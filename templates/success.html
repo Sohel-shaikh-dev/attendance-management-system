@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Saved | Navneet College</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+    /* ═══════════════════════════════════════════════
+       VARIABLES  (keep existing colour scheme)
+    ═══════════════════════════════════════════════ */
+    :root {
+        --primary:        #4361ee;
+        --primary-light:  #4895ef;
+        --secondary:      #3a0ca3;
+        --success:        #4cc9f0;
+        --success-dark:   #38b6dc;
+        --accent:         #7209b7;
+        --warning:        #f8961e;
+        --danger:         #e63946;
+        --green:          #2ecc71;
+        --green-d:        #27ae60;
+        --gray-100:       #f8f9fa;
+        --gray-200:       #e9ecef;
+        --gray-300:       #dee2e6;
+        --gray-400:       #ced4da;
+        --gray-500:       #adb5bd;
+        --gray-600:       #6c757d;
+        --gray-800:       #343a40;
+        --radius:         16px;
+        --radius-lg:      24px;
+        --shadow:         0 10px 30px rgba(0,0,0,.08);
+        --shadow-lg:      0 20px 50px rgba(0,0,0,.15);
+        --transition:     all .4s cubic-bezier(.175,.885,.32,1.275);
+        --transition-fast:all .2s ease;
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        color: var(--gray-800);
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 30px 20px 50px;
+        overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BACKGROUND SHAPES  (keep existing)
+    ═══════════════════════════════════════════════ */
+    .background-shapes { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0; }
+    .shape { position:absolute; border-radius:50%; opacity:.1; animation:float 15s infinite ease-in-out; }
+    .circle  { width:200px; height:200px; background:var(--primary);  top:15%; left:10%; animation-delay:0s; }
+    .circle2 { width:300px; height:300px; background:var(--accent);   bottom:10%; right:10%; animation-delay:2s; animation-duration:20s; }
+    .circle3 { width:150px; height:150px; background:var(--success);  top:60%; left:5%;  animation-delay:4s; animation-duration:18s; }
+
+    /* ═══════════════════════════════════════════════
+       CONFETTI  (keep existing)
+    ═══════════════════════════════════════════════ */
+    .confetti-container { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:var(--z-popover); }
+    .confetti { position:absolute; width:12px; height:12px; opacity:0; z-index:1; }
+
+    /* ═══════════════════════════════════════════════
+       MAIN CONTAINER
+    ═══════════════════════════════════════════════ */
+    .container {
+        max-width: 860px;
+        width: 100%;
+        background: rgba(255,255,255,.96);
+        backdrop-filter: blur(10px);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        animation: fadeIn .8s ease-out, float 6s ease-in-out infinite;
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(255,255,255,.2);
+    }
+
+    /* ═══════════════════════════════════════════════
+       COLLEGE BRANDING HEADER
+    ═══════════════════════════════════════════════ */
+    .college-brand {
+        background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        padding: 22px 30px 18px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        position: relative;
+        overflow: hidden;
+    }
+    .college-brand::before {
+        content: '';
+        position: absolute; top:-50%; right:-30%;
+        width:80%; height:220%;
+        background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 65%);
+        animation: shine 8s linear infinite;
+        pointer-events: none;
+    }
+    .brand-logo {
+        width: 58px; height: 58px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.18);
+        border: 2px solid rgba(255,255,255,.3);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.6rem; color: #fff;
+        flex-shrink: 0;
+        position: relative; z-index: 1;
+        backdrop-filter: blur(6px);
+    }
+    .brand-text { position: relative; z-index: 1; }
+    .brand-text h2 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem; font-weight: 800;
+        color: #fff; line-height: 1.2;
+        margin-bottom: 3px;
+    }
+    .brand-text p {
+        font-size: .75rem;
+        color: rgba(255,255,255,.8);
+        font-weight: 400;
+    }
+    .brand-right {
+        margin-left: auto;
+        position: relative; z-index: 1;
+        text-align: right;
+    }
+    .brand-right .erp-tag {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: rgba(255,255,255,.18);
+        border: 1px solid rgba(255,255,255,.28);
+        border-radius: 50px;
+        padding: 5px 14px;
+        font-size: .72rem; font-weight: 700;
+        color: rgba(255,255,255,.92);
+        letter-spacing: .5px;
+        text-transform: uppercase;
+        backdrop-filter: blur(4px);
+    }
+
+    /* ═══════════════════════════════════════════════
+       SUCCESS HEADER BAND
+    ═══════════════════════════════════════════════ */
+    .header {
+        background: linear-gradient(135deg, var(--green) 0%, var(--green-d) 100%);
+        color: white;
+        padding: 32px 30px 28px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+    .header::before {
+        content: '';
+        position: absolute; top:-50%; right:-50%;
+        width:100%; height:200%;
+        background: radial-gradient(circle, rgba(255,255,255,.15) 0%, transparent 70%);
+        transform: rotate(-15deg);
+        animation: shine 8s linear infinite;
+    }
+    .header h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.7rem; font-weight: 800;
+        margin-bottom: 8px;
+        position: relative; z-index: 1;
+        text-shadow: 0 2px 10px rgba(0,0,0,.15);
+        display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .header p {
+        font-size: 1rem; opacity: .92;
+        position: relative; z-index: 1;
+        font-weight: 400;
+    }
+
+    /* ═══════════════════════════════════════════════
+       SUCCESS ICON  (keep existing animations)
+    ═══════════════════════════════════════════════ */
+    .content {
+        padding: 36px 40px 30px;
+        text-align: center;
+        position: relative;
+    }
+    .success-icon {
+        width: 110px; height: 110px;
+        background: linear-gradient(135deg, rgba(46,204,113,.15) 0%, rgba(39,174,96,.25) 100%);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 24px;
+        position: relative;
+        animation: scaleIn .6s cubic-bezier(.175,.885,.32,1.275) both, pulse 2s ease-in-out infinite;
+        animation-delay: .3s;
+        box-shadow: 0 5px 20px rgba(46,204,113,.3);
+    }
+    .success-icon i { font-size: 52px; color: var(--green); filter: drop-shadow(0 2px 5px rgba(0,0,0,.15)); }
+    .success-icon::after {
+        content: '';
+        position: absolute; width:130%; height:130%;
+        border: 2px solid var(--green); border-radius: 50%;
+        animation: ripple 2s ease-out infinite; opacity: 0;
+    }
+
+    .message {
+        font-size: 1.4rem; font-weight: 700;
+        margin-bottom: 28px; color: var(--gray-800);
+        animation: fadeInUp .7s ease-out both;
+        animation-delay: .5s;
+        line-height: 1.4;
+        position: relative;
+    }
+    .message::after {
+        content: '';
+        position: absolute; bottom:-12px; left:50%;
+        transform: translateX(-50%);
+        width: 70px; height: 4px;
+        background: linear-gradient(to right, var(--green), var(--primary));
+        border-radius: 2px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       ATTENDANCE SUMMARY CARD
+    ═══════════════════════════════════════════════ */
+    .summary-card {
+        background: linear-gradient(135deg, #f8faff 0%, #eef2ff 100%);
+        border: 1px solid rgba(67,97,238,.15);
+        border-radius: var(--radius);
+        padding: 24px 28px;
+        margin: 28px 0 24px;
+        text-align: left;
+        animation: fadeInUp .7s ease-out both;
+        animation-delay: .6s;
+        position: relative;
+        overflow: hidden;
+    }
+    .summary-card::before {
+        content: '';
+        position: absolute; top:0; left:0;
+        width: 4px; height: 100%;
+        background: linear-gradient(180deg, var(--primary), var(--primary-light));
+        border-radius: 4px 0 0 4px;
+    }
+    .summary-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: .78rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .7px;
+        color: var(--primary);
+        margin-bottom: 18px;
+        display: flex; align-items: center; gap: 8px;
+    }
+    .summary-title::after {
+        content: ''; flex: 1; height: 1px;
+        background: rgba(67,97,238,.15);
+    }
+
+    /* grid of detail rows */
+    .summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px 24px;
+        margin-bottom: 20px;
+    }
+    .detail-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 12px;
+        background: rgba(255,255,255,.8);
+        border-radius: var(--radius);
+        border: 1px solid rgba(67,97,238,.08);
+        transition: var(--transition-fast);
+    }
+    .detail-row:hover {
+        border-color: rgba(67,97,238,.2);
+        box-shadow: 0 3px 10px rgba(67,97,238,.08);
+        transform: translateY(-1px);
+    }
+    .detail-icon {
+        width: 32px; height: 32px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .82rem; flex-shrink: 0;
+    }
+    .di-blue   { background:rgba(67,97,238,.1);  color:var(--primary); }
+    .di-green  { background:rgba(46,204,113,.1); color:var(--green-d); }
+    .di-orange { background:rgba(248,150,30,.1); color:var(--warning); }
+    .di-purple { background:rgba(114,9,183,.1);  color:var(--accent); }
+    .di-red    { background:rgba(230,57,70,.1);  color:var(--danger); }
+    .di-teal   { background:rgba(76,201,240,.1); color:var(--success-dark); }
+    .detail-info { flex: 1; min-width: 0; }
+    .detail-label { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gray-500); margin-bottom:1px; }
+    .detail-value { font-size:.9rem; font-weight:700; color:var(--gray-800); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+
+    /* KPI stat row */
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-top: 4px;
+    }
+    .kpi-box {
+        text-align: center;
+        padding: 14px 8px;
+        border-radius: var(--radius);
+        border: 1px solid transparent;
+        transition: var(--transition-fast);
+    }
+    .kpi-box:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.08); }
+    .kpi-total   { background:rgba(67,97,238,.07);  border-color:rgba(67,97,238,.15); }
+    .kpi-present { background:rgba(46,204,113,.07); border-color:rgba(46,204,113,.15); }
+    .kpi-absent  { background:rgba(230,57,70,.07);  border-color:rgba(230,57,70,.15); }
+    .kpi-pct     { background:rgba(248,150,30,.07); border-color:rgba(248,150,30,.15); }
+    .kpi-num {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.8rem; font-weight: 800;
+        line-height: 1; margin-bottom: 4px;
+    }
+    .kpi-total   .kpi-num { color:var(--primary); }
+    .kpi-present .kpi-num { color:var(--green-d); }
+    .kpi-absent  .kpi-num { color:var(--danger); }
+    .kpi-pct     .kpi-num { color:var(--warning); }
+    .kpi-lbl { font-size:.68rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gray-500); }
+
+    /* percentage progress bar */
+    .pct-bar-wrap { margin-top: 16px; }
+    .pct-bar-label {
+        display: flex; justify-content: space-between;
+        font-size: .75rem; font-weight: 600;
+        color: var(--gray-600); margin-bottom: 6px;
+    }
+    .pct-bar-track {
+        height: 8px; background: var(--gray-200);
+        border-radius: 20px; overflow: hidden;
+    }
+    .pct-bar-fill {
+        height: 100%; border-radius: 20px;
+        background: linear-gradient(90deg, var(--green), var(--primary-light));
+        width: 0;
+        transition: width 1.4s cubic-bezier(.4,0,.2,1);
+    }
+    .pct-bar-fill.danger-fill {
+        background: linear-gradient(90deg, var(--danger), var(--warning));
+    }
+
+    /* ═══════════════════════════════════════════════
+       COUNTDOWN TIMER
+    ═══════════════════════════════════════════════ */
+    .countdown-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 24px;
+        animation: fadeInUp .7s ease-out both;
+        animation-delay: .8s;
+    }
+    .countdown-ring {
+        position: relative;
+        width: 48px; height: 48px;
+        flex-shrink: 0;
+    }
+    .countdown-ring svg { transform: rotate(-90deg); }
+    .cr-track { fill:none; stroke:var(--gray-200); stroke-width:4; }
+    .cr-fill  {
+        fill:none; stroke:var(--primary); stroke-width:4;
+        stroke-linecap:round;
+        stroke-dasharray: 125.6;
+        stroke-dashoffset: 0;
+        transition: stroke-dashoffset 1s linear;
+    }
+    .cr-text {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Poppins', sans-serif;
+        font-size: .95rem; font-weight: 800;
+        color: var(--primary);
+    }
+    .countdown-msg {
+        font-size: .88rem; color: var(--gray-600); font-weight: 500;
+    }
+    .countdown-msg strong { color: var(--primary); }
+
+    /* ═══════════════════════════════════════════════
+       BUTTON GROUP
+    ═══════════════════════════════════════════════ */
+    .button-group {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        animation: fadeInUp .7s ease-out both;
+        animation-delay: .9s;
+    }
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+        padding: 13px 26px; border-radius: 999px;
+        font-family: 'Inter', sans-serif;
+        font-weight: 700; font-size: .9rem;
+        text-decoration: none; transition: var(--transition);
+        position: relative; overflow: hidden;
+        border: none; cursor: pointer;
+        letter-spacing: .3px;
+        transform-style: preserve-3d; transform: translateZ(0);
+    }
+    .btn::before {
+        content: ''; position: absolute; inset: 0;
+        background: linear-gradient(rgba(255,255,255,.2), transparent);
+        transform: translateY(100%); transition: transform .4s ease-out;
+        z-index: -1; border-radius: inherit;
+    }
+    .btn:hover::before { transform: translateY(0); }
+    .btn i { transition: var(--transition-fast); }
+    .btn:hover i { transform: scale(1.2); }
+
+    .btn-primary {
+        background: linear-gradient(135deg, var(--primary), var(--primary-light));
+        color: #fff; box-shadow: 0 6px 20px rgba(67,97,238,.4);
+    }
+    .btn-primary:hover { transform:translateY(-4px) rotate(1deg); box-shadow:0 12px 28px rgba(67,97,238,.5); }
+
+    .btn-secondary {
+        color: var(--primary);
+        border: 2px solid transparent;
+        border-radius: 999px;
+        background:
+            linear-gradient(#fff,#fff) padding-box,
+            linear-gradient(135deg, var(--primary), var(--accent)) border-box;
+        box-shadow: 0 6px 20px rgba(67,97,238,.15);
+    }
+    .btn-secondary:hover { transform:translateY(-4px) rotate(-1deg); box-shadow:0 12px 28px rgba(67,97,238,.25); }
+
+    .btn-print {
+        background: linear-gradient(135deg, #5dade2, var(--primary));
+        color: #fff; box-shadow: 0 6px 20px rgba(52,152,219,.35);
+    }
+    .btn-print:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(52,152,219,.45); }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, var(--danger), #c0392b);
+        color: #fff; box-shadow: 0 6px 20px rgba(231,76,60,.35);
+    }
+    .btn-pdf:hover { transform:translateY(-4px); box-shadow:0 12px 28px rgba(231,76,60,.45); }
+
+    /* ═══════════════════════════════════════════════
+       FLOATING PARTICLES  (keep existing)
+    ═══════════════════════════════════════════════ */
+    .floating-particles { position:absolute; width:100%; height:100%; top:0; left:0; pointer-events:none; z-index:1; }
+    .particle { position:absolute; background:linear-gradient(135deg,var(--primary-light),var(--accent)); border-radius:50%; opacity:.3; animation:floatParticle 15s infinite linear; }
+
+    /* ═══════════════════════════════════════════════
+       PRINT STYLES
+    ═══════════════════════════════════════════════ */
+    @media print {
+        body { background:#fff !important; padding:0 !important; display:block !important; }
+        .background-shapes, .confetti-container, .button-group,
+        .countdown-wrap, .floating-particles { display:none !important; }
+        .container {
+            box-shadow:none !important; border:1px solid #ddd !important;
+            animation:none !important; max-width:100% !important;
+            background:#fff !important;
+        }
+        .college-brand { background:#2980b9 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .header { background:#27ae60 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+        .summary-card { break-inside:avoid; }
+        .kpi-box { border:1px solid #ddd !important; }
+    }
+
+    /* ═══════════════════════════════════════════════
+       ANIMATIONS  (keep all existing)
+    ═══════════════════════════════════════════════ */
+    @keyframes fadeIn    { from{opacity:0;transform:translateY(30px) scale(.95)} to{opacity:1;transform:translateY(0) scale(1)} }
+    @keyframes fadeInUp  { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes scaleIn   { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+    @keyframes pulse     { 0%{transform:scale(1)} 50%{transform:scale(1.05)} 100%{transform:scale(1)} }
+    @keyframes ripple    { 0%{transform:scale(.8);opacity:1} 100%{transform:scale(2.5);opacity:0} }
+    @keyframes shine     { 0%{transform:rotate(-15deg) translateX(-100%)} 20%{transform:rotate(-15deg) translateX(100%)} 100%{transform:rotate(-15deg) translateX(100%)} }
+    @keyframes float     { 0%{transform:translateY(0)} 50%{transform:translateY(-10px)} 100%{transform:translateY(0)} }
+    @keyframes floatParticle { 0%{transform:translateY(0) rotate(0deg);opacity:0} 10%{opacity:.3} 90%{opacity:.3} 100%{transform:translateY(-100vh) rotate(360deg);opacity:0} }
+    @keyframes confettiFall  { 0%{opacity:0;transform:translateY(-20px) rotate(0deg) scale(.5)} 10%{opacity:1;transform:translateY(0) rotate(0deg) scale(1)} 100%{opacity:0;transform:translateY(100vh) rotate(720deg) scale(1)} }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media (max-width:768px) {
+        body { padding:16px 12px 40px; }
+        .college-brand { padding:16px 18px; gap:12px; }
+        .brand-text h2 { font-size:.95rem; }
+        .brand-right { display:none; }
+        .header { padding:24px 20px 20px; }
+        .header h1 { font-size:1.35rem; }
+        .content { padding:26px 20px 22px; }
+        .summary-card { padding:18px; margin:20px 0 18px; }
+        .summary-grid { grid-template-columns:1fr; gap:8px; }
+        .kpi-row { grid-template-columns:repeat(2,1fr); }
+        .button-group { gap:10px; }
+        .btn { padding:12px 20px; font-size:.82rem; }
+    }
+    @media (max-width:480px) {
+        .header h1 { font-size:1.15rem; }
+        .message { font-size:1.1rem; }
+        .kpi-num { font-size:1.5rem; }
+        .button-group { flex-direction:column; }
+        .btn { width:100%; }
+        .success-icon { width:90px; height:90px; }
+        .success-icon i { font-size:44px; }
+    }
+    </style>
+</head>
+<body>
+
+    <!-- background shapes (keep existing) -->
+    <div class="background-shapes">
+        <div class="shape circle"></div>
+        <div class="shape circle2"></div>
+        <div class="shape circle3"></div>
+    </div>
+
+    <div class="confetti-container" id="confetti-container"></div>
+
+    <div class="container" id="mainCard">
+
+        <!-- ══ COLLEGE BRANDING ══ -->
+        <div class="college-brand">
+            <div class="brand-logo"><i class="fas fa-university"></i></div>
+            <div class="brand-text">
+                <h2>Navneet College of Arts, Science &amp; Commerce</h2>
+                <p><i class="fas fa-map-marker-alt" style="margin-right:5px"></i>Mumbai Central, Mumbai, Maharashtra 400008</p>
+            </div>
+            <div class="brand-right">
+                <span class="erp-tag"><i class="fas fa-shield-alt"></i> ERP System</span>
+            </div>
+        </div>
+
+        <!-- ══ SUCCESS HEADER ══ -->
+        <div class="header">
+            <h1><i class="fas fa-check-circle"></i> Attendance Recorded</h1>
+            <p>Attendance has been successfully saved to the system</p>
+        </div>
+
+        <!-- ══ CONTENT ══ -->
+        <div class="content">
+
+            <!-- success icon (keep existing) -->
+            <div class="success-icon">
+                <i class="fas fa-check"></i>
+            </div>
+
+            <div class="message">{{ message }}</div>
+
+            {% if summary %}
+            <!-- ══ ATTENDANCE SUMMARY CARD ══ -->
+            <div class="summary-card" id="summaryCard">
+                <div class="summary-title">
+                    <i class="fas fa-clipboard-list"></i> Attendance Summary
+                </div>
+
+                <!-- detail rows grid -->
+                <div class="summary-grid">
+                    <div class="detail-row">
+                        <div class="detail-icon di-blue"><i class="fas fa-graduation-cap"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Course</div>
+                            <div class="detail-value">{{ summary.course }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-icon di-purple"><i class="fas fa-building"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Class</div>
+                            <div class="detail-value">{{ summary.class_yr }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-icon di-teal"><i class="fas fa-layer-group"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Semester</div>
+                            <div class="detail-value">{{ summary.semester }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-icon di-orange"><i class="fas fa-book"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Subject</div>
+                            <div class="detail-value">{{ summary.subject }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-icon di-blue"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">{{ summary.date }}</div>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <div class="detail-icon di-green"><i class="fas fa-clock"></i></div>
+                        <div class="detail-info">
+                            <div class="detail-label">Lecture Time</div>
+                            <div class="detail-value">{{ summary.time }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KPI boxes -->
+                <div class="kpi-row">
+                    <div class="kpi-box kpi-total">
+                        <div class="kpi-num" id="kTotal" data-target="{{ summary.total_students }}">0</div>
+                        <div class="kpi-lbl">Total</div>
+                    </div>
+                    <div class="kpi-box kpi-present">
+                        <div class="kpi-num" id="kPresent" data-target="{{ summary.present }}">0</div>
+                        <div class="kpi-lbl">Present</div>
+                    </div>
+                    <div class="kpi-box kpi-absent">
+                        <div class="kpi-num" id="kAbsent" data-target="{{ summary.absent }}">0</div>
+                        <div class="kpi-lbl">Absent</div>
+                    </div>
+                    <div class="kpi-box kpi-pct">
+                        <div class="kpi-num" id="kPct" data-target="{{ summary.percentage }}">0%</div>
+                        <div class="kpi-lbl">Attendance</div>
+                    </div>
+                </div>
+
+                <!-- percentage bar -->
+                <div class="pct-bar-wrap">
+                    <div class="pct-bar-label">
+                        <span>Attendance Rate</span>
+                        <span id="pctLabel">{{ summary.percentage }}%</span>
+                    </div>
+                    <div class="pct-bar-track">
+                        <div class="pct-bar-fill {{ 'danger-fill' if summary.percentage < 75 else '' }}"
+                             id="pctBar"
+                             data-width="{{ summary.percentage }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- ══ COUNTDOWN ══ -->
+            <div class="countdown-wrap">
+                <div class="countdown-ring">
+                    <svg width="48" height="48" viewBox="0 0 48 48">
+                        <circle class="cr-track" cx="24" cy="24" r="20"/>
+                        <circle class="cr-fill"  cx="24" cy="24" r="20" id="crFill"/>
+                    </svg>
+                    <div class="cr-text" id="crText">5</div>
+                </div>
+                <div class="countdown-msg">
+                    Redirecting to <strong>Mark Attendance</strong> in <strong id="cdSec">5</strong> seconds…
+                    <a href="#" onclick="cancelCountdown(); return false;"
+                       style="color:var(--danger);font-weight:600;margin-left:6px;font-size:.8rem">Cancel</a>
+                </div>
+            </div>
+
+            <!-- ══ BUTTONS ══ -->
+            <div class="button-group">
+                <a href="{{ url_for('teacher') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left"></i> Mark Attendance
+                </a>
+                <a href="{{ url_for('teacher_dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-chart-bar"></i> Dashboard
+                </a>
+                <button class="btn btn-print" onclick="window.print()">
+                    <i class="fas fa-print"></i> Print
+                </button>
+                <button class="btn btn-pdf" onclick="downloadPDF()">
+                    <i class="fas fa-file-pdf"></i> Download PDF
+                </button>
+            </div>
+
+        </div><!-- .content -->
+    </div><!-- .container -->
+
+    <script>
+    /* ═══════════════════════════════════════════════════════
+       CONFETTI  (keep existing)
+    ═══════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function() {
+        createConfetti();
+        createParticles();
+        animateKPIs();
+        animateProgressBar();
+        startCountdown();
+
+        /* button ripple (keep existing) */
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('mouseenter', function(e) {
+                const ripple = document.createElement('span');
+                ripple.style.cssText = 'position:absolute;border-radius:50%;background:rgba(255,255,255,.3);transform:scale(0);animation:rippleAnim .6s linear;pointer-events:none;';
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size/2;
+                const y = e.clientY - rect.top  - size/2;
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left  = x + 'px';
+                ripple.style.top   = y + 'px';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+        const s = document.createElement('style');
+        s.textContent = '@keyframes rippleAnim { to { transform:scale(2.5); opacity:0; } }';
+        document.head.appendChild(s);
+    });
+
+    function createConfetti() {
+        const container = document.getElementById('confetti-container');
+        const colors = ['#4361ee','#4895ef','#4cc9f0','#7209b7','#f72585','#3a0ca3','#f8961e','#38b6dc','#2ecc71'];
+        for (let i = 0; i < 150; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            const color    = colors[Math.floor(Math.random() * colors.length)];
+            const size     = Math.random() * 10 + 5;
+            const left     = Math.random() * 100;
+            const delay    = Math.random() * 5;
+            const duration = Math.random() * 3 + 3;
+            c.style.cssText = `width:${size}px;height:${size}px;background:${color};left:${left}vw;border-radius:${Math.random()>.7?'50%':'2px'};animation:confettiFall ${duration}s linear ${delay}s both;`;
+            container.appendChild(c);
+        }
+    }
+
+    function createParticles() {
+        const container = document.querySelector('.content');
+        const fp = document.createElement('div');
+        fp.className = 'floating-particles';
+        for (let i = 0; i < 20; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            const size = Math.random() * 8 + 2;
+            p.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;top:${Math.random()*100}%;animation-delay:${Math.random()*10}s;animation-duration:${Math.random()*10+10}s;`;
+            fp.appendChild(p);
+        }
+        container.appendChild(fp);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       KPI COUNTER ANIMATION
+    ═══════════════════════════════════════════════════════ */
+    function animateKPIs() {
+        ['kTotal','kPresent','kAbsent'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const target = parseInt(el.dataset.target || 0);
+            const start  = performance.now();
+            const dur    = 1000;
+            (function step(now) {
+                const p   = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1-p, 3);
+                el.textContent = Math.round(ease * target);
+                if (p < 1) requestAnimationFrame(step);
+            })(start);
+        });
+        /* percentage counter */
+        const pctEl = document.getElementById('kPct');
+        if (pctEl) {
+            const target = parseFloat(pctEl.dataset.target || 0);
+            const start  = performance.now();
+            const dur    = 1200;
+            (function step(now) {
+                const p    = Math.min((now - start) / dur, 1);
+                const ease = 1 - Math.pow(1-p, 3);
+                pctEl.textContent = (ease * target).toFixed(1) + '%';
+                if (p < 1) requestAnimationFrame(step);
+            })(start);
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       PROGRESS BAR ANIMATION
+    ═══════════════════════════════════════════════════════ */
+    function animateProgressBar() {
+        const bar = document.getElementById('pctBar');
+        if (!bar) return;
+        setTimeout(() => { bar.style.width = bar.dataset.width + '%'; }, 400);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       COUNTDOWN TIMER
+    ═══════════════════════════════════════════════════════ */
+    let countdownTimer = null;
+    let countdownCancelled = false;
+    const TOTAL_SECS = 5;
+    const CIRCUMFERENCE = 2 * Math.PI * 20; // r=20 → 125.66
+
+    function startCountdown() {
+        const crFill = document.getElementById('crFill');
+        const crText = document.getElementById('crText');
+        const cdSec  = document.getElementById('cdSec');
+        if (!crFill) return;
+
+        crFill.style.strokeDasharray  = CIRCUMFERENCE;
+        crFill.style.strokeDashoffset = 0;
+
+        let remaining = TOTAL_SECS;
+
+        countdownTimer = setInterval(() => {
+            if (countdownCancelled) { clearInterval(countdownTimer); return; }
+            remaining--;
+            if (crText) crText.textContent = remaining;
+            if (cdSec)  cdSec.textContent  = remaining;
+
+            /* shrink ring */
+            const offset = CIRCUMFERENCE * (1 - remaining / TOTAL_SECS);
+            crFill.style.strokeDashoffset = offset;
+
+            if (remaining <= 0) {
+                clearInterval(countdownTimer);
+                window.location.href = "{{ url_for('teacher') }}";
+            }
+        }, 1000);
+    }
+
+    function cancelCountdown() {
+        countdownCancelled = true;
+        clearInterval(countdownTimer);
+        const wrap = document.querySelector('.countdown-wrap');
+        if (wrap) {
+            wrap.innerHTML = '<span style="font-size:.85rem;color:var(--gray-500)"><i class="fas fa-pause-circle" style="margin-right:6px;color:var(--warning)"></i>Auto-redirect cancelled.</span>';
+        }
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       DOWNLOAD PDF  (jsPDF)
+    ═══════════════════════════════════════════════════════ */
+    function downloadPDF() {
+        const { jsPDF } = window.jspdf;
+        if (!jsPDF) { alert('PDF library not loaded.'); return; }
+
+        const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+        const W   = doc.internal.pageSize.getWidth();
+        const pad = 18;
+        let   y   = 0;
+
+        /* ── college header band ── */
+        doc.setFillColor(41, 128, 185);
+        doc.rect(0, 0, W, 32, 'F');
+        doc.setTextColor(255,255,255);
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(12);
+        doc.text('NAVNEET COLLEGE OF ARTS, SCIENCE & COMMERCE', W/2, 12, { align:'center' });
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(8);
+        doc.text('Mumbai Central, Mumbai, Maharashtra 400008', W/2, 19, { align:'center' });
+        doc.setFontSize(7);
+        doc.text('ERP Attendance Management System', W/2, 26, { align:'center' });
+
+        /* ── success band ── */
+        doc.setFillColor(39, 174, 96);
+        doc.rect(0, 32, W, 22, 'F');
+        doc.setTextColor(255,255,255);
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(14);
+        doc.text('ATTENDANCE RECORDED SUCCESSFULLY', W/2, 44, { align:'center' });
+
+        y = 64;
+
+        /* ── generated info ── */
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(8);
+        doc.setTextColor(100,116,139);
+        doc.text(`Generated: ${new Date().toLocaleString('en-IN')}`, pad, y);
+        y += 10;
+
+        /* ── divider ── */
+        doc.setDrawColor(200,200,200);
+        doc.line(pad, y, W-pad, y);
+        y += 8;
+
+        /* ── summary title ── */
+        doc.setFont('helvetica','bold');
+        doc.setFontSize(10);
+        doc.setTextColor(67,97,238);
+        doc.text('ATTENDANCE SUMMARY', pad, y);
+        y += 8;
+
+        {% if summary %}
+        /* ── detail rows ── */
+        const details = [
+            ['Course',        '{{ summary.course }}'],
+            ['Class',         '{{ summary.class_yr }}'],
+            ['Semester',      '{{ summary.semester }}'],
+            ['Subject',       '{{ summary.subject }}'],
+            ['Date',          '{{ summary.date }}'],
+            ['Lecture Time',  '{{ summary.time }}'],
+        ];
+        const colW = (W - pad*2) / 2;
+        details.forEach(([label, val], i) => {
+            const col = i % 2;
+            const row = Math.floor(i / 2);
+            const mx  = pad + col * colW;
+            const my  = y + row * 14;
+            doc.setFillColor(248,250,252);
+            doc.roundedRect(mx, my-4, colW-4, 12, 2, 2, 'F');
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(7);
+            doc.setTextColor(148,163,184);
+            doc.text(label.toUpperCase(), mx+4, my+1);
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(9);
+            doc.setTextColor(44,62,80);
+            doc.text(String(val), mx+4, my+7);
+        });
+        y += Math.ceil(details.length / 2) * 14 + 8;
+
+        /* ── divider ── */
+        doc.setDrawColor(200,200,200);
+        doc.line(pad, y, W-pad, y);
+        y += 8;
+
+        /* ── KPI boxes ── */
+        const kpis = [
+            ['Total Students', '{{ summary.total_students }}', [67,97,238]],
+            ['Present',        '{{ summary.present }}',        [39,174,96]],
+            ['Absent',         '{{ summary.absent }}',         [230,57,70]],
+            ['Attendance %',   '{{ summary.percentage }}%',    [248,150,30]],
+        ];
+        const kpiW = (W - pad*2) / 4;
+        kpis.forEach(([label, val, rgb], i) => {
+            const mx = pad + i * kpiW;
+            doc.setFillColor(rgb[0], rgb[1], rgb[2]);
+            doc.setGState(new doc.GState({ opacity: 0.1 }));
+            doc.roundedRect(mx, y-4, kpiW-4, 22, 3, 3, 'F');
+            doc.setGState(new doc.GState({ opacity: 1 }));
+            doc.setFont('helvetica','bold');
+            doc.setFontSize(16);
+            doc.setTextColor(rgb[0], rgb[1], rgb[2]);
+            doc.text(String(val), mx + (kpiW-4)/2, y+9, { align:'center' });
+            doc.setFont('helvetica','normal');
+            doc.setFontSize(7);
+            doc.setTextColor(100,116,139);
+            doc.text(label.toUpperCase(), mx + (kpiW-4)/2, y+16, { align:'center' });
+        });
+        y += 30;
+        {% endif %}
+
+        /* ── footer ── */
+        const H = doc.internal.pageSize.getHeight();
+        doc.setFillColor(248,250,252);
+        doc.rect(0, H-14, W, 14, 'F');
+        doc.setFont('helvetica','normal');
+        doc.setFontSize(7);
+        doc.setTextColor(148,163,184);
+        doc.text('Navneet College ERP  |  Attendance Report  |  Confidential', W/2, H-5, { align:'center' });
+
+        doc.save(`Attendance_{{ summary.course if summary else 'Report' }}_{{ summary.date if summary else '' }}.pdf`);
+    }
+    </script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ | Help & Support</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+    :root{--primary:#4361ee;--primary-d:#3a0ca3;--primary-l:#4895ef;--success:#2ecc71;--success-d:#27ae60;--danger:#e74c3c;--warning:#f39c12;--gray-100:#f8fafc;--gray-200:#e2e8f0;--gray-300:#cbd5e1;--gray-400:#94a3b8;--gray-500:#64748b;--gray-600:#475569;--gray-700:#334155;--dark:#2c3e50;--radius:14px;--radius-lg:20px;--shadow:0 4px 24px rgba(0,0,0,.07);--shadow-lg:0 16px 48px rgba(0,0,0,.13);--transition:all .3s cubic-bezier(.25,.8,.25,1);--glass:rgba(255,255,255,.88);--glass-b:rgba(255,255,255,.55)}
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Inter',sans-serif;background:linear-gradient(135deg,#f0f4ff 0%,#e8f4fd 50%,#f5f7fa 100%);background-attachment:fixed;color:var(--dark);min-height:100vh}
+    .main{margin-left:70px;padding:28px 32px;transition:margin-left .3s ease}
+    .sidebar.expanded~.main{margin-left:220px}
+    @media(max-width:768px){.main{margin-left:0!important;padding:70px 16px 24px}}
+
+    .page-header{display:flex;justify-content:space-between;align-items:center;padding:24px 28px;border-radius:var(--radius-lg);background:linear-gradient(135deg,var(--primary) 0%,var(--primary-d) 100%);color:#fff;box-shadow:var(--shadow-lg);margin-bottom:24px;position:relative;overflow:hidden;flex-wrap:wrap;gap:14px}
+    .page-header::before{content:'';position:absolute;top:-40%;right:-15%;width:65%;height:220%;background:radial-gradient(circle,rgba(255,255,255,.13) 0%,transparent 65%);animation:hdrGlow 7s ease-in-out infinite alternate;pointer-events:none}
+    @keyframes hdrGlow{from{transform:scale(1) rotate(-8deg)}to{transform:scale(1.15) rotate(-8deg)}}
+    .hdr-left h1{font-family:'Poppins',sans-serif;font-size:1.55rem;font-weight:800;display:flex;align-items:center;gap:12px;margin-bottom:4px;position:relative;z-index:1}
+    .hdr-left p{font-size:.85rem;opacity:.88;position:relative;z-index:1}
+    .hdr-right{position:relative;z-index:1;display:flex;gap:10px}
+
+    .breadcrumb{display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--gray-500);margin-bottom:20px;flex-wrap:wrap}
+    .breadcrumb a{color:var(--primary);text-decoration:none;font-weight:500}
+    .breadcrumb i{font-size:.65rem;color:var(--gray-400)}
+
+    /* search */
+    .faq-search{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-b);border-radius:var(--radius-lg);box-shadow:var(--shadow);padding:22px 26px;margin-bottom:22px;display:flex;align-items:center;gap:14px}
+    .faq-search i{font-size:1.2rem;color:var(--primary);flex-shrink:0}
+    .faq-search input{flex:1;border:none;background:transparent;font-size:1rem;font-family:'Inter',sans-serif;color:var(--dark);outline:none}
+    .faq-search input::placeholder{color:var(--gray-400)}
+
+    /* categories */
+    .cat-tabs{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}
+    .cat-tab{padding:8px 18px;border-radius:50px;border:1.5px solid var(--gray-300);background:#fff;font-size:.82rem;font-weight:600;cursor:pointer;transition:var(--transition);color:var(--gray-600)}
+    .cat-tab:hover{border-color:var(--primary);color:var(--primary)}
+    .cat-tab.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(67,97,238,.3)}
+
+    /* accordion */
+    .faq-section{margin-bottom:24px}
+    .section-title{font-family:'Poppins',sans-serif;font-size:1rem;font-weight:700;color:var(--dark);margin-bottom:14px;display:flex;align-items:center;gap:10px;padding-bottom:10px;border-bottom:2px solid var(--gray-200)}
+    .section-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem}
+    .si-blue{background:rgba(67,97,238,.1);color:var(--primary)}
+    .si-green{background:rgba(46,204,113,.1);color:var(--success-d)}
+    .si-orange{background:rgba(243,156,18,.1);color:var(--warning)}
+    .si-purple{background:rgba(155,89,182,.1);color:#9b59b6}
+
+    .faq-item{background:var(--glass);backdrop-filter:blur(16px);border:1px solid var(--glass-b);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:10px;overflow:hidden;transition:var(--transition)}
+    .faq-item:hover{box-shadow:var(--shadow-lg)}
+    .faq-q{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;cursor:pointer;font-weight:600;font-size:.9rem;color:var(--dark);user-select:none;gap:12px}
+    .faq-q:hover{color:var(--primary)}
+    .faq-q i{color:var(--gray-400);transition:transform .3s ease;flex-shrink:0}
+    .faq-item.open .faq-q i{transform:rotate(180deg);color:var(--primary)}
+    .faq-item.open .faq-q{color:var(--primary)}
+    .faq-a{max-height:0;overflow:hidden;transition:max-height .4s ease,padding .3s ease;padding:0 20px;font-size:.88rem;line-height:1.8;color:var(--gray-600)}
+    .faq-item.open .faq-a{max-height:400px;padding:0 20px 18px}
+
+    /* CTA */
+    .cta-card{background:linear-gradient(135deg,rgba(67,97,238,.08),rgba(58,12,163,.05));border:1px solid rgba(67,97,238,.15);border-radius:var(--radius-lg);padding:28px;text-align:center;margin-top:24px}
+    .cta-card h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:700;color:var(--dark);margin-bottom:8px}
+    .cta-card p{font-size:.85rem;color:var(--gray-500);margin-bottom:18px}
+    .btn-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:50px;background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;text-decoration:none;font-weight:700;font-size:.88rem;box-shadow:0 6px 18px rgba(67,97,238,.35);transition:var(--transition)}
+    .btn-cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(67,97,238,.45)}
+    </style>
+</head>
+<body>
+    {% include 'components/student_sidebar.html' %}
+
+    <div class="main">
+        <div class="page-header">
+            <div class="hdr-left">
+                <h1><i class="fas fa-question-circle"></i> Frequently Asked Questions</h1>
+                <p>Find quick answers to common questions.</p>
+            </div>
+            <div class="hdr-right">
+                <a href="{{ url_for('student_my_tickets') }}" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);color:#fff;padding:9px 18px;border-radius:50px;text-decoration:none;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:7px;backdrop-filter:blur(4px)">
+                    <i class="fas fa-list"></i> My Tickets
+                </a>
+            </div>
+        </div>
+
+        <div class="breadcrumb">
+            <a href="{{ url_for('student_dashboard') }}"><i class="fas fa-home"></i> Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{{ url_for('student_my_tickets') }}">Help & Support</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>FAQ</span>
+        </div>
+
+        <!-- search -->
+        <div class="faq-search">
+            <i class="fas fa-search"></i>
+            <input type="text" id="faqSearch" placeholder="Search questions..." oninput="searchFAQ()">
+        </div>
+
+        <!-- category tabs -->
+        <div class="cat-tabs">
+            <button class="cat-tab active" onclick="filterCat('all',this)">All</button>
+            <button class="cat-tab" onclick="filterCat('attendance',this)">📋 Attendance</button>
+            <button class="cat-tab" onclick="filterCat('fees',this)">💰 Fees</button>
+            <button class="cat-tab" onclick="filterCat('exam',this)">📝 Exam</button>
+            <button class="cat-tab" onclick="filterCat('technical',this)">💻 Technical</button>
+        </div>
+
+        <!-- Attendance FAQs -->
+        <div class="faq-section" data-cat="attendance">
+            <div class="section-title">
+                <div class="section-icon si-blue"><i class="fas fa-clipboard-check"></i></div>
+                Attendance
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">How is my attendance percentage calculated? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Your attendance percentage is calculated as: (Total classes attended ÷ Total classes held) × 100. This is calculated subject-wise and shown on your dashboard.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">What is the minimum attendance required? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">The minimum required attendance is 75% per subject. Students falling below this threshold are marked as defaulters and may not be allowed to appear in exams.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">My attendance is marked wrong. What should I do? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">If you believe your attendance has been incorrectly marked, please raise a support ticket with the category "Attendance". Include the date, subject, and lecture time in your message. The admin will review and correct it.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">Can I see my attendance history? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Yes! Go to your Student Dashboard and you can view your complete attendance history, filter by subject, and see your attendance percentage for each subject.</div>
+            </div>
+        </div>
+
+        <!-- Fees FAQs -->
+        <div class="faq-section" data-cat="fees">
+            <div class="section-title">
+                <div class="section-icon si-green"><i class="fas fa-rupee-sign"></i></div>
+                Fees
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">How can I view my fee details? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Go to the "Fees" section in the sidebar. You can view your total fee, amount paid, due amount, and payment history for each semester.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">How do I download my fee receipt? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">In the Fees section, click on the "Download Receipt" button next to any payment entry. A PDF receipt will be generated and downloaded automatically.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">My payment is not reflecting. What should I do? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">If your payment is not showing in the system, please raise a support ticket with category "Fees". Attach your payment proof (transaction ID, bank receipt) in the message. Allow 2-3 working days for verification.</div>
+            </div>
+        </div>
+
+        <!-- Exam FAQs -->
+        <div class="faq-section" data-cat="exam">
+            <div class="section-title">
+                <div class="section-icon si-orange"><i class="fas fa-file-alt"></i></div>
+                Exam
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">Will low attendance affect my exam eligibility? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Yes. Students with attendance below 75% in any subject may be declared ineligible to appear in the semester examination for that subject. Contact the admin immediately if you are at risk.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">How do I get my exam hall ticket? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Exam hall tickets are issued by the college office. Ensure your fees are fully paid and attendance is above 75%. Contact the admin or raise a ticket if you face any issues.</div>
+            </div>
+        </div>
+
+        <!-- Technical FAQs -->
+        <div class="faq-section" data-cat="technical">
+            <div class="section-title">
+                <div class="section-icon si-purple"><i class="fas fa-laptop-code"></i></div>
+                Technical
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">I forgot my login password. How do I reset it? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Your login uses your registered Gmail ID and mobile number. If you've changed your mobile number, please contact the admin or raise a support ticket with category "Technical".</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">The portal is not loading properly. What should I do? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Try clearing your browser cache and cookies, then reload the page. If the issue persists, try a different browser or device. If still unresolved, raise a Technical support ticket.</div>
+            </div>
+            <div class="faq-item" onclick="toggleFAQ(this)">
+                <div class="faq-q">How do I update my profile information? <i class="fas fa-chevron-down"></i></div>
+                <div class="faq-a">Profile information (name, email, mobile) can only be updated by the admin. Please raise a support ticket with the correct details and the admin will update your profile.</div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="cta-card">
+            <h3>Didn't find your answer?</h3>
+            <p>Our support team is here to help. Raise a ticket and we'll get back to you.</p>
+            <a href="{{ url_for('student_raise_ticket') }}" class="btn-cta">
+                <i class="fas fa-ticket-alt"></i> Raise a Support Ticket
+            </a>
+        </div>
+    </div>
+
+    <script>
+    function toggleFAQ(el){
+        const isOpen = el.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i=>i.classList.remove('open'));
+        if(!isOpen) el.classList.add('open');
+    }
+    function filterCat(cat, btn){
+        document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.faq-section').forEach(s=>{
+            s.style.display = (cat==='all'||s.dataset.cat===cat) ? '' : 'none';
+        });
+    }
+    function searchFAQ(){
+        const q = (document.getElementById('faqSearch').value||'').toLowerCase();
+        document.querySelectorAll('.faq-item').forEach(item=>{
+            const text = item.textContent.toLowerCase();
+            item.style.display = text.includes(q) ? '' : 'none';
+            if(q && text.includes(q)) item.classList.add('open');
+        });
+        document.querySelectorAll('.faq-section').forEach(s=>{
+            const visible = Array.from(s.querySelectorAll('.faq-item')).some(i=>i.style.display!=='none');
+            s.style.display = visible ? '' : 'none';
+        });
+    }
+    </script>
+</body>
+</html>

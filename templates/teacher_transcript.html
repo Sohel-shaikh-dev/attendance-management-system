@@ -1,0 +1,1715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nexus Transcripts • Teacher Panel</title>
+
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"/>
+  
+  <!-- GSAP for animations -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  
+  <!-- AOS Animation -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+  <style>
+    /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Modern color palette - Glassmorphism + Neomorphism fusion */
+      --primary-50: #eef2ff;
+      --primary-100: #e0e7ff;
+      --primary-200: #c7d2fe;
+      --primary-300: #a5b4fc;
+      --primary-400: #818cf8;
+      --primary-500: #6366f1;
+      --primary-600: #4f46e5;
+      --primary-700: #4338ca;
+      --primary-800: #3730a3;
+      --primary-900: #312e81;
+      
+      --success-50: #ecfdf5;
+      --success-100: #d1fae5;
+      --success-500: #10b981;
+      --success-600: #059669;
+      --success-700: #047857;
+      
+      --danger-50: #fef2f2;
+      --danger-100: #fee2e2;
+      --danger-500: #ef4444;
+      --danger-600: #dc2626;
+      --danger-700: #b91c1c;
+      
+      --warning-50: #fffbeb;
+      --warning-100: #fef3c7;
+      --warning-500: #f59e0b;
+      --warning-600: #d97706;
+      --warning-700: #b45309;
+      
+      /* Neutral tones */
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      
+      /* Glass effects */
+      --glass-light: rgba(255, 255, 255, 0.7);
+      --glass-medium: rgba(255, 255, 255, 0.5);
+      --glass-heavy: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      
+      /* Shadows */
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+      --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      
+      /* Neomorphic shadows */
+      --neo-light: 8px 8px 16px rgba(174, 190, 205, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.7);
+      
+      /* Typography */
+      --font-sans: "Inter", system-ui, sans-serif;
+      
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      
+      /* Border radius */
+      --radius-sm: 0.375rem;
+      --radius-md: 0.5rem;
+      --radius-lg: 0.75rem;
+      --radius-xl: 1rem;
+      --radius-2xl: 1.25rem;
+      --radius-3xl: 1.5rem;
+      --radius-full: 9999px;
+      
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      
+      /* Layout */
+      --sidebar-width: 70px;
+    }
+
+    /* ===== DARK MODE SUPPORT ===== */
+    [data-theme="dark"] {
+      --glass-light: rgba(17, 24, 39, 0.7);
+      --glass-medium: rgba(17, 24, 39, 0.5);
+      --glass-heavy: rgba(0, 0, 0, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.05);
+      --gray-50: #111827;
+      --gray-100: #1f2937;
+      --gray-200: #374151;
+      --gray-300: #4b5563;
+      --gray-400: #6b7280;
+      --gray-500: #9ca3af;
+      --gray-600: #d1d5db;
+      --gray-700: #e5e7eb;
+      --gray-800: #f3f4f6;
+      --gray-900: #f9fafb;
+      --primary-50: #1e1b4b;
+      --primary-100: #2e1b6b;
+      --primary-200: #3b1e8c;
+      --primary-300: #4c1d95;
+      --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+    }
+
+    /* ===== GLOBAL STYLES ===== */
+    html {
+      font-family: var(--font-sans);
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--gray-900);
+      background: 
+        radial-gradient(900px 450px at 95% -10%, rgba(99, 102, 241, 0.15), transparent 60%),
+        radial-gradient(1200px 550px at -5% 0%, rgba(168, 85, 247, 0.12), transparent 60%),
+        linear-gradient(180deg, #f6f7fb 0%, #edf1f7 100%);
+      background-attachment: fixed;
+      min-height: 100vh;
+      transition: background-color var(--transition-base), color var(--transition-base);
+    }
+
+    [data-theme="dark"] body {
+      background: 
+        radial-gradient(900px 450px at 95% -10%, rgba(99, 102, 241, 0.08), transparent 60%),
+        radial-gradient(1200px 550px at -5% 0%, rgba(168, 85, 247, 0.06), transparent 60%),
+        linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+      border-radius: var(--radius-full);
+      transition: var(--transition-base);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+    }
+
+    /* Selection style */
+    ::selection {
+      background: var(--primary-500);
+      color: white;
+    }
+
+    /* ===== BACKGROUND DECORATIONS ===== */
+    .bg-decoration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-decoration .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .bg-decoration .blob-1 {
+      top: -10%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: var(--primary-400);
+      animation-delay: 0s;
+    }
+
+    .bg-decoration .blob-2 {
+      bottom: -10%;
+      left: -5%;
+      width: 600px;
+      height: 600px;
+      background: var(--success-500);
+      animation-delay: -5s;
+    }
+
+    .bg-decoration .blob-3 {
+      top: 40%;
+      left: 30%;
+      width: 400px;
+      height: 400px;
+      background: var(--warning-500);
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(5%, 5%) scale(1.05); }
+      50% { transform: translate(-5%, -5%) scale(0.95); }
+      75% { transform: translate(-5%, 5%) scale(1.02); }
+    }
+
+    /* ===== THEME TOGGLE ===== */
+    .theme-toggle {
+      position: fixed;
+      bottom: var(--space-6);
+      right: var(--space-6);
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-full);
+      background: var(--glass-light);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: var(--z-popover);
+      transition: var(--transition-bounce);
+      color: var(--gray-900);
+      font-size: 1.4rem;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(180deg);
+      background: var(--primary-500);
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .theme-toggle {
+        bottom: var(--space-4);
+        right: var(--space-4);
+        width: 48px;
+        height: 48px;
+        font-size: 1.2rem;
+      }
+    }
+
+    /* ===== LAYOUT ===== */
+    #main {
+      margin-left: var(--sidebar-width);
+      padding: var(--space-5) var(--space-6) var(--space-8);
+      transition: margin-left var(--transition-base);
+      position: relative;
+      z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      #main {
+        margin-left: 0;
+        padding: 80px var(--space-4) var(--space-6);
+      }
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-5);
+      padding: var(--space-6) var(--space-8);
+      border-radius: var(--radius-3xl);
+      background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+      color: white;
+      box-shadow: var(--shadow-2xl);
+      position: relative;
+      overflow: hidden;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      animation: headerGlow 8s infinite alternate;
+    }
+
+    @keyframes headerGlow {
+      from { box-shadow: var(--shadow-2xl); }
+      to { box-shadow: 0 30px 60px -12px rgba(79, 70, 229, 0.5); }
+    }
+
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 70%;
+      height: 250%;
+      background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+      transform: rotate(-15deg);
+      animation: headerShimmer 10s infinite alternate;
+      pointer-events: none;
+    }
+
+    @keyframes headerShimmer {
+      from { transform: rotate(-15deg) translateX(-10%); }
+      to { transform: rotate(-15deg) translateX(10%); }
+    }
+
+    .ph-left {
+      position: relative;
+      z-index: 1;
+    }
+
+    .ph-left h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+
+    .ph-left h1 i {
+      font-size: 2rem;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    }
+
+    .ph-left p {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .ph-right {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-full);
+      padding: var(--space-2) var(--space-4);
+      font-weight: 600;
+      backdrop-filter: blur(8px);
+    }
+
+    /* ===== KPI STRIP ===== */
+    .kpi-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
+    }
+
+    .kpi-card {
+      background: white;
+      border-radius: var(--radius-2xl);
+      padding: var(--space-5) var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--gray-200);
+      transition: var(--transition-bounce);
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      opacity: 0;
+      animation: cardFloat 0.5s var(--transition-bounce) forwards;
+    }
+
+    .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+    .kpi-card:nth-child(2) { animation-delay: 0.12s; }
+    .kpi-card:nth-child(3) { animation-delay: 0.14s; }
+    .kpi-card:nth-child(4) { animation-delay: 0.16s; }
+
+    @keyframes cardFloat {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--primary-300);
+    }
+
+    .kpi-card.active-filter {
+      border: 2px solid var(--primary-500);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+
+    .kpi-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      transition: var(--transition-bounce);
+    }
+
+    .kpi-card:hover .kpi-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .ki-all {
+      background: var(--primary-50);
+      color: var(--primary-600);
+    }
+
+    .ki-pend {
+      background: var(--warning-50);
+      color: var(--warning-600);
+    }
+
+    .ki-appr {
+      background: var(--success-50);
+      color: var(--success-600);
+    }
+
+    .ki-rej {
+      background: var(--danger-50);
+      color: var(--danger-600);
+    }
+
+    .kpi-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      line-height: 1.2;
+    }
+
+    .kpi-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      margin-top: 2px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ===== FILTER BAR ===== */
+    .filter-bar {
+      background: white;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-4) var(--space-5);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+      box-shadow: var(--shadow-lg);
+      margin-bottom: var(--space-5);
+      animation: slideUp 0.5s var(--transition-bounce) 0.2s both;
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .filter-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .filter-label i {
+      color: var(--primary-500);
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .ftab {
+      padding: var(--space-2) var(--space-4);
+      border-radius: var(--radius-full);
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: 2px solid var(--gray-200);
+      background: transparent;
+      color: var(--gray-600);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition-bounce);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .ftab:hover {
+      border-color: var(--primary-400);
+      color: var(--primary-600);
+      background: var(--primary-50);
+    }
+
+    .ftab.active {
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      border-color: transparent;
+      color: white;
+      box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+    }
+
+    .filter-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-input {
+      height: 42px;
+      padding: 0 var(--space-3) 0 var(--space-6);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      outline: none;
+      width: 240px;
+      transition: var(--transition-base);
+    }
+
+    .search-input:hover {
+      border-color: var(--primary-300);
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: var(--space-3);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 0.8rem;
+      pointer-events: none;
+      transition: var(--transition-base);
+    }
+
+    .search-input:focus + .search-icon {
+      color: var(--primary-500);
+    }
+
+    /* ===== TABLE CARD ===== */
+    .table-card {
+      background: white;
+      border-radius: var(--radius-3xl);
+      border: 1px solid var(--gray-200);
+      box-shadow: var(--shadow-xl);
+      overflow: hidden;
+      animation: slideUp 0.5s var(--transition-bounce) 0.3s both;
+    }
+
+    .table-card-head {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+      background: linear-gradient(to right, var(--gray-50), white);
+    }
+
+    .tch-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .tch-title i {
+      color: var(--primary-500);
+    }
+
+    .tch-count {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--gray-200);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    thead th {
+      padding: var(--space-4) var(--space-4);
+      text-align: left;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      background: var(--gray-50);
+      border-bottom: 2px solid var(--gray-200);
+      white-space: nowrap;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--gray-200);
+      transition: var(--transition-base);
+      animation: rowFade 0.4s var(--transition-bounce) forwards;
+      opacity: 0;
+    }
+
+    @keyframes rowFade {
+      from {
+        opacity: 0;
+        transform: translateX(-5px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    tbody tr:nth-child(even) {
+      background: var(--gray-50);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: var(--primary-50);
+    }
+
+    tbody td {
+      padding: var(--space-4) var(--space-4);
+      color: var(--gray-700);
+      vertical-align: middle;
+    }
+
+    .td-id {
+      font-weight: 700;
+      color: var(--primary-600);
+      font-size: 0.8rem;
+    }
+
+    .td-name {
+      font-weight: 600;
+      color: var(--gray-900);
+    }
+
+    .td-roll {
+      font-size: 0.75rem;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .td-meta {
+      font-size: 0.8rem;
+      color: var(--gray-600);
+    }
+
+    .td-date {
+      font-size: 0.75rem;
+      color: var(--gray-600);
+      white-space: nowrap;
+    }
+
+    /* ===== STATUS BADGES ===== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-1) var(--space-3);
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .badge-pending {
+      background: var(--warning-50);
+      color: var(--warning-700);
+      border: 1px solid var(--warning-200);
+    }
+    .badge-pending::before {
+      background: var(--warning-500);
+      animation: blink 1.5s ease-in-out infinite;
+    }
+
+    .badge-approved {
+      background: var(--success-50);
+      color: var(--success-700);
+      border: 1px solid var(--success-200);
+    }
+    .badge-approved::before {
+      background: var(--success-500);
+    }
+
+    .badge-rejected {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border: 1px solid var(--danger-200);
+    }
+    .badge-rejected::before {
+      background: var(--danger-500);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ===== ACTION BUTTONS ===== */
+    .action-cell {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .btn-approve, .btn-reject {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: var(--space-2) var(--space-3);
+      border-radius: var(--radius-lg);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition-bounce);
+    }
+
+    .btn-approve {
+      background: var(--success-50);
+      color: var(--success-700);
+      border: 1px solid var(--success-200);
+    }
+
+    .btn-approve:hover {
+      background: linear-gradient(135deg, var(--success-500), var(--success-600));
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-reject {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border: 1px solid var(--danger-200);
+    }
+
+    .btn-reject:hover {
+      background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+      color: white;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .remarks-chip {
+      display: inline-block;
+      max-width: 160px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-size: 0.7rem;
+      color: var(--gray-600);
+      background: var(--gray-100);
+      padding: var(--space-1) var(--space-2);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--gray-200);
+      cursor: help;
+    }
+
+    /* ===== EMPTY STATE ===== */
+    .empty-state {
+      text-align: center;
+      padding: var(--space-10) var(--space-5);
+      color: var(--gray-500);
+    }
+
+    .empty-state i {
+      font-size: 3.5rem;
+      margin-bottom: var(--space-4);
+      opacity: 0.35;
+      animation: emptyBob 3s ease-in-out infinite;
+    }
+
+    @keyframes emptyBob {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .empty-state h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--gray-700);
+      margin-bottom: var(--space-2);
+    }
+
+    .empty-state p {
+      font-size: 0.9rem;
+      color: var(--gray-500);
+      margin-bottom: var(--space-4);
+    }
+
+    .empty-state a {
+      color: var(--primary-600);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    /* ===== MODAL ===== */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      z-index: var(--z-modal);
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-5);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: modalFade 0.3s ease;
+    }
+
+    @keyframes modalFade {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-3xl);
+      box-shadow: var(--shadow-2xl);
+      width: 100%;
+      max-width: 480px;
+      animation: modalPop 0.4s var(--transition-bounce);
+    }
+
+    @keyframes modalPop {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: var(--space-6) var(--space-6) var(--space-4);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+
+    .modal-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .mi-approve {
+      background: var(--success-50);
+      color: var(--success-600);
+    }
+
+    .mi-reject {
+      background: var(--danger-50);
+      color: var(--danger-600);
+    }
+
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: none;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      transition: var(--transition-bounce);
+    }
+
+    .modal-close:hover {
+      background: var(--danger-500);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: var(--space-6) var(--space-6);
+    }
+
+    .modal-info {
+      background: var(--gray-50);
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      padding: var(--space-4) var(--space-5);
+      font-size: 0.85rem;
+      color: var(--gray-600);
+      margin-bottom: var(--space-5);
+      line-height: 1.8;
+    }
+
+    .modal-info strong {
+      color: var(--gray-900);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-4);
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: var(--space-2);
+    }
+
+    .form-textarea {
+      width: 100%;
+      padding: var(--space-3) var(--space-4);
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-900);
+      resize: vertical;
+      min-height: 100px;
+      outline: none;
+      transition: var(--transition-base);
+    }
+
+    .form-textarea:hover {
+      border-color: var(--primary-300);
+    }
+
+    .form-textarea:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+
+    .modal-footer {
+      padding: var(--space-4) var(--space-6) var(--space-6);
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      gap: var(--space-3);
+      justify-content: flex-end;
+    }
+
+    .btn-modal-cancel {
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: transparent;
+      color: var(--gray-600);
+      border: 2px solid var(--gray-200);
+      cursor: pointer;
+      transition: var(--transition-base);
+    }
+
+    .btn-modal-cancel:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+      border-color: var(--gray-300);
+    }
+
+    .btn-modal-confirm {
+      padding: var(--space-2) var(--space-6);
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      transition: var(--transition-bounce);
+    }
+
+    .btn-modal-confirm.approve {
+      background: linear-gradient(135deg, var(--success-500), var(--success-600));
+      color: white;
+      box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-modal-confirm.approve:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-modal-confirm.reject {
+      background: linear-gradient(135deg, var(--danger-500), var(--danger-600));
+      color: white;
+      box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-modal-confirm.reject:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-modal-confirm:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* ===== TOAST ===== */
+    #toast-container {
+      position: fixed;
+      bottom: var(--space-6);
+      right: var(--space-6);
+      z-index: var(--z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-xl);
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: var(--shadow-2xl);
+      pointer-events: all;
+      animation: toastIn 0.4s var(--transition-bounce);
+      max-width: 340px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .toast::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: var(--success-500);
+      animation: toastProgress 3.5s linear forwards;
+    }
+
+    .toast.toast-err::before {
+      background: var(--danger-500);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    @keyframes toastProgress {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    .toast-ok {
+      background: var(--success-50);
+      color: var(--success-700);
+      border: 1px solid var(--success-200);
+    }
+
+    .toast-err {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border: 1px solid var(--danger-200);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+      .kpi-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .filter-right {
+        margin-left: 0;
+        width: 100%;
+      }
+      
+      .search-input {
+        width: 100%;
+      }
+      
+      .filter-tabs {
+        justify-content: center;
+      }
+      
+      .kpi-strip {
+        gap: var(--space-3);
+      }
+      
+      .kpi-val {
+        font-size: 1.5rem;
+      }
+      
+      .action-cell {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .btn-approve, .btn-reject {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .ph-left h1 {
+        font-size: 1.4rem;
+      }
+      
+      .kpi-strip {
+        grid-template-columns: 1fr;
+      }
+      
+      .kpi-card {
+        padding: var(--space-4);
+      }
+      
+      .kpi-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+      }
+      
+      .kpi-val {
+        font-size: 1.4rem;
+      }
+      
+      .modal {
+        max-width: 95%;
+      }
+      
+      .modal-footer {
+        flex-direction: column;
+      }
+      
+      .btn-modal-cancel, .btn-modal-confirm {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <!-- Background decorations -->
+  <div class="bg-decoration">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Theme Toggle Button -->
+  <div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+    <i class="fas fa-moon"></i>
+  </div>
+
+  {% include 'components/teacher_sidebar.html' %}
+
+  <div id="main">
+    <!-- Page Header -->
+    <div class="page-header" data-aos="fade-up">
+      <div class="ph-left">
+        <h1><i class="fas fa-file-alt"></i> Transcript Requests</h1>
+        <p>Review and manage student transcript requests</p>
+      </div>
+      <div class="ph-right">
+        <i class="fas fa-calendar-alt"></i>
+        {{ now.strftime('%d %b %Y') if now else '' }}
+      </div>
+    </div>
+
+    <!-- KPI Strip -->
+    <div class="kpi-strip" data-aos="fade-up" data-aos-delay="50">
+      <a href="{{ url_for('teacher_transcripts', status='all') }}"
+         class="kpi-card {% if status_filter == 'all' %}active-filter{% endif %}">
+        <div class="kpi-icon ki-all"><i class="fas fa-list"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ counts.all }}</div>
+          <div class="kpi-lbl">Total Requests</div>
+        </div>
+      </a>
+      <a href="{{ url_for('teacher_transcripts', status='pending') }}"
+         class="kpi-card {% if status_filter == 'pending' %}active-filter{% endif %}">
+        <div class="kpi-icon ki-pend"><i class="fas fa-clock"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ counts.pending }}</div>
+          <div class="kpi-lbl">Pending</div>
+        </div>
+      </a>
+      <a href="{{ url_for('teacher_transcripts', status='approved') }}"
+         class="kpi-card {% if status_filter == 'approved' %}active-filter{% endif %}">
+        <div class="kpi-icon ki-appr"><i class="fas fa-check-circle"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ counts.approved }}</div>
+          <div class="kpi-lbl">Approved</div>
+        </div>
+      </a>
+      <a href="{{ url_for('teacher_transcripts', status='rejected') }}"
+         class="kpi-card {% if status_filter == 'rejected' %}active-filter{% endif %}">
+        <div class="kpi-icon ki-rej"><i class="fas fa-times-circle"></i></div>
+        <div class="kpi-body">
+          <div class="kpi-val">{{ counts.rejected }}</div>
+          <div class="kpi-lbl">Rejected</div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar" data-aos="fade-up" data-aos-delay="100">
+      <span class="filter-label"><i class="fas fa-filter"></i> Filter</span>
+      <div class="filter-tabs">
+        <a href="{{ url_for('teacher_transcripts', status='all') }}"
+           class="ftab {% if status_filter == 'all' %}active{% endif %}">
+          All <span>({{ counts.all }})</span>
+        </a>
+        <a href="{{ url_for('teacher_transcripts', status='pending') }}"
+           class="ftab {% if status_filter == 'pending' %}active{% endif %}">
+          <i class="fas fa-clock"></i> Pending <span>({{ counts.pending }})</span>
+        </a>
+        <a href="{{ url_for('teacher_transcripts', status='approved') }}"
+           class="ftab {% if status_filter == 'approved' %}active{% endif %}">
+          <i class="fas fa-check"></i> Approved <span>({{ counts.approved }})</span>
+        </a>
+        <a href="{{ url_for('teacher_transcripts', status='rejected') }}"
+           class="ftab {% if status_filter == 'rejected' %}active{% endif %}">
+          <i class="fas fa-times"></i> Rejected <span>({{ counts.rejected }})</span>
+        </a>
+      </div>
+      <div class="filter-right">
+        <div class="search-wrap">
+          <i class="fas fa-search search-icon"></i>
+          <input type="text" class="search-input" id="searchInput"
+                 placeholder="Search student, course…" oninput="filterTable()">
+        </div>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="table-card" data-aos="fade-up" data-aos-delay="150">
+      <div class="table-card-head">
+        <div class="tch-title">
+          <i class="fas fa-table"></i>
+          Transcript Requests
+        </div>
+        <span class="tch-count" id="rowCount">{{ requests_list|length }} records</span>
+      </div>
+
+      <div class="table-wrap">
+        {% if requests_list %}
+        <table id="transcriptTable">
+          <thead>
+            <tr>
+              <th>Req ID</th>
+              <th>Student</th>
+              <th>Roll No</th>
+              <th>Course / Class / Sem</th>
+              <th>Remarks</th>
+              <th>Requested</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tr in requests_list %}
+            <tr id="row-{{ tr.id }}" 
+                data-search="{{ (tr.student_name or '') | lower }} {{ (tr.course or '') | lower }} {{ (tr.class_yr or '') | lower }}"
+                style="animation-delay: {{ loop.index0 * 0.02 }}s">
+              <td class="td-id">#{{ tr.id }}</td>
+              <td>
+                <div class="td-name">{{ tr.student_name or '—' }}</div>
+                <div class="td-roll">ID: {{ tr.student_id }}</div>
+              </td>
+              <td class="td-meta">{{ tr.student_id }}</td>
+              <td class="td-meta">
+                {{ tr.course or '—' }} / {{ tr.class_yr or '—' }} / Sem {{ tr.semester or '—' }}
+              </td>
+              <td>
+                {% if tr.remarks %}
+                  <span class="remarks-chip" title="{{ tr.remarks }}">{{ tr.remarks }}</span>
+                {% else %}
+                  <span style="color:var(--gray-400);">—</span>
+                {% endif %}
+              </td>
+              <td class="td-date">
+                {{ tr.requested_at.strftime('%d %b %Y') if tr.requested_at else '—' }}<br>
+                <span style="font-size:0.65rem; color:var(--gray-400);">
+                  {{ tr.requested_at.strftime('%I:%M %p') if tr.requested_at else '' }}
+                </span>
+              </td>
+              <td>
+                <span class="badge badge-{{ tr.status | lower }}" id="badge-{{ tr.id }}">
+                  {{ tr.status }}
+                </span>
+              </td>
+              <td>
+                <div class="action-cell" id="actions-{{ tr.id }}">
+                  {% if tr.status == 'Pending' %}
+                    <button class="btn-approve"
+                            onclick="openActionModal({{ tr.id }}, 'Approved', '{{ tr.student_name | replace("'","\\'")|e }}', {{ tr.student_id }})">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn-reject"
+                            onclick="openActionModal({{ tr.id }}, 'Rejected', '{{ tr.student_name | replace("'","\\'")|e }}', {{ tr.student_id }})">
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  {% elif tr.status == 'Approved' %}
+                    <span style="font-size:0.75rem; color:var(--success-600); font-weight:600;">
+                      <i class="fas fa-check-circle"></i> Approved
+                    </span>
+                    <button class="btn-reject"
+                            onclick="openActionModal({{ tr.id }}, 'Rejected', '{{ tr.student_name | replace("'","\\'")|e }}', {{ tr.student_id }})">
+                      <i class="fas fa-times"></i> Reject
+                    </button>
+                  {% else %}
+                    <span style="font-size:0.75rem; color:var(--danger-600); font-weight:600;">
+                      <i class="fas fa-times-circle"></i> Rejected
+                    </span>
+                    <button class="btn-approve"
+                            onclick="openActionModal({{ tr.id }}, 'Approved', '{{ tr.student_name | replace("'","\\'")|e }}', {{ tr.student_id }})">
+                      <i class="fas fa-check"></i> Approve
+                    </button>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <i class="fas fa-file-alt"></i>
+          <h3>No transcript requests found</h3>
+          <p>
+            {% if status_filter != 'all' %}
+              No {{ status_filter }} requests at the moment.
+              <a href="{{ url_for('teacher_transcripts') }}">View all</a>
+            {% else %}
+              Students haven't submitted any transcript requests yet.
+            {% endif %}
+          </p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Modal -->
+  <div class="modal-backdrop" id="actionModal">
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-icon" id="modalIcon"><i class="fas fa-check"></i></div>
+          <div class="modal-title" id="modalTitle">Approve Request</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-info" id="modalInfo">
+          <!-- filled by JS -->
+        </div>
+        <div class="form-group">
+          <label class="form-label">Remarks <span style="font-weight:400; text-transform:none;">(optional)</span></label>
+          <textarea class="form-textarea" id="modalRemarks"
+                    placeholder="Add a note for the student..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" onclick="closeModal()">Cancel</button>
+        <button class="btn-modal-confirm" id="modalConfirmBtn" onclick="submitAction()">
+          <i class="fas fa-check"></i> Confirm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <script>
+    // Initialize AOS
+    AOS.init({
+      duration: 600,
+      easing: 'ease-out',
+      once: true,
+      offset: 20
+    });
+
+    // Theme Management
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+    const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+    
+    if (savedTheme === 'dark') {
+      body.setAttribute('data-theme', 'dark');
+      themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+    }
+
+    themeToggle.addEventListener('click', () => {
+      const current = body.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      body.setAttribute('data-theme', next);
+      themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      localStorage.setItem('theme', next);
+    });
+
+    /* ===== STATE ===== */
+    let _activeReqId   = null;
+    let _activeAction  = null;  // 'Approved' | 'Rejected'
+
+    /* ===== MODAL ===== */
+    function openActionModal(reqId, action, studentName, rollNo) {
+      _activeReqId  = reqId;
+      _activeAction = action;
+
+      const isApprove = action === 'Approved';
+
+      // Update icon and title
+      const icon  = document.getElementById('modalIcon');
+      const title = document.getElementById('modalTitle');
+      icon.className = 'modal-icon ' + (isApprove ? 'mi-approve' : 'mi-reject');
+      icon.innerHTML = `<i class="fas fa-${isApprove ? 'check' : 'times'}"></i>`;
+      title.textContent = (isApprove ? 'Approve' : 'Reject') + ' Transcript Request';
+
+      // Update info block
+      document.getElementById('modalInfo').innerHTML = `
+        <strong>Request #${reqId}</strong><br>
+        Student: <strong>${studentName}</strong> (Roll No: ${rollNo})<br>
+        Action: <strong style="color:${isApprove ? '#10b981' : '#ef4444'};">${action}</strong>
+      `;
+
+      // Update confirm button
+      const btn = document.getElementById('modalConfirmBtn');
+      btn.className = 'btn-modal-confirm ' + (isApprove ? 'approve' : 'reject');
+      btn.innerHTML = `<i class="fas fa-${isApprove ? 'check' : 'times'}"></i> ${isApprove ? 'Approve' : 'Reject'}`;
+
+      // Clear remarks
+      document.getElementById('modalRemarks').value = '';
+
+      // Show modal
+      document.getElementById('actionModal').classList.add('open');
+      document.body.style.overflow = 'hidden';
+      setTimeout(() => document.getElementById('modalRemarks').focus(), 200);
+    }
+
+    function closeModal() {
+      document.getElementById('actionModal').classList.remove('open');
+      document.body.style.overflow = '';
+      _activeReqId = null;
+      _activeAction = null;
+    }
+
+    // Close on backdrop click
+    document.getElementById('actionModal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ===== SUBMIT ACTION ===== */
+    function submitAction() {
+      if (!_activeReqId || !_activeAction) return;
+
+      const remarks = document.getElementById('modalRemarks').value.trim();
+      const btn     = document.getElementById('modalConfirmBtn');
+
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving…';
+
+      fetch(`/teacher/transcripts/${_activeReqId}/update`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ status: _activeAction, remarks: remarks })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          // Update badge
+          const badge = document.getElementById(`badge-${_activeReqId}`);
+          if (badge) {
+            badge.className = `badge badge-${data.new_status.toLowerCase()}`;
+            badge.textContent = data.new_status;
+          }
+
+          // Update action buttons
+          const actCell = document.getElementById(`actions-${_activeReqId}`);
+          if (actCell) {
+            if (data.new_status === 'Approved') {
+              actCell.innerHTML = `
+                <span style="font-size:0.75rem; color:var(--success-600); font-weight:600;">
+                  <i class="fas fa-check-circle"></i> Approved
+                </span>
+                <button class="btn-reject" onclick="openActionModal(${_activeReqId}, 'Rejected', '', 0)">
+                  <i class="fas fa-times"></i> Reject
+                </button>`;
+            } else {
+              actCell.innerHTML = `
+                <span style="font-size:0.75rem; color:var(--danger-600); font-weight:600;">
+                  <i class="fas fa-times-circle"></i> Rejected
+                </span>
+                <button class="btn-approve" onclick="openActionModal(${_activeReqId}, 'Approved', '', 0)">
+                  <i class="fas fa-check"></i> Approve
+                </button>`;
+            }
+          }
+
+          // Update remarks if present
+          const row = document.getElementById(`row-${_activeReqId}`);
+          if (row && remarks) {
+            const remarksTd = row.querySelector('td:nth-child(5)');
+            if (remarksTd) {
+              remarksTd.innerHTML = `<span class="remarks-chip" title="${remarks}">${remarks}</span>`;
+            }
+          }
+
+          closeModal();
+          showToast(`Request #${_activeReqId} ${data.new_status.toLowerCase()} successfully.`, 'ok');
+
+          // Refresh counts after a delay
+          setTimeout(() => location.reload(), 1500);
+        } else {
+          showToast(data.message || 'Failed to update. Please try again.', 'err');
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fas fa-${_activeAction === 'Approved' ? 'check' : 'times'}"></i> ${_activeAction === 'Approved' ? 'Approve' : 'Reject'}`;
+        }
+      })
+      .catch(() => {
+        showToast('Network error. Please check your connection.', 'err');
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fas fa-${_activeAction === 'Approved' ? 'check' : 'times'}"></i> ${_activeAction === 'Approved' ? 'Approve' : 'Reject'}`;
+      });
+    }
+
+    /* ===== SEARCH FILTER ===== */
+    function filterTable() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+      const rows = document.querySelectorAll('#transcriptTable tbody tr');
+      let visible = 0;
+      
+      rows.forEach(row => {
+        const text = (row.dataset.search || '') + ' ' + row.textContent.toLowerCase();
+        const show = !searchTerm || text.includes(searchTerm);
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
+      });
+      
+      const countEl = document.getElementById('rowCount');
+      if (countEl) {
+        countEl.textContent = visible + ' record' + (visible !== 1 ? 's' : '');
+      }
+    }
+
+    /* ===== TOAST ===== */
+    function showToast(msg, type = 'ok') {
+      const icons = { ok: 'fa-check-circle', err: 'fa-exclamation-circle' };
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerHTML = `<i class="fas ${icons[type] || icons.ok}"></i> ${msg}`;
+      document.getElementById('toast-container').appendChild(t);
+      
+      setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateY(10px)';
+        t.style.transition = 'all 0.3s';
+        setTimeout(() => t.remove(), 300);
+      }, 3500);
+    }
+
+    /* ===== PAGE ENTRANCE ANIMATION ===== */
+    document.addEventListener('DOMContentLoaded', () => {
+      gsap.from('#main', {
+        opacity: 0,
+        y: 30,
+        duration: 0.8,
+        ease: 'power2.out'
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Add Notice | Teacher Portal</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <!-- Quill Editor -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet"/>
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+    /* ===== VARIABLES (keep existing theme) ===== */
+    
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #dfe6e9 100%);
+      color: var(--dark-color);
+      min-height: 100vh;
+    }
+
+    /* ===== MAIN (sidebar uses #main) ===== */
+    #main { padding: 36px 48px; }
+
+    /* ===== GRADIENT HEADER ===== */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 28px 32px;
+      border-radius: var(--border-radius);
+      background: linear-gradient(135deg, var(--primary-color) 0%, #3a0ca3 100%);
+      color: #fff;
+      box-shadow: var(--box-shadow-lg);
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-header::before {
+      content: '';
+      position: absolute;
+      top: -60%; right: -30%;
+      width: 80%; height: 220%;
+      background: radial-gradient(circle, rgba(255,255,255,.12) 0%, transparent 65%);
+      animation: hdrShine 8s linear infinite;
+    }
+    @keyframes hdrShine {
+      0%   { transform: rotate(-15deg) translateX(-60%); }
+      50%  { transform: rotate(-15deg) translateX(60%); }
+      100% { transform: rotate(-15deg) translateX(-60%); }
+    }
+    .hdr-left { position: relative; z-index: 1; }
+    .hdr-left h1 {
+      font-size: 26px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 5px;
+    }
+    .hdr-left p { font-size: 14px; opacity: .85; }
+    .hdr-right {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      gap: 10px;
+    }
+    .hdr-badge {
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      backdrop-filter: blur(6px);
+    }
+
+    /* ===== EDIT / PREVIEW TOGGLE ===== */
+    .mode-toggle {
+      display: flex;
+      background: var(--glass);
+      border-radius: 50px;
+      padding: 4px;
+      box-shadow: var(--box-shadow);
+      border: 1px solid rgba(255,255,255,.6);
+      width: fit-content;
+      margin-bottom: 28px;
+      gap: 2px;
+    }
+    .mode-btn {
+      padding: 10px 24px;
+      border-radius: 50px;
+      border: none;
+      background: transparent;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: #888;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mode-btn.active {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(108,92,231,.35);
+    }
+
+    /* ===== MAIN LAYOUT ===== */
+    .publisher-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* ===== FORM CARD ===== */
+    .form-card {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border: 1px solid rgba(255,255,255,.6);
+      padding: 32px;
+      animation: fadeUp .5s ease-out;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SIDEBAR PANEL ===== */
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .panel-card {
+      background: var(--glass);
+      backdrop-filter: blur(16px);
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border: 1px solid rgba(255,255,255,.6);
+      padding: 22px 24px;
+    }
+    .panel-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: #888;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    .form-group { margin-bottom: 22px; }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--dark-color);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1.5px solid #e0e3eb;
+      border-radius: var(--border-radius-sm);
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      background: rgba(255,255,255,.9);
+      color: var(--dark-color);
+      transition: var(--transition);
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(108,92,231,.18);
+      transform: translateY(-1px);
+    }
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236c757d' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      background-size: 16px;
+      padding-right: 40px;
+    }
+
+    /* ===== QUILL EDITOR ===== */
+    .quill-wrap {
+      border-radius: var(--border-radius-sm);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.04);
+      border: 1.5px solid #e0e3eb;
+      transition: var(--transition);
+    }
+    .quill-wrap:focus-within {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(108,92,231,.18);
+    }
+    .ql-toolbar.ql-snow {
+      border: none !important;
+      border-bottom: 1px solid #e0e3eb !important;
+      background: #f8f9fa;
+      border-radius: 0;
+    }
+    .ql-container.ql-snow {
+      border: none !important;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+    }
+    .ql-editor { min-height: 200px; padding: 16px 18px; }
+    .ql-editor.ql-blank::before { color: #aaa; font-style: normal; }
+
+    /* ===== PREVIEW PANEL ===== */
+    #previewPanel {
+      display: none;
+      background: #fff;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      border: 1px solid rgba(255,255,255,.6);
+      padding: 32px;
+      animation: fadeUp .4s ease-out;
+    }
+    .preview-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .preview-icon {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 22px; flex-shrink: 0;
+    }
+    .preview-meta { flex: 1; }
+    .preview-title { font-size: 22px; font-weight: 700; color: var(--dark-color); margin-bottom: 6px; }
+    .preview-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+    .preview-tag {
+      padding: 3px 12px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .tag-category { background: rgba(108,92,231,.12); color: var(--primary-color); }
+    .tag-priority-low    { background: rgba(0,184,148,.12); color: #00b894; }
+    .tag-priority-medium { background: rgba(253,203,110,.25); color: #e17055; }
+    .tag-priority-high   { background: rgba(214,48,49,.12); color: var(--danger-color); }
+    .tag-pinned    { background: rgba(108,92,231,.12); color: var(--primary-color); }
+    .tag-important { background: rgba(214,48,49,.12); color: var(--danger-color); }
+    .preview-body { font-size: 15px; line-height: 1.8; color: #444; }
+    .preview-footer {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #f0f0f0;
+      font-size: 12px;
+      color: #aaa;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ===== CATEGORY CHIPS ===== */
+    .category-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .chip {
+      padding: 9px 18px;
+      border-radius: 50px;
+      background: rgba(255,255,255,.9);
+      border: 1.5px solid #e0e3eb;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+    .chip:hover { border-color: var(--primary-color); color: var(--primary-color); transform: translateY(-2px); }
+    .chip.selected {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      border-color: transparent;
+      box-shadow: 0 4px 12px rgba(108,92,231,.3);
+    }
+
+    /* ===== PRIORITY SELECTOR ===== */
+    .priority-group {
+      display: flex;
+      gap: 10px;
+    }
+    .priority-group input[type="radio"] { display: none; }
+    .priority-group label {
+      flex: 1;
+      text-align: center;
+      padding: 10px 8px;
+      border-radius: var(--border-radius-sm);
+      border: 1.5px solid #e0e3eb;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .priority-group input[value="Low"]:checked + label    { background: rgba(0,184,148,.12); border-color: #00b894; color: #00b894; }
+    .priority-group input[value="Medium"]:checked + label { background: rgba(253,203,110,.25); border-color: #e17055; color: #e17055; }
+    .priority-group input[value="High"]:checked + label   { background: rgba(214,48,49,.12); border-color: var(--danger-color); color: var(--danger-color); }
+    .priority-group label:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+    /* ===== CHECKBOXES ===== */
+    .check-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+    .check-row input[type="checkbox"] {
+      appearance: none;
+      width: 20px; height: 20px;
+      border: 2px solid #e0e3eb;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.9);
+    }
+    .check-row input[type="checkbox"]:checked {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+    .check-row input[type="checkbox"]:checked::after {
+      content: '\f00c';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      position: absolute;
+      color: #fff;
+      font-size: 11px;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .check-row label { font-size: 14px; font-weight: 500; cursor: pointer; }
+
+    /* ===== FILE UPLOAD ===== */
+    .file-drop {
+      border: 2px dashed #d0d3e0;
+      border-radius: var(--border-radius-sm);
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      background: rgba(255,255,255,.6);
+      position: relative;
+    }
+    .file-drop:hover, .file-drop.drag-over {
+      border-color: var(--primary-color);
+      background: rgba(108,92,231,.04);
+    }
+    .file-drop input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .file-drop i { font-size: 28px; color: #bbb; margin-bottom: 8px; display: block; }
+    .file-drop p { font-size: 13px; color: #888; margin: 0; }
+    .file-drop strong { color: var(--primary-color); }
+    .file-preview-list { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .file-preview-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(108,92,231,.06);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+    .file-preview-item i { color: var(--primary-color); }
+    .file-preview-item .fname { flex: 1; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .file-preview-item .fsize { color: #aaa; font-size: 11px; }
+    .file-preview-item .fremove { cursor: pointer; color: var(--danger-color); font-size: 14px; }
+
+    /* ===== FORM ACTIONS ===== */
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 13px 28px;
+      border-radius: 50px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      transition: var(--transition);
+    }
+    .btn-publish {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      color: #fff;
+      box-shadow: 0 8px 20px rgba(108,92,231,.35);
+    }
+    .btn-publish:hover { transform: translateY(-3px); box-shadow: 0 14px 28px rgba(108,92,231,.45); }
+    .btn-draft {
+      background: rgba(255,255,255,.9);
+      border: 1.5px solid #e0e3eb;
+      color: var(--dark-color);
+    }
+    .btn-draft:hover { border-color: var(--primary-color); color: var(--primary-color); transform: translateY(-2px); }
+    .btn-clear {
+      background: transparent;
+      border: 1.5px solid #e0e3eb;
+      color: #888;
+    }
+    .btn-clear:hover { border-color: var(--danger-color); color: var(--danger-color); }
+
+    /* ===== LOADING OVERLAY ===== */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,.88);
+      z-index: var(--z-toast);
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 18px;
+      backdrop-filter: blur(6px);
+    }
+    .loading-overlay.active { display: flex; }
+    .spinner {
+      width: 56px; height: 56px;
+      border: 5px solid #e0e3eb;
+      border-top-color: var(--primary-color);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { font-size: 17px; font-weight: 600; color: var(--dark-color); }
+    .loading-sub  { font-size: 13px; color: #888; }
+
+    /* ===== TOAST ===== */
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: var(--z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+    .toast {
+      background: #fff;
+      border-radius: 14px;
+      padding: 16px 20px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.15);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 300px;
+      max-width: 380px;
+      pointer-events: all;
+      animation: toastIn .4s cubic-bezier(.175,.885,.32,1.275) forwards;
+      border-left: 4px solid var(--success-color);
+    }
+    .toast.toast-error { border-left-color: var(--danger-color); }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(60px) scale(.9); }
+      to   { opacity: 1; transform: translateX(0) scale(1); }
+    }
+    @keyframes toastOut {
+      from { opacity: 1; transform: translateX(0) scale(1); }
+      to   { opacity: 0; transform: translateX(60px) scale(.9); }
+    }
+    .toast-icon {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: rgba(0,184,148,.12);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--success-color);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .toast.toast-error .toast-icon { background: rgba(214,48,49,.1); color: var(--danger-color); }
+    .toast-body { flex: 1; }
+    .toast-title { font-size: 14px; font-weight: 700; color: var(--dark-color); margin-bottom: 2px; }
+    .toast-msg   { font-size: 12px; color: #888; }
+    .toast-close { cursor: pointer; color: #bbb; font-size: 14px; }
+    .toast-close:hover { color: #666; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1100px) {
+      .publisher-layout { grid-template-columns: 1fr; }
+      .side-panel { display: grid; grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      #main { padding: 18px; }
+      .page-header { flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px 20px; }
+      .side-panel { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+      .priority-group { flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      #main { padding: 12px; }
+      .form-card { padding: 20px; }
+      .panel-card { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+  {% include 'components/teacher_sidebar.html' %}
+
+  <!-- ===== LOADING OVERLAY ===== -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <div class="loading-text">Publishing Notice...</div>
+    <div class="loading-sub">Please wait, do not close this page.</div>
+  </div>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <div id="main" class="main-content">
+
+    <!-- ===== HEADER ===== -->
+    <div class="page-header">
+      <div class="hdr-left">
+        <h1><i class="fas fa-bullhorn"></i> Notice Publisher</h1>
+        <p>Create, schedule and publish notices to students.</p>
+      </div>
+      <div class="hdr-right">
+        <div class="hdr-badge"><i class="fas fa-edit"></i> Publishing Panel</div>
+      </div>
+    </div>
+
+    <!-- ===== EDIT / PREVIEW TOGGLE ===== -->
+    <div class="mode-toggle">
+      <button class="mode-btn active" id="btnEdit" onclick="setMode('edit')">
+        <i class="fas fa-pen"></i> Edit
+      </button>
+      <button class="mode-btn" id="btnPreview" onclick="setMode('preview')">
+        <i class="fas fa-eye"></i> Preview
+      </button>
+    </div>
+
+    <!-- ===== EDIT MODE ===== -->
+    <div id="editPanel">
+      <div class="publisher-layout">
+
+        <!-- LEFT: Main Form -->
+        <div class="form-card">
+          <form id="addNoticeForm" method="post" action="/add_notice" enctype="multipart/form-data">
+
+            <!-- Title -->
+            <div class="form-group">
+              <label for="noticeTitle"><i class="fas fa-heading"></i> Notice Title <span style="color:red">*</span></label>
+              <input type="text" id="noticeTitle" name="title" class="form-control"
+                placeholder="Enter a clear, descriptive title..." required
+                oninput="updatePreview()">
+            </div>
+
+            <!-- Rich Text Content -->
+            <div class="form-group">
+              <label><i class="fas fa-align-left"></i> Notice Content <span style="color:red">*</span></label>
+              <div class="quill-wrap">
+                <div id="quillEditor"></div>
+              </div>
+              <!-- Hidden textarea synced with Quill -->
+              <textarea id="noticeContent" name="content" style="display:none" required></textarea>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+              <label><i class="fas fa-tag"></i> Category</label>
+              <div class="category-chips" id="categoryChips">
+                <div class="chip selected" data-cat="Academic">Academic</div>
+                <div class="chip" data-cat="Events">Events</div>
+                <div class="chip" data-cat="Important">Important</div>
+                <div class="chip" data-cat="Pinned">Pinned</div>
+                <div class="chip" data-cat="News">News</div>
+                <div class="chip" data-cat="Exam">Exam</div>
+              </div>
+              <input type="hidden" id="selectedCategory" name="category" value="Academic">
+            </div>
+
+            <!-- Notice Options -->
+            <div class="form-group">
+              <label><i class="fas fa-sliders-h"></i> Notice Options</label>
+              <div class="check-row">
+                <input type="checkbox" id="isPinned" name="is_pinned" onchange="updatePreview()">
+                <label for="isPinned">📌 Pin this notice (show at top)</label>
+              </div>
+              <div class="check-row">
+                <input type="checkbox" id="isImportant" name="is_important" onchange="updatePreview()">
+                <label for="isImportant">🔴 Mark as Important</label>
+              </div>
+              <div class="check-row">
+                <input type="checkbox" id="isActive" name="is_active" checked>
+                <label for="isActive">✅ Make this notice active immediately</label>
+              </div>
+            </div>
+
+            <!-- File Attachment -->
+            <div class="form-group">
+              <label><i class="fas fa-paperclip"></i> Attachment <span style="font-weight:400;color:#aaa;font-size:12px">(optional, UI preview only)</span></label>
+              <div class="file-drop" id="fileDrop">
+                <input type="file" id="attachmentInput" name="attachment" multiple accept=".pdf,.doc,.docx,.jpg,.png,.xlsx"
+                  onchange="handleFiles(this.files)">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <p>Drag &amp; drop files here or <strong>browse</strong></p>
+                <p style="font-size:11px;margin-top:4px">PDF, DOC, DOCX, JPG, PNG, XLSX</p>
+              </div>
+              <div class="file-preview-list" id="filePreviewList"></div>
+            </div>
+
+            <!-- Form Actions -->
+            <div class="form-actions">
+              <button type="button" class="btn btn-clear" onclick="clearForm()">
+                <i class="fas fa-undo"></i> Clear
+              </button>
+              <button type="button" class="btn btn-draft" onclick="saveDraft()">
+                <i class="fas fa-save"></i> Save Draft
+              </button>
+              <button type="submit" class="btn btn-publish" id="publishBtn">
+                <i class="fas fa-paper-plane"></i> Publish Notice
+              </button>
+            </div>
+
+          </form>
+        </div>
+
+        <!-- RIGHT: Side Panel -->
+        <div class="side-panel">
+
+          <!-- Priority -->
+          <div class="panel-card">
+            <div class="panel-title"><i class="fas fa-flag"></i> Priority</div>
+            <div class="priority-group">
+              <input type="radio" name="priority" id="pLow" value="Low" checked onchange="updatePreview()">
+              <label for="pLow"><i class="fas fa-arrow-down"></i> Low</label>
+              <input type="radio" name="priority" id="pMed" value="Medium" onchange="updatePreview()">
+              <label for="pMed"><i class="fas fa-minus"></i> Medium</label>
+              <input type="radio" name="priority" id="pHigh" value="High" onchange="updatePreview()">
+              <label for="pHigh"><i class="fas fa-arrow-up"></i> High</label>
+            </div>
+          </div>
+
+          <!-- Audience -->
+          <div class="panel-card">
+            <div class="panel-title"><i class="fas fa-users"></i> Audience</div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label style="font-size:13px;margin-bottom:6px">Course</label>
+              <select class="form-control" id="audienceCourse" style="font-size:13px;padding:10px 14px">
+                <option value="">All Courses</option>
+                <option>BBA</option>
+                <option>BSc IT</option>
+                <option>BCom</option>
+                <option>BA</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label style="font-size:13px;margin-bottom:6px">Class</label>
+              <select class="form-control" id="audienceClass" style="font-size:13px;padding:10px 14px">
+                <option value="">All Classes</option>
+                <option>FY</option>
+                <option>SY</option>
+                <option>TY</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Schedule -->
+          <div class="panel-card">
+            <div class="panel-title"><i class="fas fa-calendar-alt"></i> Schedule</div>
+            <div class="form-group" style="margin-bottom:12px">
+              <label style="font-size:13px;margin-bottom:6px"><i class="fas fa-clock"></i> Publish Date &amp; Time</label>
+              <input type="datetime-local" class="form-control" id="publishDateTime" style="font-size:13px;padding:10px 14px">
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label style="font-size:13px;margin-bottom:6px"><i class="fas fa-calendar-times"></i> Expiry Date</label>
+              <input type="date" class="form-control" id="expiryDate" style="font-size:13px;padding:10px 14px">
+            </div>
+          </div>
+
+          <!-- Quick Stats -->
+          <div class="panel-card">
+            <div class="panel-title"><i class="fas fa-info-circle"></i> Notice Info</div>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:10px">
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#888">Characters</span>
+                <strong id="infoChars">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#888">Words</span>
+                <strong id="infoWords">0</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#888">Category</span>
+                <strong id="infoCat">Academic</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between">
+                <span style="color:#888">Priority</span>
+                <strong id="infoPriority">Low</strong>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- side-panel -->
+      </div><!-- publisher-layout -->
+    </div><!-- editPanel -->
+
+    <!-- ===== PREVIEW MODE ===== -->
+    <div id="previewPanel">
+      <div class="preview-header">
+        <div class="preview-icon"><i class="fas fa-bullhorn"></i></div>
+        <div class="preview-meta">
+          <div class="preview-title" id="pvTitle">Notice Title</div>
+          <div class="preview-tags" id="pvTags"></div>
+        </div>
+      </div>
+      <div class="preview-body ql-editor" id="pvBody" style="padding:0;min-height:auto"></div>
+      <div class="preview-footer" id="pvFooter">
+        <span><i class="fas fa-user"></i> Posted by Teacher</span>
+        <span id="pvDate"><i class="fas fa-calendar"></i> —</span>
+        <span id="pvExpiry"></span>
+        <span id="pvAudience"></span>
+      </div>
+    </div>
+
+  </div><!-- #main -->
+
+  <!-- Quill JS -->
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+  <script>
+    /* ===== QUILL INIT ===== */
+    const quill = new Quill('#quillEditor', {
+      theme: 'snow',
+      placeholder: 'Write your notice content here...',
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, 3, false] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ color: [] }, { background: [] }],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [{ align: [] }],
+          ['link'],
+          ['clean']
+        ]
+      }
+    });
+
+    quill.on('text-change', function() {
+      const html = quill.root.innerHTML;
+      document.getElementById('noticeContent').value = html === '<p><br></p>' ? '' : html;
+      updateStats();
+      updatePreview();
+    });
+
+    /* ===== MODE TOGGLE ===== */
+    function setMode(mode) {
+      const editPanel    = document.getElementById('editPanel');
+      const previewPanel = document.getElementById('previewPanel');
+      const btnEdit      = document.getElementById('btnEdit');
+      const btnPreview   = document.getElementById('btnPreview');
+
+      if (mode === 'preview') {
+        updatePreview();
+        editPanel.style.display    = 'none';
+        previewPanel.style.display = 'block';
+        btnEdit.classList.remove('active');
+        btnPreview.classList.add('active');
+      } else {
+        editPanel.style.display    = 'block';
+        previewPanel.style.display = 'none';
+        btnEdit.classList.add('active');
+        btnPreview.classList.remove('active');
+      }
+    }
+
+    /* ===== PREVIEW UPDATE ===== */
+    function updatePreview() {
+      const title    = document.getElementById('noticeTitle').value || 'Notice Title';
+      const category = document.getElementById('selectedCategory').value || 'Academic';
+      const priority = document.querySelector('input[name="priority"]:checked')?.value || 'Low';
+      const pinned   = document.getElementById('isPinned').checked;
+      const important= document.getElementById('isImportant').checked;
+      const expiry   = document.getElementById('expiryDate').value;
+      const pubDT    = document.getElementById('publishDateTime').value;
+      const course   = document.getElementById('audienceCourse').value;
+      const cls      = document.getElementById('audienceClass').value;
+
+      document.getElementById('pvTitle').textContent = title;
+      document.getElementById('pvBody').innerHTML    = quill.root.innerHTML;
+
+      // Tags
+      const tagsEl = document.getElementById('pvTags');
+      tagsEl.innerHTML = '';
+      const addTag = (text, cls2) => {
+        const s = document.createElement('span');
+        s.className = 'preview-tag ' + cls2;
+        s.textContent = text;
+        tagsEl.appendChild(s);
+      };
+      addTag(category, 'tag-category');
+      addTag(priority + ' Priority', 'tag-priority-' + priority.toLowerCase());
+      if (pinned)    addTag('📌 Pinned', 'tag-pinned');
+      if (important) addTag('🔴 Important', 'tag-important');
+
+      // Footer
+      document.getElementById('pvDate').innerHTML =
+        `<i class="fas fa-calendar"></i> ${pubDT ? new Date(pubDT).toLocaleString() : 'Immediately'}`;
+      document.getElementById('pvExpiry').innerHTML =
+        expiry ? `<i class="fas fa-calendar-times"></i> Expires: ${expiry}` : '';
+      document.getElementById('pvAudience').innerHTML =
+        (course || cls) ? `<i class="fas fa-users"></i> ${[course, cls].filter(Boolean).join(' – ')}` : '';
+    }
+
+    /* ===== STATS ===== */
+    function updateStats() {
+      const text = quill.getText().trim();
+      const chars = text.length;
+      const words = text ? text.split(/\s+/).filter(Boolean).length : 0;
+      document.getElementById('infoChars').textContent = chars;
+      document.getElementById('infoWords').textContent = words;
+    }
+
+    /* ===== CATEGORY CHIPS ===== */
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', function() {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        this.classList.add('selected');
+        const cat = this.dataset.cat;
+        document.getElementById('selectedCategory').value = cat;
+        document.getElementById('infoCat').textContent = cat;
+        updatePreview();
+      });
+    });
+
+    /* ===== PRIORITY CHANGE ===== */
+    document.querySelectorAll('input[name="priority"]').forEach(r => {
+      r.addEventListener('change', function() {
+        document.getElementById('infoPriority').textContent = this.value;
+        updatePreview();
+      });
+    });
+
+    /* ===== FILE UPLOAD PREVIEW ===== */
+    const fileList = [];
+    function handleFiles(files) {
+      Array.from(files).forEach(file => {
+        if (fileList.find(f => f.name === file.name)) return;
+        fileList.push(file);
+        renderFileList();
+      });
+    }
+    function renderFileList() {
+      const el = document.getElementById('filePreviewList');
+      el.innerHTML = '';
+      fileList.forEach((file, idx) => {
+        const size = file.size < 1024 * 1024
+          ? (file.size / 1024).toFixed(1) + ' KB'
+          : (file.size / 1024 / 1024).toFixed(1) + ' MB';
+        const icon = file.type.includes('pdf') ? 'fa-file-pdf'
+          : file.type.includes('image') ? 'fa-file-image'
+          : file.type.includes('word') ? 'fa-file-word'
+          : 'fa-file';
+        el.innerHTML += `
+          <div class="file-preview-item">
+            <i class="fas ${icon}"></i>
+            <span class="fname">${file.name}</span>
+            <span class="fsize">${size}</span>
+            <i class="fas fa-times fremove" onclick="removeFile(${idx})"></i>
+          </div>`;
+      });
+    }
+    function removeFile(idx) {
+      fileList.splice(idx, 1);
+      renderFileList();
+    }
+
+    // Drag & drop
+    const fileDrop = document.getElementById('fileDrop');
+    fileDrop.addEventListener('dragover', e => { e.preventDefault(); fileDrop.classList.add('drag-over'); });
+    fileDrop.addEventListener('dragleave', () => fileDrop.classList.remove('drag-over'));
+    fileDrop.addEventListener('drop', e => {
+      e.preventDefault();
+      fileDrop.classList.remove('drag-over');
+      handleFiles(e.dataTransfer.files);
+    });
+
+    /* ===== SAVE DRAFT ===== */
+    function saveDraft() {
+      const title   = document.getElementById('noticeTitle').value;
+      const content = quill.getText().trim();
+      if (!title && !content) { showToast('Nothing to save', 'Please add a title or content first.', true); return; }
+      const draft = {
+        title,
+        content: quill.root.innerHTML,
+        category: document.getElementById('selectedCategory').value,
+        savedAt: new Date().toISOString()
+      };
+      try {
+        localStorage.setItem('notice_draft', JSON.stringify(draft));
+        showToast('Draft Saved!', 'Your notice draft has been saved locally.');
+      } catch(e) {
+        showToast('Save Failed', 'Could not save draft.', true);
+      }
+    }
+
+    /* ===== CLEAR FORM ===== */
+    function clearForm() {
+      document.getElementById('noticeTitle').value = '';
+      quill.setContents([]);
+      document.getElementById('noticeContent').value = '';
+      document.querySelectorAll('.chip').forEach((c, i) => c.classList.toggle('selected', i === 0));
+      document.getElementById('selectedCategory').value = 'Academic';
+      document.getElementById('isPinned').checked   = false;
+      document.getElementById('isImportant').checked = false;
+      document.getElementById('isActive').checked   = true;
+      document.getElementById('pLow').checked       = true;
+      document.getElementById('publishDateTime').value = '';
+      document.getElementById('expiryDate').value   = '';
+      document.getElementById('audienceCourse').value = '';
+      document.getElementById('audienceClass').value  = '';
+      fileList.length = 0;
+      renderFileList();
+      updateStats();
+      updatePreview();
+    }
+
+    /* ===== FORM SUBMIT ===== */
+    document.getElementById('addNoticeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      // Sync Quill content
+      const html = quill.root.innerHTML;
+      const text = quill.getText().trim();
+      if (!text) {
+        showToast('Content Required', 'Please write some notice content.', true);
+        return;
+      }
+      document.getElementById('noticeContent').value = html;
+
+      // Show loading
+      document.getElementById('loadingOverlay').classList.add('active');
+
+      // Submit via fetch
+      const formData = new FormData(this);
+      fetch('/add_notice', {
+        method: 'POST',
+        body: new URLSearchParams(formData)
+      }).then(res => {
+        document.getElementById('loadingOverlay').classList.remove('active');
+        if (res.redirected) {
+          showToast('Notice Published!', 'Your notice has been published successfully.');
+          setTimeout(() => { window.location.href = res.url; }, 1400);
+        } else {
+          showToast('Published!', 'Notice saved successfully.');
+          setTimeout(() => { window.location.href = '/all_notices'; }, 1400);
+        }
+      }).catch(() => {
+        document.getElementById('loadingOverlay').classList.remove('active');
+        showToast('Error', 'Failed to publish notice. Please try again.', true);
+      });
+    });
+
+    /* ===== TOAST ===== */
+    function showToast(title, msg, isError = false) {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = 'toast' + (isError ? ' toast-error' : '');
+      toast.innerHTML = `
+        <div class="toast-icon"><i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i></div>
+        <div class="toast-body">
+          <div class="toast-title">${title}</div>
+          <div class="toast-msg">${msg}</div>
+        </div>
+        <i class="fas fa-times toast-close" onclick="this.closest('.toast').remove()"></i>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.animation = 'toastOut .35s ease forwards';
+        setTimeout(() => toast.remove(), 350);
+      }, 4000);
+    }
+
+    /* ===== LOAD DRAFT ON PAGE LOAD ===== */
+    document.addEventListener('DOMContentLoaded', function() {
+      updateStats();
+      updatePreview();
+
+      // Set default publish datetime to now
+      const now = new Date();
+      now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      document.getElementById('publishDateTime').value = now.toISOString().slice(0, 16);
+
+      // Restore draft if exists
+      try {
+        const draft = JSON.parse(localStorage.getItem('notice_draft') || 'null');
+        if (draft && draft.title) {
+          // Silently restore — don't auto-fill to avoid confusion, just show toast
+          // showToast('Draft Available', 'You have a saved draft. Click Save Draft to restore.');
+        }
+      } catch(e) {}
+    });
+  </script>
+</body>
+</html>

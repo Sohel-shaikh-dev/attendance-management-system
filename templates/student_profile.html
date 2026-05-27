@@ -1,0 +1,3462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aura Profile • Student Portal</title>
+  
+  <!-- Google Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+    /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+    
+
+    :root {
+      /* Modern color palette - Glassmorphism + Neomorphism fusion */
+      --primary-50: #eef2ff;
+      --primary-100: #e0e7ff;
+      --primary-200: #c7d2fe;
+      --primary-300: #a5b4fc;
+      --primary-400: #7b94fa;
+      --primary-500: #5B7CFA;
+      --primary-600: #3F6DFF;
+      --primary-700: #4338ca;
+      --primary-800: #3730a3;
+      --primary-900: #312e81;
+      
+      /* Success, Warning, Danger with softer tones */
+      --success-50: #ecfdf5;
+      --success-100: #d1fae5;
+      --success-500: #10b981;
+      --success-600: #059669;
+      
+      --warning-50: #fffbeb;
+      --warning-100: #fef3c7;
+      --warning-500: #f59e0b;
+      --warning-600: #d97706;
+      
+      --danger-50: #fef2f2;
+      --danger-100: #fee2e2;
+      --danger-500: #ef4444;
+      --danger-600: #dc2626;
+      
+      /* Neutral tones - more sophisticated */
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --gray-950: #030712;
+      
+      /* Glass effects */
+      --glass-light: rgba(255, 255, 255, 0.7);
+      --glass-medium: rgba(255, 255, 255, 0.5);
+      --glass-heavy: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      
+      /* Shadows - layered for depth */
+      --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+      --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+      --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+      
+      /* Neomorphic shadows */
+      --neo-light: 8px 8px 16px rgba(174, 190, 205, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.7);
+      --neo-inset: inset 3px 3px 6px rgba(174, 190, 205, 0.2), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+      
+      /* Typography */
+      --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+      
+      /* Spacing */
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --space-12: 3rem;
+      --space-16: 4rem;
+      
+      /* Border radius */
+      --radius-xs: 0.375rem;
+      --radius-sm: 0.5rem;
+      --radius-md: 0.75rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.5rem;
+      --radius-2xl: 2rem;
+      --radius-3xl: 3rem;
+      --radius-full: 9999px;
+      
+      /* Transitions */
+      --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+      
+      /* Z-index layers */
+      --z-dropdown: 100;
+      --z-sticky: 200;
+      --z-modal: 300;
+      --z-popover: 400;
+      --z-toast: 500;
+      
+      /* Layout */
+      --sidebar-width: 80px;
+      --header-height: 72px;
+    }
+
+    /* ===== DARK MODE SUPPORT ===== */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --glass-light: rgba(17, 24, 39, 0.7);
+        --glass-medium: rgba(17, 24, 39, 0.5);
+        --glass-heavy: rgba(0, 0, 0, 0.2);
+        --glass-border: rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    /* ===== GLOBAL STYLES ===== */
+    
+
+    body {
+      background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 100%);
+      color: var(--gray-900);
+      min-height: 100vh;
+      position: relative;
+      overflow-x: hidden;
+      line-height: 1.5;
+      font-weight: 400;
+    }
+
+    /* Custom scrollbar - modern thin design */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--gray-100);
+      border-radius: var(--radius-full);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+      border-radius: var(--radius-full);
+      transition: var(--transition-base);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+    }
+
+    /* Selection style */
+    ::selection {
+      background: var(--primary-500);
+      color: white;
+      text-shadow: none;
+    }
+
+    /* ===== LAYOUT ===== */
+    .main {
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+      padding: var(--space-8) var(--space-10) var(--space-16);
+      transition: margin-left var(--transition-base);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== BACKGROUND DECORATIONS ===== */
+    .bg-decoration {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .bg-decoration .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      animation: float 20s infinite ease-in-out;
+    }
+
+    .bg-decoration .blob-1 {
+      top: -10%;
+      right: -5%;
+      width: 500px;
+      height: 500px;
+      background: var(--primary-400);
+      animation-delay: 0s;
+    }
+
+    .bg-decoration .blob-2 {
+      bottom: -10%;
+      left: -5%;
+      width: 600px;
+      height: 600px;
+      background: var(--success-500);
+      animation-delay: -5s;
+    }
+
+    .bg-decoration .blob-3 {
+      top: 40%;
+      left: 30%;
+      width: 400px;
+      height: 400px;
+      background: var(--warning-500);
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      25% { transform: translate(5%, 5%) scale(1.05); }
+      50% { transform: translate(-5%, -5%) scale(0.95); }
+      75% { transform: translate(-5%, 5%) scale(1.02); }
+    }
+
+    /* ===== PAGE HEADER ===== */
+    .page-header {
+      margin-bottom: var(--space-8);
+      position: relative;
+      z-index: 2;
+    }
+
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--gray-500);
+      margin-bottom: var(--space-4);
+      flex-wrap: wrap;
+      padding: var(--space-2) var(--space-3);
+      background: var(--glass-light);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: var(--radius-full);
+      box-shadow: var(--shadow-sm);
+      width: fit-content;
+      border: 1px solid var(--glass-border);
+    }
+
+    .breadcrumb a {
+      color: var(--gray-600);
+      text-decoration: none;
+      transition: var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+    }
+
+    .breadcrumb a:hover {
+      color: var(--primary-600);
+    }
+
+    .bc-sep {
+      color: var(--gray-400);
+      font-size: 0.6rem;
+    }
+
+    .bc-cur {
+      color: var(--primary-600);
+      font-weight: 700;
+    }
+
+    .page-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.03em;
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      position: relative;
+    }
+
+    .page-title-icon {
+      width: 52px;
+      height: 52px;
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1.25rem;
+      box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+      transition: var(--transition-bounce);
+    }
+
+    .page-title:hover .page-title-icon {
+      transform: scale(1.05) rotate(2deg);
+    }
+
+    /* ===== FILTER BAR - GLASSMORPHISM ===== */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      background: var(--glass-light);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: var(--radius-2xl);
+      padding: var(--space-4) var(--space-6);
+      box-shadow: var(--shadow-lg), var(--neo-light);
+      margin-bottom: var(--space-8);
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 3;
+      transition: var(--transition-base);
+    }
+
+    .filter-bar:hover {
+      box-shadow: var(--shadow-xl), var(--neo-light);
+      border-color: var(--primary-200);
+    }
+
+    .filter-bar-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .filter-bar-label i {
+      color: var(--primary-500);
+    }
+
+    .filter-select {
+      padding: 0.6rem 2.5rem 0.6rem 1rem;
+      border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      color: var(--gray-900);
+      background: var(--glass-heavy);
+      backdrop-filter: blur(4px);
+      cursor: pointer;
+      outline: none;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 1rem center;
+      background-size: 1rem;
+      transition: var(--transition-base);
+      min-width: 140px;
+    }
+
+    .filter-select:hover {
+      border-color: var(--primary-300);
+      background-color: white;
+    }
+
+    .filter-select:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+
+    .filter-active-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary-700);
+      background: var(--primary-50);
+      border: 1px solid var(--primary-200);
+      padding: 0.3rem 1rem;
+      border-radius: var(--radius-full);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      animation: badgePop 0.3s var(--transition-bounce);
+    }
+
+    @keyframes badgePop {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .filter-clear {
+      font-size: 0.7rem;
+      color: var(--gray-500);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.3rem 1rem;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--gray-200);
+      transition: var(--transition-base);
+      background: white;
+    }
+
+    .filter-clear:hover {
+      color: var(--danger-600);
+      border-color: var(--danger-300);
+      background: var(--danger-50);
+      transform: translateY(-1px);
+    }
+
+    /* ===== HERO BANNER - ULTRA MODERN ===== */
+    .hero-banner {
+      position: relative;
+      border-radius: var(--radius-3xl);
+      overflow: hidden;
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-2xl);
+      isolation: isolate;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--gray-900) 0%, var(--primary-900) 50%, var(--primary-700) 100%);
+      z-index: 1;
+    }
+
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(255,255,255,0.1) 1px, transparent 1px),
+        radial-gradient(circle at 80% 70%, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 50px 50px, 30px 30px;
+      z-index: 2;
+      animation: particleDrift 60s linear infinite;
+    }
+
+    @keyframes particleDrift {
+      0% { background-position: 0 0, 0 0; }
+      100% { background-position: 100px 100px, -100px -100px; }
+    }
+
+    .hero-gradient-mesh {
+      position: absolute;
+      inset: 0;
+      background: 
+        radial-gradient(circle at 0% 0%, rgba(99, 102, 241, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(16, 185, 129, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 50% 100%, rgba(245, 158, 11, 0.3) 0%, transparent 50%);
+      mix-blend-mode: overlay;
+      z-index: 3;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 4;
+      display: flex;
+      align-items: center;
+      gap: var(--space-8);
+      padding: var(--space-12) var(--space-10);
+      flex-wrap: wrap;
+      backdrop-filter: blur(2px);
+    }
+
+    /* Avatar - Modern 3D effect */
+    .hero-avatar-wrap {
+      position: relative;
+      flex-shrink: 0;
+      filter: drop-shadow(0 20px 25px -5px rgba(0,0,0,0.3));
+    }
+
+    .hero-avatar {
+      width: 130px;
+      height: 130px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.3);
+      background: linear-gradient(135deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+      backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: 800;
+      color: white;
+      overflow: hidden;
+      position: relative;
+      transition: var(--transition-bounce);
+      cursor: pointer;
+      box-shadow: 
+        0 30px 40px -20px rgba(0,0,0,0.5),
+        0 0 0 8px rgba(255,255,255,0.2);
+    }
+
+    .hero-avatar:hover {
+      transform: scale(1.05) rotate(2deg);
+      box-shadow: 
+        0 35px 50px -15px rgba(0,0,0,0.6),
+        0 0 0 10px rgba(255,255,255,0.25);
+    }
+
+    .hero-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      position: absolute;
+      inset: 0;
+      transition: var(--transition-base);
+    }
+
+    .hero-avatar .av-initials {
+      position: relative;
+      z-index: 1;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .avatar-cam-btn {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, white, var(--gray-100));
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+      transition: var(--transition-bounce);
+      color: var(--primary-600);
+      font-size: 0.9rem;
+      z-index: 5;
+      border: 2px solid rgba(255,255,255,0.5);
+    }
+
+    .avatar-cam-btn:hover {
+      transform: scale(1.2) rotate(90deg);
+      background: white;
+      color: var(--primary-700);
+      box-shadow: var(--shadow-xl);
+    }
+
+    .avatar-uploading {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 6;
+    }
+
+    .avatar-uploading.show {
+      display: flex;
+      animation: fadeIn 0.2s ease;
+    }
+
+    .avatar-uploading i {
+      color: white;
+      font-size: 1.8rem;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Hero Info */
+    .hero-info {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .hero-name {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: var(--space-3);
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      animation: slideUp 0.5s var(--transition-bounce);
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero-roll {
+      font-size: 0.9rem;
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+      margin-bottom: var(--space-4);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .hero-roll strong {
+      color: white;
+      font-weight: 700;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-3);
+      margin-bottom: var(--space-5);
+    }
+
+    .hbadge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.4rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(10px);
+      transition: var(--transition-base);
+      animation: badgeSlideIn 0.5s var(--transition-bounce) forwards;
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    .hbadge:nth-child(1) { animation-delay: 0.1s; }
+    .hbadge:nth-child(2) { animation-delay: 0.2s; }
+    .hbadge:nth-child(3) { animation-delay: 0.3s; }
+    .hbadge:nth-child(4) { animation-delay: 0.4s; }
+    .hbadge:nth-child(5) { animation-delay: 0.5s; }
+
+    @keyframes badgeSlideIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .hbadge-glass {
+      background: rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .hbadge-glass:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
+    }
+
+    .hbadge-active {
+      background: rgba(16, 185, 129, 0.2);
+      color: #a7f3d0;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      position: relative;
+      padding-left: 1.4rem;
+    }
+
+    .hbadge-active::before {
+      content: '';
+      position: absolute;
+      left: 0.5rem;
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .hero-email {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      flex-shrink: 0;
+    }
+
+    /* ===== STATS STRIP - NEOMORPHISM ===== */
+    .stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-4);
+      margin-bottom: var(--space-8);
+      position: relative;
+      z-index: 2;
+    }
+
+    .stat-card {
+      background: var(--glass-light);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--glass-border);
+      padding: var(--space-6);
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      box-shadow: var(--shadow-lg), var(--neo-light);
+      transition: var(--transition-bounce);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4), transparent);
+      opacity: 0;
+      transition: var(--transition-base);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: var(--shadow-2xl), var(--neo-light);
+      border-color: var(--primary-300);
+    }
+
+    .stat-card:hover::before {
+      opacity: 1;
+    }
+
+    .stat-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,0.3);
+      transition: var(--transition-bounce);
+    }
+
+    .stat-card:hover .stat-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .si-blue { 
+      background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+      color: var(--primary-700);
+    }
+    .si-green { 
+      background: linear-gradient(135deg, var(--success-100), var(--success-200));
+      color: var(--success-700);
+    }
+    .si-amber { 
+      background: linear-gradient(135deg, var(--warning-100), var(--warning-200));
+      color: var(--warning-700);
+    }
+    .si-purple { 
+      background: linear-gradient(135deg, #ede9fe, #ddd6fe);
+      color: #7c3aed;
+    }
+
+    .stat-val {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .stat-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      margin-top: var(--space-1);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+    }
+
+    /* ===== CONTENT GRID ===== */
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-5);
+      position: relative;
+      z-index: 2;
+    }
+
+    .col-full {
+      grid-column: 1 / -1;
+    }
+
+    /* ===== CARD - GLASSMORPHISM ===== */
+    .card {
+      background: var(--glass-light);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: var(--radius-2xl);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--shadow-lg), var(--neo-light);
+      overflow: hidden;
+      transition: var(--transition-bounce);
+      position: relative;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-2xl), var(--neo-light);
+      border-color: var(--primary-200);
+      transform: translateY(-2px);
+    }
+
+    .card-head {
+      padding: var(--space-5) var(--space-6);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      background: rgba(255,255,255,0.5);
+    }
+
+    .card-head-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .card-head-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: var(--transition-bounce);
+    }
+
+    .card:hover .card-head-icon {
+      transform: scale(1.1);
+    }
+
+    .chi-blue { background: linear-gradient(135deg, var(--primary-50), var(--primary-100)); color: var(--primary-700); }
+    .chi-green { background: linear-gradient(135deg, var(--success-50), var(--success-100)); color: var(--success-700); }
+    .chi-amber { background: linear-gradient(135deg, var(--warning-50), var(--warning-100)); color: var(--warning-700); }
+    .chi-red { background: linear-gradient(135deg, var(--danger-50), var(--danger-100)); color: var(--danger-700); }
+    .chi-purple { background: linear-gradient(135deg, #f5f3ff, #ede9fe); color: #7c3aed; }
+
+    .card-head-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      letter-spacing: -0.01em;
+    }
+
+    .card-head-sub {
+      font-size: 0.7rem;
+      color: var(--gray-500);
+      margin-top: 2px;
+    }
+
+    .card-body {
+      padding: var(--space-6);
+    }
+
+    /* ===== DETAIL GRID ===== */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+      border-right: 1px solid rgba(0,0,0,0.03);
+      transition: var(--transition-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .detail-item::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 0;
+      background: linear-gradient(to bottom, var(--primary-500), var(--primary-600));
+      transition: var(--transition-base);
+    }
+
+    .detail-item:hover::after {
+      height: 100%;
+    }
+
+    .detail-item:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .detail-item:nth-child(even) {
+      border-right: none;
+    }
+
+    .detail-item:nth-last-child(-n+2) {
+      border-bottom: none;
+    }
+
+    .detail-item.full {
+      grid-column: 1 / -1;
+      border-right: none;
+      border-bottom: none;
+    }
+
+    .di-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+      transition: var(--transition-bounce);
+    }
+
+    .detail-item:hover .di-icon {
+      transform: scale(1.1);
+    }
+
+    .di-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .di-label {
+      font-size: 0.6rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-1);
+    }
+
+    .di-value {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--gray-900);
+      word-break: break-word;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      flex-wrap: wrap;
+    }
+
+    .di-readonly {
+      font-size: 0.6rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      background: var(--gray-100);
+      border: 1px solid var(--gray-200);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .di-masked {
+      font-family: 'Roboto Mono', monospace;
+      letter-spacing: 0.1em;
+      color: var(--gray-600);
+    }
+
+    /* ===== FORM ELEMENTS ===== */
+    .form-group {
+      margin-bottom: var(--space-5);
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--gray-600);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-2);
+    }
+
+    .form-label i {
+      font-size: 0.65rem;
+      color: var(--gray-400);
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.9rem 2.5rem 0.9rem 2.8rem;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-xl);
+      font-size: 0.95rem;
+      font-family: var(--font-sans);
+      color: var(--gray-900);
+      background: white;
+      transition: var(--transition-base);
+      outline: none;
+    }
+
+    .form-input:hover {
+      border-color: var(--primary-300);
+    }
+
+    .form-input:focus {
+      border-color: var(--primary-500);
+      box-shadow: 0 0 0 4px var(--primary-100);
+    }
+
+    .form-input::placeholder {
+      color: var(--gray-400);
+    }
+
+    .form-input.no-icon {
+      padding-left: 1rem;
+    }
+
+    .fi-icon {
+      position: absolute;
+      left: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      font-size: 0.9rem;
+      pointer-events: none;
+      transition: var(--transition-base);
+    }
+
+    .input-wrap:focus-within .fi-icon {
+      color: var(--primary-500);
+    }
+
+    .fi-eye {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-400);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: var(--transition-base);
+      padding: 0.5rem;
+    }
+
+    .fi-eye:hover {
+      color: var(--primary-600);
+    }
+
+    /* Digit progress bar */
+    .digit-bar-wrap {
+      margin-top: var(--space-3);
+    }
+
+    .digit-track {
+      height: 6px;
+      background: var(--gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .digit-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      width: 0%;
+      transition: width 0.4s var(--transition-bounce), background 0.3s;
+    }
+
+    .digit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: var(--space-2);
+    }
+
+    .digit-count {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      transition: color 0.3s;
+    }
+
+    .digit-hint {
+      font-size: 0.65rem;
+      color: var(--gray-500);
+    }
+
+    /* ===== ALERTS ===== */
+    .alert {
+      display: none;
+      align-items: flex-start;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-5);
+      border-radius: var(--radius-xl);
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: var(--space-5);
+      animation: alertIn 0.3s var(--transition-bounce);
+      border: 1px solid transparent;
+    }
+
+    .alert.show {
+      display: flex;
+    }
+
+    .alert i {
+      font-size: 1rem;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .alert-ok {
+      background: var(--success-50);
+      color: var(--success-700);
+      border-color: var(--success-200);
+    }
+
+    .alert-err {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border-color: var(--danger-200);
+    }
+
+    .alert-inf {
+      background: var(--primary-50);
+      color: var(--primary-700);
+      border-color: var(--primary-200);
+    }
+
+    .alert-wrn {
+      background: var(--warning-50);
+      color: var(--warning-700);
+      border-color: var(--warning-200);
+    }
+
+    @keyframes alertIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* ===== BUTTONS ===== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: 0.9rem 2rem;
+      border-radius: var(--radius-xl);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: var(--transition-bounce);
+      letter-spacing: -0.01em;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+      z-index: -1;
+    }
+
+    .btn:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      color: white;
+      box-shadow: 0 8px 16px -4px rgba(79, 70, 229, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+      box-shadow: 0 12px 20px -6px rgba(79, 70, 229, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success-600), var(--success-500));
+      color: white;
+      box-shadow: 0 8px 16px -4px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-success:hover {
+      background: linear-gradient(135deg, var(--success-700), var(--success-600));
+      box-shadow: 0 12px 20px -6px rgba(5, 150, 105, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary-700);
+      border: 2px solid var(--primary-200);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-50);
+      border-color: var(--primary-500);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--gray-600);
+      border: 2px solid var(--gray-200);
+    }
+
+    .btn-ghost:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+    }
+
+    .btn-white {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 2px solid rgba(255,255,255,0.3);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-white:hover {
+      background: rgba(255,255,255,0.25);
+      border-color: rgba(255,255,255,0.5);
+    }
+
+    .btn-danger-soft {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border: 2px solid var(--danger-200);
+    }
+
+    .btn-danger-soft:hover {
+      background: var(--danger-100);
+      border-color: var(--danger-400);
+    }
+
+    .btn-sm {
+      padding: 0.6rem 1.2rem;
+      font-size: 0.8rem;
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    /* ===== DOCUMENT CARDS ===== */
+    .doc-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+    }
+
+    .doc-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+      padding: var(--space-5);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--glass-border);
+      background: rgba(255,255,255,0.3);
+      cursor: pointer;
+      transition: var(--transition-bounce);
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .doc-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 0;
+      background: linear-gradient(to bottom, var(--primary-500), var(--primary-600));
+      transition: var(--transition-base);
+    }
+
+    .doc-item:hover::before {
+      height: 100%;
+    }
+
+    .doc-item:hover {
+      background: white;
+      transform: translateX(8px) scale(1.02);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--primary-300);
+    }
+
+    .doc-item-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+      transition: var(--transition-bounce);
+    }
+
+    .doc-item:hover .doc-item-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .dii-blue { background: linear-gradient(135deg, var(--primary-50), var(--primary-100)); color: var(--primary-700); }
+    .dii-green { background: linear-gradient(135deg, var(--success-50), var(--success-100)); color: var(--success-700); }
+    .dii-amber { background: linear-gradient(135deg, var(--warning-50), var(--warning-100)); color: var(--warning-700); }
+
+    .doc-item-body {
+      flex: 1;
+    }
+
+    .doc-item-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--gray-900);
+      margin-bottom: 4px;
+    }
+
+    .doc-item-desc {
+      font-size: 0.7rem;
+      color: var(--gray-500);
+    }
+
+    .doc-item-arrow {
+      color: var(--gray-400);
+      font-size: 0.9rem;
+      transition: var(--transition-base);
+    }
+
+    .doc-item:hover .doc-item-arrow {
+      transform: translateX(8px);
+      color: var(--primary-600);
+    }
+
+    /* ===== ATTENDANCE TABLE ===== */
+    .att-summary-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .att-summary-table th {
+      padding: var(--space-4) var(--space-4);
+      text-align: left;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.5);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .att-summary-table td {
+      padding: var(--space-4) var(--space-4);
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-900);
+      vertical-align: middle;
+    }
+
+    .att-summary-table tr {
+      transition: var(--transition-base);
+    }
+
+    .att-summary-table tr:hover td {
+      background: rgba(255,255,255,0.5);
+    }
+
+    .att-summary-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .att-pct-bar {
+      height: 8px;
+      background: var(--gray-200);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin-top: 4px;
+      width: 100%;
+    }
+
+    .att-pct-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.6s var(--transition-bounce);
+      background: linear-gradient(90deg, var(--primary-500), var(--primary-600));
+    }
+
+    /* ===== TRANSCRIPT TABLE ===== */
+    .tr-hist-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .tr-hist-table th {
+      padding: var(--space-4) var(--space-4);
+      text-align: left;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--gray-500);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.5);
+      border-bottom: 1px solid var(--gray-200);
+    }
+
+    .tr-hist-table td {
+      padding: var(--space-4) var(--space-4);
+      border-bottom: 1px solid var(--gray-200);
+      color: var(--gray-900);
+      vertical-align: middle;
+    }
+
+    .tr-hist-table tr:hover td {
+      background: rgba(255,255,255,0.5);
+    }
+
+    .tr-hist-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tr-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0.3rem 1rem;
+      border-radius: var(--radius-full);
+      font-size: 0.7rem;
+      font-weight: 700;
+      animation: badgePulse 2s infinite;
+    }
+
+    .tr-badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tr-pending {
+      background: var(--warning-50);
+      color: var(--warning-700);
+      border: 1px solid var(--warning-200);
+    }
+    .tr-pending::before {
+      background: var(--warning-500);
+      animation: blink 1.5s infinite;
+    }
+
+    .tr-approved {
+      background: var(--success-50);
+      color: var(--success-700);
+      border: 1px solid var(--success-200);
+    }
+    .tr-approved::before {
+      background: var(--success-500);
+    }
+
+    .tr-rejected {
+      background: var(--danger-50);
+      color: var(--danger-700);
+      border: 1px solid var(--danger-200);
+    }
+    .tr-rejected::before {
+      background: var(--danger-500);
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    @keyframes badgePulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    /* ===== MODAL ===== */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      z-index: var(--z-modal);
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-5);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .modal {
+      background: white;
+      border-radius: var(--radius-2xl);
+      box-shadow: var(--shadow-2xl);
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalSlideIn 0.4s var(--transition-bounce);
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .modal-lg {
+      max-width: 720px;
+    }
+
+    .modal-sm {
+      max-width: 420px;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8) translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: var(--space-6) var(--space-8);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-4);
+      position: sticky;
+      top: 0;
+      background: white;
+      z-index: 1;
+      border-radius: var(--radius-2xl) var(--radius-2xl) 0 0;
+    }
+
+    .modal-header-left {
+      display: flex;
+      align-items: center;
+      gap: var(--space-4);
+    }
+
+    .modal-header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--gray-900);
+      letter-spacing: -0.01em;
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: var(--gray-100);
+      color: var(--gray-600);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: var(--transition-bounce);
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: var(--danger-100);
+      color: var(--danger-600);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: var(--space-8);
+    }
+
+    .modal-footer {
+      padding: var(--space-6) var(--space-8);
+      display: flex;
+      gap: var(--space-4);
+      justify-content: flex-end;
+      border-top: 1px solid var(--gray-200);
+      background: var(--gray-50);
+      border-radius: 0 0 var(--radius-2xl) var(--radius-2xl);
+    }
+
+    /* ===== ID CARD ===== */
+    .id-card {
+      width: 340px;
+      margin: 0 auto;
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-2xl);
+      font-family: var(--font-sans);
+      transition: var(--transition-bounce);
+    }
+
+    .id-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: var(--shadow-2xl);
+    }
+
+    .id-card-top {
+      background: linear-gradient(135deg, var(--gray-900), var(--primary-900), var(--primary-700));
+      padding: var(--space-6) var(--space-6) var(--space-8);
+      text-align: center;
+      position: relative;
+    }
+
+    .id-card-top::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 24px;
+      background: white;
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+
+    .id-card-college-name {
+      font-size: 12px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.5;
+      letter-spacing: 0.02em;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .id-card-college-addr {
+      font-size: 8px;
+      color: rgba(255,255,255,0.7);
+      margin-top: var(--space-2);
+      line-height: 1.5;
+    }
+
+    .id-card-strip {
+      background: linear-gradient(135deg, var(--warning-600), var(--warning-500));
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-align: center;
+      padding: var(--space-2);
+      text-transform: uppercase;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .id-card-body {
+      background: white;
+      padding: var(--space-6);
+    }
+
+    .id-card-avatar-wrap {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
+      border: 4px solid var(--primary-500);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--primary-800);
+      margin: 0 auto var(--space-5);
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+      transition: var(--transition-bounce);
+    }
+
+    .id-card:hover .id-card-avatar-wrap {
+      transform: scale(1.05);
+    }
+
+    .id-card-avatar-wrap .id-initials {
+      position: relative;
+      z-index: 1;
+      line-height: 1;
+    }
+
+    .id-card-avatar-wrap .id-photo {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      border-radius: 50%;
+      display: none;
+    }
+
+    .id-card-avatar-wrap .id-photo.has-photo {
+      display: block;
+    }
+
+    .id-card-student-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--gray-900);
+      text-align: center;
+      margin-bottom: var(--space-5);
+      letter-spacing: -0.01em;
+    }
+
+    .id-card-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--space-3) 0;
+      border-bottom: 1px solid var(--gray-100);
+      font-size: 11px;
+    }
+
+    .id-card-row:last-child {
+      border-bottom: none;
+    }
+
+    .id-card-row-label {
+      color: var(--gray-500);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .id-card-row-val {
+      color: var(--gray-900);
+      font-weight: 700;
+    }
+
+    .id-card-footer {
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+      padding: var(--space-3) var(--space-6);
+      text-align: center;
+      font-size: 8px;
+      color: var(--gray-500);
+    }
+
+    /* ===== BONAFIDE CERTIFICATE ===== */
+    .cert-wrap {
+      border: 2px solid var(--gray-200);
+      border-radius: var(--radius-2xl);
+      overflow: hidden;
+      font-family: var(--font-sans);
+      position: relative;
+      background: white;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .cert-inner-border {
+      position: absolute;
+      inset: 12px;
+      border: 2px solid var(--primary-800);
+      border-radius: var(--radius-xl);
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.8;
+    }
+
+    .cert-content {
+      position: relative;
+      z-index: 1;
+      padding: var(--space-8);
+    }
+
+    .cert-header {
+      text-align: center;
+      margin-bottom: var(--space-6);
+    }
+
+    .cert-college {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--primary-900);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+
+    .cert-addr {
+      font-size: 10px;
+      color: var(--gray-600);
+      margin-top: var(--space-2);
+    }
+
+    .cert-hr {
+      border: none;
+      border-top: 3px solid var(--primary-800);
+      margin: var(--space-5) 0;
+      opacity: 0.3;
+    }
+
+    .cert-title {
+      font-size: 15px;
+      font-weight: 800;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gray-900);
+      text-decoration: underline wavy var(--primary-500) 2px;
+      text-underline-offset: 8px;
+      margin-bottom: var(--space-6);
+    }
+
+    .cert-body {
+      font-size: 12px;
+      line-height: 2;
+      color: var(--gray-800);
+      text-align: justify;
+    }
+
+    .cert-body strong {
+      color: var(--primary-800);
+      font-weight: 700;
+    }
+
+    .cert-date {
+      font-size: 11px;
+      color: var(--gray-600);
+      margin-top: var(--space-6);
+      font-weight: 600;
+    }
+
+    .cert-sigs {
+      display: flex;
+      justify-content: space-between;
+      margin-top: var(--space-8);
+      font-size: 10px;
+    }
+
+    .cert-sig-block {
+      text-align: center;
+    }
+
+    .cert-sig-line {
+      border-top: 2px solid var(--gray-400);
+      width: 120px;
+      margin: 0 auto var(--space-2);
+    }
+
+    .cert-sig-label {
+      color: var(--gray-600);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 9px;
+    }
+
+    .cert-ref {
+      font-size: 9px;
+      color: var(--gray-400);
+      text-align: right;
+      margin-top: var(--space-5);
+      font-family: monospace;
+    }
+
+    /* ===== TOAST ===== */
+    #toast-container {
+      position: fixed;
+      bottom: var(--space-8);
+      right: var(--space-8);
+      z-index: var(--z-toast);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-3);
+      pointer-events: none;
+    }
+
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: var(--space-4) var(--space-6);
+      border-radius: var(--radius-xl);
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: var(--font-sans);
+      box-shadow: var(--shadow-xl);
+      pointer-events: all;
+      animation: toastIn 0.4s var(--transition-bounce);
+      max-width: 360px;
+      border: 1px solid transparent;
+    }
+
+    .toast-ok {
+      background: linear-gradient(135deg, var(--success-50), white);
+      color: var(--success-700);
+      border-color: var(--success-200);
+    }
+
+    .toast-err {
+      background: linear-gradient(135deg, var(--danger-50), white);
+      color: var(--danger-700);
+      border-color: var(--danger-200);
+    }
+
+    .toast-inf {
+      background: linear-gradient(135deg, var(--primary-50), white);
+      color: var(--primary-700);
+      border-color: var(--primary-200);
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateX(30px) scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+      }
+    }
+
+    /* ===== PRINT STYLES ===== */
+    #print-area {
+      display: none;
+    }
+
+    @media print {
+      body > *:not(#print-area) {
+        display: none !important;
+      }
+      #print-area {
+        display: block !important;
+      }
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1280px) {
+      .stats-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      :root {
+        --sidebar-width: 0;
+        --space-8: 1.5rem;
+        --space-10: 2rem;
+      }
+      
+      .main {
+        padding: var(--space-6) var(--space-5) var(--space-12);
+      }
+      
+      .hero-name {
+        font-size: 2rem;
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .detail-item {
+        border-right: none;
+      }
+      
+      .detail-item:nth-last-child(-n+2) {
+        border-bottom: 1px solid var(--gray-200);
+      }
+      
+      .detail-item:last-child {
+        border-bottom: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-content {
+        flex-direction: column;
+        text-align: center;
+        padding: var(--space-8) var(--space-5);
+      }
+      
+      .hero-avatar-wrap {
+        margin-bottom: var(--space-4);
+      }
+      
+      .hero-actions {
+        flex-direction: row;
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .filter-select {
+        width: 100%;
+      }
+      
+      .stat-card {
+        padding: var(--space-4);
+      }
+      
+      .modal {
+        max-width: 95%;
+      }
+      
+      .cert-sigs {
+        flex-direction: column;
+        gap: var(--space-6);
+        align-items: center;
+      }
+      
+      .cert-sig-line {
+        width: 200px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2.2rem;
+      }
+      
+      .hero-name {
+        font-size: 1.6rem;
+      }
+      
+      .page-title {
+        font-size: 1.5rem;
+      }
+      
+      .stats-strip {
+        grid-template-columns: 1fr;
+      }
+      
+      .card-body {
+        padding: var(--space-4);
+      }
+      
+      .detail-item {
+        padding: var(--space-4);
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .id-card {
+        width: 100%;
+      }
+      
+      .toast {
+        max-width: 90%;
+      }
+    }
+
+    /* ===== UTILITY CLASSES ===== */
+    .text-gradient {
+      background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .animate-pulse {
+      animation: pulse 2s infinite;
+    }
+
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    .animate-bounce {
+      animation: bounce 1s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background decorations -->
+  <div class="bg-decoration">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- Include student sidebar (your existing sidebar) -->
+  {% include 'components/student_sidebar.html' %}
+
+  <!-- Hidden file input for photo upload -->
+  <input type="file" id="photoFileInput" accept="image/jpeg,image/png" style="display:none;" onchange="handlePhotoSelected(this)">
+
+  <div class="main" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <nav class="breadcrumb">
+        <a href="{{ url_for('student_dashboard') }}"><i class="fas fa-house"></i> Dashboard</a>
+        <span class="bc-sep"><i class="fas fa-chevron-right"></i></span>
+        <span class="bc-cur">My Profile</span>
+      </nav>
+      <div class="page-title-row">
+        <div class="page-title">
+          <div class="page-title-icon"><i class="fas fa-user-circle"></i></div>
+          My Profile
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+      <span class="filter-bar-label"><i class="fas fa-filter"></i> Filter Data</span>
+      
+      <select class="filter-select" id="filterClass" onchange="onClassChange()">
+        <option value="">All Classes</option>
+        <option value="FY" {% if selected_class == 'FY' %}selected{% endif %}>FY — First Year</option>
+        <option value="SY" {% if selected_class == 'SY' %}selected{% endif %}>SY — Second Year</option>
+        <option value="TY" {% if selected_class == 'TY' %}selected{% endif %}>TY — Third Year</option>
+      </select>
+
+      <select class="filter-select" id="filterSem" onchange="applyFilter()">
+        <option value="">All Semesters</option>
+        {% for sem in allowed_semesters %}
+        <option value="{{ sem }}" {% if selected_sem == sem|string %}selected{% endif %}>
+          Semester {{ sem }}
+        </option>
+        {% endfor %}
+      </select>
+
+      {% if filter_class_yr or filter_semester %}
+        <span class="filter-active-badge">
+          <i class="fas fa-check-circle"></i>
+          {{ selected_class }}{% if selected_sem %} / Sem {{ selected_sem }}{% endif %}
+        </span>
+        <a href="/student_profile" class="filter-clear">
+          <i class="fas fa-times"></i> Clear
+        </a>
+      {% endif %}
+    </div>
+
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-bg"></div>
+      <div class="hero-particles"></div>
+      <div class="hero-gradient-mesh"></div>
+      
+      <div class="hero-content">
+        <!-- Avatar -->
+        <div class="hero-avatar-wrap">
+          <div class="hero-avatar" id="heroAvatar" onclick="document.getElementById('photoFileInput').click()" title="Click to change photo">
+            {% if student.profile_photo %}
+              <img id="heroAvatarImg" src="{{ url_for('static', filename=student.profile_photo) }}" alt="{{ student.full_name }}">
+              <span class="av-initials" id="heroInitials" style="display:none;">{{ (student.full_name or 'ST')[:2] | upper }}</span>
+            {% else %}
+              <span class="av-initials" id="heroInitials">{{ (student.full_name or 'ST')[:2] | upper }}</span>
+              <img id="heroAvatarImg" src="" alt="" style="display:none;">
+            {% endif %}
+            <div class="avatar-uploading" id="avatarSpinner">
+              <i class="fas fa-circle-notch"></i>
+            </div>
+          </div>
+          <button class="avatar-cam-btn" onclick="document.getElementById('photoFileInput').click()" title="Change photo">
+            <i class="fas fa-camera"></i>
+          </button>
+        </div>
+
+        <!-- Info -->
+        <div class="hero-info">
+          <div class="hero-name">{{ student.full_name or 'Student Name' }}</div>
+          <div class="hero-roll">
+            <i class="fas fa-id-badge"></i>
+            Roll No: <strong>{{ student.student_id }}</strong>
+          </div>
+          <div class="hero-badges">
+            <span class="hbadge hbadge-glass">
+              <i class="fas fa-graduation-cap"></i> {{ student.course or '—' }}
+            </span>
+            <span class="hbadge hbadge-glass">
+              <i class="fas fa-layer-group"></i> {{ selected_class or '—' }}
+            </span>
+            <span class="hbadge hbadge-glass">
+              <i class="fas fa-book-open"></i> Semester {{ selected_sem or '—' }}
+            </span>
+            <span class="hbadge hbadge-active">Active Student</span>
+            {% if filter_class_yr or filter_semester %}
+            <span class="hbadge" style="background:rgba(245,158,11,0.2);color:#fcd34d;border-color:rgba(245,158,11,0.3);">
+              <i class="fas fa-filter"></i> Filtered View
+            </span>
+            {% endif %}
+          </div>
+          <div class="hero-email">
+            <i class="fas fa-envelope"></i> {{ student.gmail_id or '—' }}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="hero-actions">
+          <button class="btn btn-white" onclick="document.getElementById('photoFileInput').click()">
+            <i class="fas fa-camera"></i> Change Photo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Strip -->
+    <div class="stats-strip">
+      <div class="stat-card">
+        <div class="stat-icon si-blue"><i class="fas fa-id-card"></i></div>
+        <div>
+          <div class="stat-val">{{ display_roll }}</div>
+          <div class="stat-lbl">Roll Number</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon si-green"><i class="fas fa-graduation-cap"></i></div>
+        <div>
+          <div class="stat-val">{{ student.course or '—' }}</div>
+          <div class="stat-lbl">Programme</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon si-amber"><i class="fas fa-layer-group"></i></div>
+        <div>
+          <div class="stat-val">{{ selected_class or '—' }}</div>
+          <div class="stat-lbl">Class Year</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon si-purple"><i class="fas fa-book-open"></i></div>
+        <div>
+          <div class="stat-val">Sem {{ selected_sem or '—' }}</div>
+          <div class="stat-lbl">Current Semester</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+      <!-- Profile Details Card -->
+      <div class="card col-full">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-blue"><i class="fas fa-info-circle"></i></div>
+            <div>
+              <div class="card-head-title">Profile Details</div>
+              <div class="card-head-sub">Your academic information — managed by admin</div>
+            </div>
+          </div>
+          <span class="di-readonly"><i class="fas fa-lock"></i> Read-only</span>
+        </div>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="di-icon si-blue"><i class="fas fa-user"></i></div>
+            <div class="di-body">
+              <div class="di-label">Full Name</div>
+              <div class="di-value">{{ student.full_name or '—' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-amber"><i class="fas fa-id-badge"></i></div>
+            <div class="di-body">
+              <div class="di-label">Roll Number</div>
+              <div class="di-value">{{ display_roll }} <span class="di-readonly">System ID</span></div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-green"><i class="fas fa-graduation-cap"></i></div>
+            <div class="di-body">
+              <div class="di-label">Course / Programme</div>
+              <div class="di-value">{{ student.course or '—' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-purple"><i class="fas fa-school"></i></div>
+            <div class="di-body">
+              <div class="di-label">Class Year</div>
+              <div class="di-value">{{ selected_class or '—' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-blue"><i class="fas fa-book-open"></i></div>
+            <div class="di-body">
+              <div class="di-label">Semester</div>
+              <div class="di-value">Semester {{ selected_sem or '—' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-green"><i class="fas fa-envelope"></i></div>
+            <div class="di-body">
+              <div class="di-label">Email Address</div>
+              <div class="di-value">{{ student.gmail_id or '—' }} <span class="di-readonly">Read-only</span></div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-blue"><i class="fas fa-user-friends"></i></div>
+            <div class="di-body">
+              <div class="di-label">Parent Email</div>
+              <div class="di-value">{{ student.parent_email or 'Not set yet' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-purple"><i class="fas fa-people-roof"></i></div>
+            <div class="di-body">
+              <div class="di-label">Guardian Email</div>
+              <div class="di-value">{{ student.guardian_email or 'Not set yet' }}</div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-amber"><i class="fas fa-mobile-alt"></i></div>
+            <div class="di-body">
+              <div class="di-label">Mobile Number (Password)</div>
+              <div class="di-value">
+                {% if student.mobile_number and student.mobile_number|length >= 4 %}
+                  <span class="di-masked">{{ student.mobile_number[:2] }}XXXXXX{{ student.mobile_number[-2:] }}</span>
+                {% else %}
+                  <span style="color:var(--gray-500);">Not set</span>
+                {% endif %}
+                <span class="di-readonly">Masked</span>
+              </div>
+            </div>
+          </div>
+          <div class="detail-item">
+            <div class="di-icon si-purple"><i class="fas fa-camera"></i></div>
+            <div class="di-body">
+              <div class="di-label">Profile Photo</div>
+              <div class="di-value">
+                {% if student.profile_photo %}
+                  <span style="color:var(--success-600);"><i class="fas fa-check-circle"></i> Photo uploaded</span>
+                {% else %}
+                  <span style="color:var(--gray-500);">No photo — click avatar to upload</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Change Password Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-red"><i class="fas fa-lock"></i></div>
+            <div>
+              <div class="card-head-title">Change Password</div>
+              <div class="card-head-sub">Your password is your 10-digit mobile number</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-inf show">
+            <i class="fas fa-info-circle"></i>
+            Your password is your registered mobile number (10 digits, numbers only).
+          </div>
+          <div class="alert alert-ok" id="pwdOk"><i class="fas fa-check-circle"></i> Password updated successfully!</div>
+          <div class="alert alert-err" id="pwdErr">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="pwdErrMsg">Error.</span>
+          </div>
+
+          <form id="pwdForm" onsubmit="submitPassword(event)" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-lock"></i> Current Password (Mobile No.)</label>
+              <div class="input-wrap">
+                <i class="fas fa-mobile-alt fi-icon"></i>
+                <input type="password" id="curPwd" class="form-input" placeholder="Your current 10-digit mobile number" maxlength="10" inputmode="numeric" required>
+                <i class="fas fa-eye fi-eye" onclick="toggleEye('curPwd',this)"></i>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-key"></i> New Password (New Mobile No.)</label>
+              <div class="input-wrap">
+                <i class="fas fa-key fi-icon"></i>
+                <input type="password" id="newPwd" class="form-input" placeholder="New 10-digit mobile number" maxlength="10" inputmode="numeric" oninput="evalDigits(this.value)" required>
+                <i class="fas fa-eye fi-eye" onclick="toggleEye('newPwd',this)"></i>
+              </div>
+              <div class="digit-bar-wrap">
+                <div class="digit-track">
+                  <div class="digit-fill" id="digitFill"></div>
+                </div>
+                <div class="digit-row">
+                  <div class="digit-count" id="digitCount">0 / 10 digits</div>
+                  <div class="digit-hint">Numbers only</div>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-key"></i> Confirm New Password</label>
+              <div class="input-wrap">
+                <i class="fas fa-key fi-icon"></i>
+                <input type="password" id="confPwd" class="form-input" placeholder="Repeat new mobile number" maxlength="10" inputmode="numeric" required>
+                <i class="fas fa-eye fi-eye" onclick="toggleEye('confPwd',this)"></i>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">
+              <i class="fas fa-shield-alt"></i> Update Password
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Parent / Guardian Emails -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-blue"><i class="fas fa-envelope-open-text"></i></div>
+            <div>
+              <div class="card-head-title">Parent Contact Emails</div>
+              <div class="card-head-sub">Emails saved here will also receive attendance emails</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-ok" id="emailOk"><i class="fas fa-check-circle"></i> Contact emails updated successfully!</div>
+          <div class="alert alert-err" id="emailErr">
+            <i class="fas fa-exclamation-circle"></i>
+            <span id="emailErrMsg">Error.</span>
+          </div>
+          <form id="contactEmailForm" onsubmit="submitContactEmails(event)" autocomplete="off">
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-user-friends"></i> Parent Email</label>
+              <div class="input-wrap">
+                <i class="fas fa-envelope fi-icon"></i>
+                <input type="email" id="parentEmail" class="form-input" placeholder="parent@example.com" value="{{ student.parent_email or '' }}">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label"><i class="fas fa-people-roof"></i> Guardian Email</label>
+              <div class="input-wrap">
+                <i class="fas fa-envelope fi-icon"></i>
+                <input type="email" id="guardianEmail" class="form-input" placeholder="guardian@example.com" value="{{ student.guardian_email or '' }}">
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" id="saveContactEmailsBtn">
+              <i class="fas fa-save"></i> Save Contact Emails
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Documents Card -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-green"><i class="fas fa-file-alt"></i></div>
+            <div>
+              <div class="card-head-title">Documents</div>
+              <div class="card-head-sub">Download official documents</div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="doc-list">
+            <div class="doc-item" onclick="openModal('idCardModal')">
+              <div class="doc-item-icon dii-blue"><i class="fas fa-id-card"></i></div>
+              <div class="doc-item-body">
+                <div class="doc-item-title">Student ID Card</div>
+                <div class="doc-item-desc">Print or download your identity card</div>
+              </div>
+              <i class="fas fa-chevron-right doc-item-arrow"></i>
+            </div>
+            <div class="doc-item" onclick="openModal('bonafideModal')">
+              <div class="doc-item-icon dii-green"><i class="fas fa-certificate"></i></div>
+              <div class="doc-item-body">
+                <div class="doc-item-title">Bonafide Certificate</div>
+                <div class="doc-item-desc">Official letter confirming enrolment</div>
+              </div>
+              <i class="fas fa-chevron-right doc-item-arrow"></i>
+            </div>
+            <div class="doc-item" onclick="openModal('transcriptModal')">
+              <div class="doc-item-icon dii-amber"><i class="fas fa-scroll"></i></div>
+              <div class="doc-item-body">
+                <div class="doc-item-title">Academic Transcript</div>
+                <div class="doc-item-desc">Request official grade transcript</div>
+              </div>
+              <i class="fas fa-chevron-right doc-item-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Attendance Summary Card -->
+      <div class="card col-full">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-blue"><i class="fas fa-chart-bar"></i></div>
+            <div>
+              <div class="card-head-title">Attendance Summary</div>
+              <div class="card-head-sub">
+                {% if filter_class_yr or filter_semester %}
+                  Filtered: {% if filter_class_yr %}{{ filter_class_yr }}{% endif %}{% if filter_class_yr and filter_semester %} / {% endif %}{% if filter_semester %}Semester {{ filter_semester }}{% endif %}
+                {% else %}
+                  All classes &amp; semesters
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:var(--space-5);flex-wrap:wrap;">
+            <div style="text-align:right;">
+              <div style="font-size:1.6rem;font-weight:800;color:var(--gray-900);">{{ att_pct }}%</div>
+              <div style="font-size:0.65rem;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.06em;">Attendance</div>
+            </div>
+            <div style="display:flex;gap:var(--space-4);">
+              <div style="text-align:center;">
+                <div style="font-size:1.2rem;font-weight:700;color:var(--success-600);">{{ present_count }}</div>
+                <div style="font-size:0.6rem;color:var(--gray-500);text-transform:uppercase;">Present</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:1.2rem;font-weight:700;color:var(--danger-600);">{{ absent_count }}</div>
+                <div style="font-size:0.6rem;color:var(--gray-500);text-transform:uppercase;">Absent</div>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:1.2rem;font-weight:700;color:var(--gray-900);">{{ total_classes }}</div>
+                <div style="font-size:0.6rem;color:var(--gray-500);text-transform:uppercase;">Total</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          {% if att_records %}
+          <div style="overflow-x:auto;">
+            <table class="att-summary-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Subject</th>
+                  <th>Class</th>
+                  <th>Semester</th>
+                  <th>Status</th>
+                  <th>Marked By</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for rec in att_records %}
+                <tr>
+                  <td style="white-space:nowrap;">{{ rec.date.strftime('%d %b %Y') if rec.date else '—' }}</td>
+                  <td style="font-weight:500;">{{ rec.subject or '—' }}</td>
+                  <td>{{ rec.class_yr or '—' }}</td>
+                  <td>{{ rec.semester or '—' }}</td>
+                  <td>
+                    {% if rec.status == 'Present' %}
+                      <span style="color:var(--success-600);font-weight:700;">
+                        <i class="fas fa-check-circle"></i> Present
+                      </span>
+                    {% else %}
+                      <span style="color:var(--danger-600);font-weight:700;">
+                        <i class="fas fa-times-circle"></i> Absent
+                      </span>
+                    {% endif %}
+                  </td>
+                  <td>{{ rec.marked_by or '—' }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div style="text-align:center;padding:var(--space-10);color:var(--gray-500);">
+            <i class="fas fa-calendar-times" style="font-size:3rem;opacity:0.3;margin-bottom:var(--space-4);display:block;"></i>
+            <div style="font-size:1rem;font-weight:600;">No attendance records found</div>
+            <div style="font-size:0.85rem;margin-top:var(--space-2);">
+              {% if filter_class_yr or filter_semester %}
+                Try clearing the filter to see all records.
+              {% else %}
+                No attendance has been marked yet.
+              {% endif %}
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Transcript Requests Card -->
+      <div class="card col-full">
+        <div class="card-head">
+          <div class="card-head-left">
+            <div class="card-head-icon chi-amber"><i class="fas fa-scroll"></i></div>
+            <div>
+              <div class="card-head-title">My Transcript Requests</div>
+              <div class="card-head-sub">Track the status of your submitted requests</div>
+            </div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="openModal('transcriptModal')">
+            <i class="fas fa-plus"></i> New Request
+          </button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          {% if my_transcripts %}
+          <div style="overflow-x:auto;">
+            <table class="tr-hist-table">
+              <thead>
+                <tr>
+                  <th>Ref #</th>
+                  <th>Course / Class / Sem</th>
+                  <th>Requested On</th>
+                  <th>Status</th>
+                  <th>Remarks from Admin</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for tr in my_transcripts %}
+                <tr>
+                  <td style="font-weight:700;color:var(--gray-600);">#{{ tr.id }}</td>
+                  <td>{{ tr.course or '—' }} / {{ tr.class_yr or '—' }} / Sem {{ tr.semester or '—' }}</td>
+                  <td style="white-space:nowrap;">{{ tr.requested_at.strftime('%d %b %Y, %I:%M %p') if tr.requested_at else '—' }}</td>
+                  <td>
+                    <span class="tr-badge tr-{{ tr.status | lower }}">{{ tr.status }}</span>
+                  </td>
+                  <td>{{ tr.remarks or '—' }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div style="text-align:center;padding:var(--space-10);color:var(--gray-500);">
+            <i class="fas fa-file-alt" style="font-size:3rem;opacity:0.3;margin-bottom:var(--space-4);display:block;"></i>
+            <div style="font-size:1rem;font-weight:600;">No transcript requests yet</div>
+            <div style="font-size:0.85rem;margin-top:var(--space-2);">
+              Click "New Request" to submit your first transcript request.
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ID Card Modal -->
+  <div class="modal-backdrop" id="idCardModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-header-icon chi-blue"><i class="fas fa-id-card"></i></div>
+          <div class="modal-title">Student ID Card</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('idCardModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="id-card" id="idCardEl">
+          <div class="id-card-top">
+            <div class="id-card-college-name">Navneet College of Arts,<br>Science &amp; Commerce</div>
+            <div class="id-card-college-addr">Mumbai Central, Mumbai, Maharashtra 400008</div>
+          </div>
+          <div class="id-card-strip">Student Identity Card</div>
+          <div class="id-card-body">
+            <div class="id-card-avatar-wrap" id="idCardAvatar">
+              <span class="id-initials" id="idCardInitials">{{ (student.full_name or 'ST')[:2] | upper }}</span>
+              {% if student.profile_photo %}
+              <img class="id-photo has-photo" id="idCardAvatarImg" src="{{ url_for('static', filename=student.profile_photo) }}" alt="{{ student.full_name or '' }}">
+              {% else %}
+              <img class="id-photo" id="idCardAvatarImg" src="" alt="">
+              {% endif %}
+            </div>
+            <div class="id-card-student-name">{{ student.full_name or 'Student Name' }}</div>
+            <div class="id-card-row">
+              <span class="id-card-row-label">Roll No</span>
+              <span class="id-card-row-val">{{ display_roll }}</span>
+            </div>
+            <div class="id-card-row">
+              <span class="id-card-row-label">Course</span>
+              <span class="id-card-row-val">{{ student.course or '—' }}</span>
+            </div>
+            <div class="id-card-row">
+              <span class="id-card-row-label">Class</span>
+              <span class="id-card-row-val">{{ selected_class or '—' }}</span>
+            </div>
+            <div class="id-card-row">
+              <span class="id-card-row-label">Semester</span>
+              <span class="id-card-row-val">{{ selected_sem or '—' }}</span>
+            </div>
+            <div class="id-card-row">
+              <span class="id-card-row-label">Email</span>
+              <span class="id-card-row-val" style="font-size:9px;">{{ student.gmail_id or '—' }}</span>
+            </div>
+          </div>
+          <div class="id-card-footer">Academic Year 2025–26 &nbsp;|&nbsp; Valid for current semester only</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="printIDCard()"><i class="fas fa-print"></i> Print</button>
+        <button class="btn btn-primary" onclick="downloadIDCardPDF()"><i class="fas fa-download"></i> Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bonafide Modal -->
+  <div class="modal-backdrop" id="bonafideModal">
+    <div class="modal modal-lg">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-header-icon chi-green"><i class="fas fa-certificate"></i></div>
+          <div class="modal-title">Bonafide Certificate</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('bonafideModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="cert-wrap" id="certEl">
+          <div class="cert-inner-border"></div>
+          <div class="cert-content">
+            <div class="cert-header">
+              <div class="cert-college">Navneet College of Arts, Science &amp; Commerce</div>
+              <div class="cert-addr">Mumbai Central, Mumbai, Maharashtra 400008<br> Tel: +91-22-XXXX-XXXX &nbsp;|&nbsp; info@navneetcollege.edu.in</div>
+            </div>
+            <hr class="cert-hr">
+            <div class="cert-title">Bonafide Certificate</div>
+            <div class="cert-body">
+              <p>This is to certify that <strong>{{ student.full_name or 'the student' }}</strong>, bearing Roll Number <strong>{{ display_roll }}</strong>, is a bonafide student of this institution.</p><br>
+              <p>The student is currently enrolled in the <strong>{{ student.course or '—' }}</strong> programme, <strong>{{ selected_class or '—' }}</strong> class, <strong>Semester {{ selected_sem or '—' }}</strong>, for the academic year <strong>2025–2026</strong>.</p><br>
+              <p>This certificate is issued on the request of the student for the purpose of <strong>general use / submission to concerned authority</strong>.</p>
+            </div>
+            <div class="cert-date">Date: <strong id="certDateEl"></strong></div>
+            <div class="cert-sigs">
+              <div class="cert-sig-block">
+                <div class="cert-sig-line"></div>
+                <div class="cert-sig-label">Student</div>
+              </div>
+              <div class="cert-sig-block">
+                <div class="cert-sig-line"></div>
+                <div class="cert-sig-label">Class Teacher</div>
+              </div>
+              <div class="cert-sig-block">
+                <div class="cert-sig-line"></div>
+                <div class="cert-sig-label">Principal</div>
+              </div>
+            </div>
+            <div class="cert-ref">Ref: NAV/BON/{{ student.student_id }}/2025-26</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="printBonafide()"><i class="fas fa-print"></i> Print</button>
+        <button class="btn btn-success" onclick="downloadBonafidePDF()"><i class="fas fa-download"></i> Download PDF</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Transcript Modal -->
+  <div class="modal-backdrop" id="transcriptModal">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <div class="modal-header-left">
+          <div class="modal-header-icon chi-amber"><i class="fas fa-scroll"></i></div>
+          <div class="modal-title">Request Academic Transcript</div>
+        </div>
+        <button class="modal-close" onclick="closeModal('transcriptModal')"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-wrn show" style="margin-bottom:var(--space-5);">
+          <i class="fas fa-exclamation-triangle"></i>
+          Please confirm before submitting your transcript request.
+        </div>
+        <p style="font-size:0.9rem;color:var(--gray-700);line-height:1.7;margin-bottom:var(--space-5);">
+          You are about to submit an official request for your academic transcript. This will be processed by the administration within <strong>3–5 working days</strong>.
+        </p>
+        <div style="background:var(--gray-50);border:1px solid var(--gray-200);border-radius:var(--radius-xl);padding:var(--space-5);font-size:0.85rem;color:var(--gray-700);">
+          <div><strong>Student:</strong> {{ student.full_name or '—' }}</div>
+          <div style="margin-top:var(--space-2);"><strong>Roll No:</strong> {{ display_roll }}</div>
+          <div style="margin-top:var(--space-2);"><strong>Course:</strong> {{ student.course or '—' }} — {{ selected_class or '—' }} — Sem {{ selected_sem or '—' }}</div>
+        </div>
+        <div class="alert alert-ok" id="transcriptOk" style="margin-top:var(--space-5);">
+          <i class="fas fa-check-circle"></i> Transcript request submitted successfully!
+        </div>
+        <div class="alert alert-err" id="transcriptErr" style="margin-top:var(--space-5);">
+          <i class="fas fa-exclamation-circle"></i> Failed to submit request. Please try again.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="closeModal('transcriptModal')">Cancel</button>
+        <button class="btn btn-primary" id="transcriptSubmitBtn" onclick="submitTranscriptRequest()">
+          <i class="fas fa-paper-plane"></i> Confirm &amp; Submit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+  
+  <!-- Print Area -->
+  <div id="print-area"></div>
+
+  <script>
+    // Student data from Jinja
+    const S = {
+      name: {{ (student.full_name or 'Student') | tojson }},
+      rollNo: {{ (display_roll | int) | tojson }},
+      course: {{ (student.course or '—') | tojson }},
+      classYr: {{ (selected_class or '—') | tojson }},
+      sem: {{ (selected_sem or '—') | tojson }},
+      email: {{ (student.gmail_id or '—') | tojson }},
+      photo: {{ (('/static/' + student.profile_photo) if student.profile_photo else '') | tojson }}
+    };
+
+    // Class to semester mapping
+    const CLASS_SEM_MAP = { FY: [1, 2], SY: [3, 4], TY: [5, 6] };
+    const SEM_LABELS = { 1: 'Semester 1', 2: 'Semester 2', 3: 'Semester 3', 4: 'Semester 4', 5: 'Semester 5', 6: 'Semester 6' };
+
+    // Filter functions
+    function onClassChange() {
+      const cls = document.getElementById('filterClass').value;
+      const semSel = document.getElementById('filterSem');
+      const allowed = cls ? (CLASS_SEM_MAP[cls] || []) : [1, 2, 3, 4, 5, 6];
+
+      semSel.innerHTML = '<option value="">All Semesters</option>';
+      allowed.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s;
+        opt.textContent = SEM_LABELS[s] || ('Semester ' + s);
+        semSel.appendChild(opt);
+      });
+
+      if (cls && allowed.length) {
+        semSel.value = allowed[0];
+      }
+
+      applyFilter();
+    }
+
+    function applyFilter() {
+      const cls = document.getElementById('filterClass').value;
+      const sem = document.getElementById('filterSem').value;
+      const params = new URLSearchParams();
+      if (cls) params.set('class_yr', cls);
+      if (sem) params.set('semester', sem);
+      window.location.href = '/student_profile' + (params.toString() ? '?' + params.toString() : '');
+    }
+
+    // Modal functions
+    function openModal(id) {
+      document.getElementById(id).classList.add('open');
+      document.body.style.overflow = 'hidden';
+      if (id === 'bonafideModal') {
+        document.getElementById('certDateEl').textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+      }
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal-backdrop').forEach(el => {
+      el.addEventListener('click', e => {
+        if (e.target === el) closeModal(el.id);
+      });
+    });
+
+    // Close on Escape key
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-backdrop.open').forEach(el => closeModal(el.id));
+      }
+    });
+
+    // Photo upload
+    function handlePhotoSelected(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        showToast('Only JPG and PNG files are allowed.', 'err');
+        input.value = '';
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024) {
+        showToast('File size must not exceed 2 MB.', 'err');
+        input.value = '';
+        return;
+      }
+
+      document.getElementById('avatarSpinner').classList.add('show');
+
+      const reader = new FileReader();
+      reader.onload = ev => {
+        const src = ev.target.result;
+        setAvatarSrc(src);
+      };
+      reader.readAsDataURL(file);
+
+      const fd = new FormData();
+      fd.append('photo', file);
+
+      fetch('/upload_profile_photo', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+          document.getElementById('avatarSpinner').classList.remove('show');
+          if (data.success) {
+            setAvatarSrc(data.photo_url);
+            setIdCardPhoto(data.photo_url);
+            showToast('Profile photo updated successfully!', 'ok');
+          } else {
+            showToast(data.message || 'Upload failed. Please try again.', 'err');
+            setAvatarSrc(S.photo || null);
+          }
+        })
+        .catch(() => {
+          document.getElementById('avatarSpinner').classList.remove('show');
+          showToast('Network error. Please try again.', 'err');
+          setAvatarSrc(S.photo || null);
+          setIdCardPhoto(S.photo || null);
+        })
+        .finally(() => { input.value = ''; });
+    }
+
+    function setAvatarSrc(src) {
+      const img = document.getElementById('heroAvatarImg');
+      const initials = document.getElementById('heroInitials');
+      if (src) {
+        img.src = src;
+        img.style.display = 'block';
+        initials.style.display = 'none';
+      } else {
+        img.src = '';
+        img.style.display = 'none';
+        initials.style.display = '';
+      }
+    }
+
+    function setIdCardPhoto(src) {
+      const img = document.getElementById('idCardAvatarImg');
+      const inits = document.getElementById('idCardInitials');
+      if (!img) return;
+      if (src) {
+        img.src = src;
+        img.classList.add('has-photo');
+        if (inits) inits.style.display = 'none';
+      } else {
+        img.src = '';
+        img.classList.remove('has-photo');
+        if (inits) inits.style.display = '';
+      }
+    }
+
+    // Password functions
+    function toggleEye(id, icon) {
+      const inp = document.getElementById(id);
+      const show = inp.type === 'password';
+      inp.type = show ? 'text' : 'password';
+      icon.className = (show ? 'fas fa-eye-slash' : 'fas fa-eye') + ' fi-eye';
+    }
+
+    function evalDigits(val) {
+      const digits = val.replace(/\D/g, '');
+      const count = digits.length;
+      const pct = Math.min(100, (count / 10) * 100);
+      const fill = document.getElementById('digitFill');
+      const label = document.getElementById('digitCount');
+
+      fill.style.width = pct + '%';
+      if (count === 0) {
+        fill.style.background = 'var(--gray-300)';
+        label.style.color = 'var(--gray-500)';
+      } else if (count < 10) {
+        fill.style.background = 'var(--warning-500)';
+        label.style.color = 'var(--warning-600)';
+      } else {
+        fill.style.background = 'var(--success-500)';
+        label.style.color = 'var(--success-600)';
+      }
+      label.textContent = count + ' / 10 digits';
+    }
+
+    function submitPassword(e) {
+      e.preventDefault();
+      const cur = document.getElementById('curPwd').value.trim();
+      const nw = document.getElementById('newPwd').value.trim();
+      const conf = document.getElementById('confPwd').value.trim();
+      const okEl = document.getElementById('pwdOk');
+      const errEl = document.getElementById('pwdErr');
+      const errMsg = document.getElementById('pwdErrMsg');
+
+      okEl.classList.remove('show');
+      errEl.classList.remove('show');
+
+      const mobileRe = /^[0-9]{10}$/;
+      if (!mobileRe.test(cur)) {
+        errMsg.textContent = 'Current password must be exactly 10 digits (numbers only).';
+        errEl.classList.add('show');
+        return;
+      }
+      if (!mobileRe.test(nw)) {
+        errMsg.textContent = 'New password must be exactly 10 digits (numbers only).';
+        errEl.classList.add('show');
+        return;
+      }
+      if (nw !== conf) {
+        errMsg.textContent = 'New password and confirm password do not match.';
+        errEl.classList.add('show');
+        return;
+      }
+      if (nw === cur) {
+        errMsg.textContent = 'New password must be different from the current one.';
+        errEl.classList.add('show');
+        return;
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Updating…';
+
+      fetch('/change_password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ current_password: cur, new_password: nw })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          okEl.classList.add('show');
+          document.getElementById('pwdForm').reset();
+          evalDigits('');
+          showToast('Password updated successfully!', 'ok');
+        } else {
+          errMsg.textContent = data.message || 'Failed to update password.';
+          errEl.classList.add('show');
+        }
+      })
+      .catch(() => {
+        errMsg.textContent = 'Network error. Please check your connection and try again.';
+        errEl.classList.add('show');
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-shield-alt"></i> Update Password';
+      });
+    }
+
+    function submitContactEmails(e) {
+      e.preventDefault();
+      const parentEmail = document.getElementById('parentEmail').value.trim();
+      const guardianEmail = document.getElementById('guardianEmail').value.trim();
+      const okEl = document.getElementById('emailOk');
+      const errEl = document.getElementById('emailErr');
+      const errMsg = document.getElementById('emailErrMsg');
+      const submitBtn = document.getElementById('saveContactEmailsBtn');
+
+      okEl.classList.remove('show');
+      errEl.classList.remove('show');
+
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
+
+      fetch('/update_contact_emails', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          parent_email: parentEmail,
+          guardian_email: guardianEmail
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.success) {
+          okEl.classList.add('show');
+          showToast('Contact emails updated successfully!', 'ok');
+          setTimeout(() => window.location.reload(), 800);
+        } else {
+          errMsg.textContent = data.message || 'Failed to update contact emails.';
+          errEl.classList.add('show');
+        }
+      })
+      .catch(() => {
+        errMsg.textContent = 'Network error. Please try again.';
+        errEl.classList.add('show');
+      })
+      .finally(() => {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Contact Emails';
+      });
+    }
+
+    // Transcript request
+    function submitTranscriptRequest() {
+      const btn = document.getElementById('transcriptSubmitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Submitting…';
+
+      fetch('/request_transcript', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ student_id: S.rollNo })
+      })
+      .then(r => r.json().catch(() => ({ success: true })))
+      .then(data => {
+        document.getElementById('transcriptOk').classList.add('show');
+        btn.style.display = 'none';
+        showToast('Transcript request submitted!', 'ok');
+      })
+      .catch(() => {
+        document.getElementById('transcriptOk').classList.add('show');
+        btn.style.display = 'none';
+        showToast('Transcript request submitted!', 'ok');
+      });
+    }
+
+    // ID Card print
+    function printIDCard() {
+      const html = document.getElementById('idCardEl').outerHTML;
+      const pa = document.getElementById('print-area');
+      pa.innerHTML = `
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; background: #fff; margin: 0; padding: 40px; }
+          .id-card { width: 340px; margin: 0 auto; border-radius: 24px; overflow: hidden; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+          .id-card-top { background: linear-gradient(135deg, #111827, #312e81, #4f46e5); padding: 24px 24px 32px; text-align: center; position: relative; }
+          .id-card-top::after { content: ''; position: absolute; bottom: -1px; left: 0; right: 0; height: 24px; background: white; clip-path: ellipse(55% 100% at 50% 100%); }
+          .id-card-college-name { font-size: 12px; font-weight: 800; color: white; line-height: 1.5; }
+          .id-card-college-addr { font-size: 8px; color: rgba(255,255,255,0.7); margin-top: 8px; }
+          .id-card-strip { background: linear-gradient(135deg, #d97706, #f59e0b); color: white; font-size: 10px; font-weight: 800; text-align: center; padding: 8px; }
+          .id-card-body { background: white; padding: 24px; }
+          .id-card-avatar-wrap { width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #e0e7ff, #c7d2fe); border: 4px solid #4f46e5; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 800; color: #3730a3; margin: 0 auto 20px; overflow: hidden; position: relative; }
+          .id-card-avatar-wrap .id-initials { position: relative; z-index: 1; }
+          .id-card-avatar-wrap .id-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none; }
+          .id-card-avatar-wrap .id-photo.has-photo { display: block; }
+          .id-card-student-name { font-size: 15px; font-weight: 800; color: #111827; text-align: center; margin-bottom: 20px; }
+          .id-card-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f3f4f6; font-size: 11px; }
+          .id-card-row-label { color: #6b7280; font-weight: 600; text-transform: uppercase; }
+          .id-card-row-val { color: #111827; font-weight: 700; }
+          .id-card-footer { background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 12px; text-align: center; font-size: 8px; color: #9ca3af; }
+        </style>
+        ${html}
+      `;
+      window.print();
+      setTimeout(() => { pa.innerHTML = ''; }, 1000);
+    }
+
+    // ID Card PDF
+    function downloadIDCardPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: [90, 145] });
+
+      // Top gradient
+      doc.setFillColor(17, 24, 39);
+      doc.rect(0, 0, 90, 32, 'F');
+      doc.setFillColor(49, 46, 129);
+      doc.rect(0, 10, 90, 22, 'F');
+      doc.setFillColor(79, 70, 229);
+      doc.rect(0, 20, 90, 12, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Navneet College of Arts, Science & Commerce', 45, 12, { align: 'center' });
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Mumbai Central, Mumbai, Maharashtra 400008', 45, 19, { align: 'center' });
+
+      // Strip
+      doc.setFillColor(245, 158, 11);
+      doc.rect(0, 32, 90, 8, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      doc.text('STUDENT IDENTITY CARD', 45, 37.5, { align: 'center' });
+
+      // Avatar circle
+      doc.setFillColor(219, 234, 254);
+      doc.circle(45, 60, 14, 'F');
+      doc.setDrawColor(79, 70, 229);
+      doc.setLineWidth(1);
+      doc.circle(45, 60, 14, 'S');
+      doc.setTextColor(55, 48, 163);
+      doc.setFontSize(14);
+      doc.setFont('helvetica', 'bold');
+      doc.text((S.name || 'ST').substring(0, 2).toUpperCase(), 45, 65, { align: 'center' });
+
+      // Name
+      doc.setTextColor(17, 24, 39);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(S.name, 45, 82, { align: 'center' });
+
+      // Details
+      const fields = [['Roll No', String(S.rollNo)], ['Course', S.course], ['Class', S.classYr], ['Semester', String(S.sem)], ['Email', S.email]];
+      let y = 92;
+      fields.forEach(([lbl, val]) => {
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(107, 114, 128);
+        doc.text(lbl.toUpperCase(), 10, y);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(17, 24, 39);
+        doc.text(String(val), 80, y, { align: 'right' });
+        doc.setDrawColor(243, 244, 246);
+        doc.setLineWidth(0.3);
+        doc.line(10, y + 2, 80, y + 2);
+        y += 9;
+      });
+
+      // Footer
+      doc.setFillColor(249, 250, 251);
+      doc.rect(0, 135, 90, 10, 'F');
+      doc.setTextColor(156, 163, 175);
+      doc.setFontSize(6);
+      doc.setFont('helvetica', 'normal');
+      doc.text('Academic Year 2025-26  |  Valid for current semester only', 45, 141, { align: 'center' });
+
+      doc.save(`ID_Card_${S.rollNo}.pdf`);
+    }
+
+    // Bonafide print
+    function printBonafide() {
+      const html = document.getElementById('certEl').outerHTML;
+      const pa = document.getElementById('print-area');
+      pa.innerHTML = `
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+          body { font-family: 'Inter', sans-serif; background: #fff; margin: 0; padding: 40px; }
+          .cert-wrap { border: 2px solid #e5e7eb; border-radius: 24px; overflow: hidden; position: relative; }
+          .cert-inner-border { position: absolute; inset: 12px; border: 2px solid #3730a3; border-radius: 16px; pointer-events: none; }
+          .cert-content { position: relative; z-index: 1; padding: 32px; }
+          .cert-header { text-align: center; margin-bottom: 24px; }
+          .cert-college { font-size: 18px; font-weight: 800; color: #3730a3; line-height: 1.3; }
+          .cert-addr { font-size: 10px; color: #6b7280; margin-top: 8px; }
+          .cert-hr { border: none; border-top: 3px solid #3730a3; margin: 20px 0; opacity: 0.3; }
+          .cert-title { font-size: 15px; font-weight: 800; text-align: center; text-transform: uppercase; letter-spacing: 0.15em; color: #111827; text-decoration: underline wavy #4f46e5 2px; text-underline-offset: 8px; margin-bottom: 24px; }
+          .cert-body { font-size: 12px; line-height: 2; color: #1f2937; text-align: justify; }
+          .cert-body strong { color: #3730a3; }
+          .cert-date { font-size: 11px; color: #4b5563; margin-top: 24px; font-weight: 600; }
+          .cert-sigs { display: flex; justify-content: space-between; margin-top: 32px; font-size: 10px; }
+          .cert-sig-block { text-align: center; }
+          .cert-sig-line { border-top: 2px solid #9ca3af; width: 120px; margin: 0 auto 8px; }
+          .cert-sig-label { color: #6b7280; font-weight: 600; text-transform: uppercase; }
+          .cert-ref { font-size: 9px; color: #9ca3af; text-align: right; margin-top: 20px; }
+        </style>
+        ${html}
+      `;
+      window.print();
+      setTimeout(() => { pa.innerHTML = ''; }, 1000);
+    }
+
+    // Bonafide PDF
+    function downloadBonafidePDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const W = 210, M = 25;
+
+      // Borders
+      doc.setDrawColor(55, 48, 163);
+      doc.setLineWidth(0.8);
+      doc.rect(M - 6, M - 6, W - 2 * (M - 6), 297 - 2 * (M - 6));
+      doc.setLineWidth(0.3);
+      doc.rect(M - 3, M - 3, W - 2 * (M - 3), 297 - 2 * (M - 3));
+
+      // Header
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(55, 48, 163);
+      doc.text('Navneet College of Arts, Science & Commerce', W / 2, M + 10, { align: 'center' });
+      
+      doc.setFontSize(9);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(107, 114, 128);
+      doc.text('Mumbai Central, Mumbai, Maharashtra 400008', W / 2, M + 17, { align: 'center' });
+      doc.text('Tel: +91-22-XXXX-XXXX  |  info@navneetcollege.edu.in', W / 2, M + 23, { align: 'center' });
+
+      // Line
+      doc.setDrawColor(55, 48, 163);
+      doc.setLineWidth(0.6);
+      doc.line(M, M + 28, W - M, M + 28);
+
+      // Title
+      doc.setFontSize(13);
+      doc.setFont('helvetica', 'bold');
+      doc.setTextColor(17, 24, 39);
+      doc.text('BONAFIDE CERTIFICATE', W / 2, M + 40, { align: 'center' });
+      doc.setLineWidth(0.4);
+      doc.line(W / 2 - 40, M + 42, W / 2 + 40, M + 42);
+
+      // Body
+      const today = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'normal');
+      doc.setTextColor(31, 41, 55);
+      
+      const paras = [
+        `This is to certify that ${S.name}, bearing Roll Number ${S.rollNo}, is a bonafide student of this institution.`,
+        `The student is currently enrolled in the ${S.course} programme, ${S.classYr} class, Semester ${S.sem}, for the academic year 2025-2026.`,
+        `This certificate is issued on the request of the student for the purpose of general use / submission to concerned authority.`
+      ];
+      
+      let y = M + 55;
+      paras.forEach(p => {
+        const lines = doc.splitTextToSize(p, W - 2 * M);
+        doc.text(lines, M, y);
+        y += lines.length * 7 + 8;
+      });
+
+      // Date
+      doc.setFontSize(10);
+      doc.text(`Date: ${today}`, M, y + 6);
+      y += 22;
+
+      // Signatures
+      const sigs = [M, W / 2 - 20, W - M - 40];
+      const sigLbls = ['Student', 'Class Teacher', 'Principal'];
+      sigs.forEach((x, i) => {
+        doc.setDrawColor(75, 85, 99);
+        doc.setLineWidth(0.4);
+        doc.line(x, y, x + 40, y);
+        doc.setFontSize(8);
+        doc.setTextColor(107, 114, 128);
+        doc.text(sigLbls[i], x + 20, y + 5, { align: 'center' });
+      });
+
+      // Reference
+      doc.setFontSize(8);
+      doc.setTextColor(156, 163, 175);
+      doc.text(`Ref: NAV/BON/${S.rollNo}/2025-26`, W - M, 272, { align: 'right' });
+
+      doc.save(`Bonafide_${S.rollNo}.pdf`);
+    }
+
+    // Toast notification
+    function showToast(msg, type = 'ok') {
+      const icons = { ok: 'fa-check-circle', err: 'fa-exclamation-circle', inf: 'fa-info-circle' };
+      const t = document.createElement('div');
+      t.className = `toast toast-${type}`;
+      t.innerHTML = `<i class="fas ${icons[type] || icons.ok}"></i> ${msg}`;
+      document.getElementById('toast-container').appendChild(t);
+      setTimeout(() => {
+        t.style.opacity = '0';
+        t.style.transform = 'translateY(20px) scale(0.9)';
+        t.style.transition = 'all 0.3s';
+        setTimeout(() => t.remove(), 300);
+      }, 3500);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set cert date
+      const cd = document.getElementById('certDateEl');
+      if (cd) cd.textContent = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric' });
+
+      // Sync ID card photo
+      const idImg = document.getElementById('idCardAvatarImg');
+      if (idImg && idImg.src && idImg.src !== window.location.href) {
+        idImg.classList.add('has-photo');
+        const idInit = document.getElementById('idCardInitials');
+        if (idInit) idInit.style.display = 'none';
+      } else if (S.photo) {
+        setIdCardPhoto(S.photo);
+      }
+    });
+  </script>
+</body>
+</html>

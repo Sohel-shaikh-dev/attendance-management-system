@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Teacher Dashboard - College Management System</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+        /* Segmented control */
+        .segmented{ display:flex; flex-wrap:wrap; gap:8px; }
+        .segmented input{ display:none; }
+        .segmented label{
+            padding:10px 14px; border-radius:10px; border:1px solid rgba(15,23,42,.12); cursor:pointer; font-weight:600; font-size:13px; color:#334155; background:#fff;
+            transition:all .2s var(--easing);
+        }
+        .segmented input:checked + label{ color:#fff; background:linear-gradient(135deg, var(--primary), var(--primary-d)); border-color: transparent; box-shadow:var(--shadow); }
+
+        /* KPI cards */
+        .dashboard-grid{ display:grid; gap:16px; margin-bottom:16px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+        .summary-card{ background:var(--card-bg); backdrop-filter:var(--glass-blur); -webkit-backdrop-filter:var(--glass-blur); border:1px solid var(--card-border); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow); position:relative; }
+        .summary-card .card-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:10px }
+        .card-title{ font-weight:600; color:#1f2a44; font-size:15px }
+        .card-icon{ width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; box-shadow: var(--shadow) }
+        .card-total-users .card-icon{ background:linear-gradient(135deg,#5B7CFA,#3F6DFF) }
+        .card-active-courses .card-icon{ background:linear-gradient(135deg,#60a5fa,#2dd4bf) }
+        .card-pending-actions .card-icon{ background:linear-gradient(135deg,#f472b6,#ef4444) }
+        .card-value{ font-family:'Poppins',sans-serif; font-size:clamp(22px, 2.6vw, 28px); font-weight:700; color:#0b1531; min-height:52px; display:flex; align-items:center; }
+        .card-label{ color:var(--muted); font-size:12px; margin-top:8px }
+        .summary-card{ transition:transform .35s var(--easing), box-shadow .35s var(--easing); will-change:transform; }
+        .summary-card:hover{ transform:translateY(-8px) scale(1.05); box-shadow:var(--shadow-strong); }
+        .count-up{ display:block; font-size:inherit; }
+        .trend-indicator{ margin-top:6px; font-size:12px; display:flex; align-items:center; gap:6px; color:#16a34a; }
+        .trend-indicator.negative{ color:#dc2626; }
+        .trend-indicator i{ font-size:10px; }
+        .kpi-sparkline{ width:100%; height:60px; margin-top:12px; }
+        
+        /* Layout specifics */
+        .filters{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:12px; align-items:end; }
+        .chart-controls{ display:flex; justify-content:flex-end; gap:10px; margin-bottom:6px; }
+        .chart-controls .btn{ border-radius:10px; font-size:13px; min-width:140px; }
+        .main-content.blurred{ filter:blur(2px); }
+        
+        /* Loaders & Modals */
+        #dashboard-loader{ position:fixed; inset:0; background:rgba(255,255,255,.65); z-index:var(--z-popover); display:flex; align-items:center; justify-content:center; backdrop-filter:blur(3px); display:none; }
+        #dashboard-loader.active{ display:flex; }
+        #dashboard-loader .spinner{ width:48px; height:48px; border:5px solid rgba(91,124,250,.2); border-top-color:var(--primary); border-radius:50%; animation:spin 1s linear infinite; }
+        @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+        .chart-modal{ position:fixed; inset:0; background:rgba(15,23,42,.55); display:none; align-items:center; justify-content:center; z-index:var(--z-popover); }
+        .chart-modal.active{ display:flex; }
+        .chart-modal-close{ position:absolute; top:10px; right:12px; border:none; background:transparent; font-size:22px; cursor:pointer; color:#0f172a; }
+        .chart-modal canvas{ height:420px !important; }
+
+        /* Charts Section */
+        .charts-grid{ display:grid; gap:16px; grid-template-columns:1fr; }
+        @media(min-width:768px){ .charts-grid{ grid-template-columns:1.2fr .8fr } }
+        .chart-container{ position:relative; height:320px; border-radius:14px; overflow:hidden; background:#fff; border:1px solid rgba(15,23,42,.06); }
+        .chart-title{ position:absolute; top:10px; left:10px; z-index:2; background:rgba(15,23,42,.65); color:#fff; padding:6px 10px; border-radius:10px; font-size:12px; pointer-events:none; }
+        .range-badge{ position:absolute; bottom:8px; right:10px; font-size:11px; color:#475569; background:rgba(148,163,184,.16); padding:4px 8px; border-radius:8px; }
+        @media (max-width:576px){ .chart-container{ height:280px } }
+
+        @media print{ 
+            .sidebar, .page-header, .glass-card{ display:none !important } 
+            .main-content{ margin:0 !important; width:100% !important; padding:0 !important } 
+            .dashboard-grid, .charts-section{ box-shadow:none } 
+        }
+    </style>
+</head>
+<body>
+    <div id="dashboard-loader">
+        <div class="spinner"></div>
+    </div>
+    <div id="toastWrap" class="toast-wrap"></div>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <div class="dashboard-container" id="main">
+        <div class="main-content">
+            <div class="page-header" data-aos="fade-up">
+                <div class="page-title"><i class="fas fa-gauge"></i><h1>Teacher Dashboard</h1></div>
+                <div class="header-actions">
+                    <button class="btn btn-light" id="sendAttendanceEmails"><i class="fas fa-envelope"></i> Send Emails Now</button>
+                    <button class="btn btn-light" id="exportKpiCsv"><i class="fas fa-file-csv"></i> Export CSV</button>
+                    <button class="btn btn-light" id="exportKpiPdf"><i class="fas fa-file-pdf"></i> Export PDF</button>
+                    <button class="btn btn-light" id="printDashboard"><i class="fas fa-print"></i> Print Dashboard</button>
+                </div>
+                <p>Course-wise attendance overview with quick insights</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="glass-card" data-aos="fade-up" data-aos-delay="40">
+                <div class="filters">
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label>Quick range</label>
+                        <div class="segmented">
+                            <input type="radio" name="range" id="rAll" value="all" checked><label for="rAll">All time</label>
+                            <input type="radio" name="range" id="rWeek" value="week"><label for="rWeek">Weekly</label>
+                            <input type="radio" name="range" id="rMonth" value="month"><label for="rMonth">Monthly</label>
+                            <input type="radio" name="range" id="rQuarter" value="quarter"><label for="rQuarter">Quarterly</label>
+                            <input type="radio" name="range" id="rYear" value="year"><label for="rYear">Yearly</label>
+                            <input type="radio" name="range" id="rCustom" value="custom"><label for="rCustom">Custom</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="startDate">Start date</label>
+                        <input type="date" id="startDate" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End date</label>
+                        <input type="date" id="endDate" class="form-control" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label for="classYr">Class</label>
+                        <select id="classYr" class="form-control">
+                            <option value="">All</option>
+                            <option value="FY">FY</option>
+                            <option value="SY">SY</option>
+                            <option value="TY">TY</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="semester">Semester</label>
+                        <select id="semester" class="form-control">
+                            <option value="">All</option>
+                            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" class="form-control" placeholder="Optional">
+                    </div>
+                    <div class="form-group">
+                        <button id="applyFilters" class="btn btn-primary"><i class="fas fa-filter"></i> Apply</button>
+                    </div>
+                    <div class="form-group">
+                        <button id="resetFilters" class="btn btn-light"><i class="fas fa-rotate"></i> Reset</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- KPIs -->
+            <div class="dashboard-grid">
+                <div class="summary-card card-total-users" data-aos="fade-up" data-aos-delay="60">
+                    <div class="card-header">
+                        <div class="card-title">Total Users</div>
+                        <div class="card-icon"><i class="fas fa-users"></i></div>
+                    </div>
+                    <div class="card-value"><span id="totalUsersValue" class="count-up" data-target="0">0</span></div>
+                    <div class="trend-indicator positive"><i class="fas fa-arrow-up"></i> +8% vs last month</div>
+                    <canvas id="sparklineTotalUsers" class="kpi-sparkline"></canvas>
+                    <div class="card-label">Registered users</div>
+                </div>
+
+                <div class="summary-card card-active-courses" data-aos="fade-up" data-aos-delay="80">
+                    <div class="card-header">
+                        <div class="card-title">Active Courses</div>
+                        <div class="card-icon"><i class="fas fa-book"></i></div>
+                    </div>
+                    <div class="card-value"><span id="activeCoursesValue" class="count-up" data-target="0">0</span></div>
+                    <div class="trend-indicator positive"><i class="fas fa-arrow-up"></i> +12% vs last week</div>
+                    <canvas id="sparklineActiveCourses" class="kpi-sparkline"></canvas>
+                    <div class="card-label">Running courses</div>
+                </div>
+
+                <div class="summary-card card-pending-actions" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <div class="card-title">Pending Actions</div>
+                        <div class="card-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    </div>
+                    <div class="card-value"><span id="pendingActionsValue" class="count-up" data-target="0">0</span></div>
+                    <div class="trend-indicator negative"><i class="fas fa-arrow-down"></i> -5% vs last week</div>
+                    <canvas id="sparklinePending" class="kpi-sparkline"></canvas>
+                    <div class="card-label">Today's absents</div>
+                </div>
+            </div>
+
+            <!-- Charts -->
+            <div class="glass-card charts-section" data-aos="fade-up" data-aos-delay="120">
+                <div class="charts-grid">
+                    <div class="chart-container">
+                    <div class="chart-title">Course-wise Present vs Absent</div>
+                    <div class="chart-controls">
+                        <button class="btn btn-light" id="chartTypeToggle"><i class="fas fa-chart-line"></i> Switch Chart Type</button>
+                        <button class="btn btn-light" id="fullscreenChart" title="Fullscreen"><i class="fas fa-expand"></i></button>
+                    </div>
+                    <div id="rangeBadgeStacked" class="range-badge">All time</div>
+                    <canvas id="courseStacked"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <div class="chart-title">Overall Present vs Absent</div>
+                        <div id="rangeBadgeDonut" class="range-badge">All time</div>
+                        <canvas id="overallDonut"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="chartModal" class="chart-modal">
+            <div class="chart-modal-content">
+                <button class="chart-modal-close" aria-label="Close">&times;</button>
+                <canvas id="modalChartCanvas"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    const dashboardLoader = document.getElementById('dashboard-loader');
+    const mainContent = document.querySelector('.main-content');
+    const chartModal = document.getElementById('chartModal');
+    const modalChartCanvas = document.getElementById('modalChartCanvas');
+    const chartTypeToggleBtn = document.getElementById('chartTypeToggle');
+    const fullscreenChartBtn = document.getElementById('fullscreenChart');
+    const exportCsvBtn = document.getElementById('exportKpiCsv');
+    const exportPdfBtn = document.getElementById('exportKpiPdf');
+    const printDashboardBtn = document.getElementById('printDashboard');
+    const sendAttendanceEmailsBtn = document.getElementById('sendAttendanceEmails');
+    const modalCloseBtn = chartModal ? chartModal.querySelector('.chart-modal-close') : null;
+    const toastWrap = document.getElementById('toastWrap');
+
+    let loaderTimeout;
+    let courseChartInstance = null;
+    let modalCourseChart = null;
+    let courseChartData = { labels: [], present: [], absent: [] };
+    let currentCourseChartType = 'bar';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        AOS.init({ duration: 700, easing: 'ease-in-out', once: true });
+        bindFilters();
+        bindEnhancements();
+        loadAll();
+        setInterval(() => location.reload(), 60000);
+    });
+
+    // Small helper: debounce to avoid too many API calls on quick changes
+    const debounce = (fn, delay=300) => {
+        let t; 
+        return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+    };
+    const debouncedLoadAll = debounce(loadAll, 250);
+
+    function bindFilters(){
+        const radios = document.querySelectorAll('input[name="range"]');
+        const sd = document.getElementById('startDate');
+        const ed = document.getElementById('endDate');
+        const classYr = document.getElementById('classYr');
+        const semester = document.getElementById('semester');
+        const subject = document.getElementById('subject');
+
+        // Range radio: toggle dates + auto load
+        radios.forEach(r => r.addEventListener('change', () => {
+            const v = document.querySelector('input[name="range"]:checked').value;
+            const custom = v === 'custom';
+            sd.disabled = !custom;
+            ed.disabled = !custom;
+            if (!custom){ sd.value = ''; ed.value = ''; }
+            debouncedLoadAll(); // auto filter on range change
+        }));
+
+        // Date fields (only when custom)
+        sd.addEventListener('change', () => {
+            if (!sd.disabled) debouncedLoadAll();
+        });
+        ed.addEventListener('change', () => {
+            if (!ed.disabled) debouncedLoadAll();
+        });
+
+        // Other filters
+        classYr.addEventListener('change', debouncedLoadAll);
+        semester.addEventListener('change', debouncedLoadAll);
+        subject.addEventListener('input', debounce(() => debouncedLoadAll(), 400));
+
+        // Buttons still work
+        document.getElementById('applyFilters').addEventListener('click', loadAll);
+        document.getElementById('resetFilters').addEventListener('click', () => {
+            classYr.value = '';
+            semester.value = '';
+            subject.value = '';
+            document.getElementById('rAll').checked = true;
+            sd.disabled = true; ed.disabled = true; sd.value=''; ed.value='';
+            loadAll();
+        });
+    }
+
+    function bindEnhancements(){
+        if (chartTypeToggleBtn) chartTypeToggleBtn.addEventListener('click', toggleChartType);
+        if (fullscreenChartBtn) fullscreenChartBtn.addEventListener('click', openChartModal);
+        if (exportCsvBtn) exportCsvBtn.addEventListener('click', exportKpiCsv);
+        if (exportPdfBtn) exportPdfBtn.addEventListener('click', exportKpiPdf);
+        if (printDashboardBtn) printDashboardBtn.addEventListener('click', () => window.print());
+        if (sendAttendanceEmailsBtn) sendAttendanceEmailsBtn.addEventListener('click', sendAttendanceEmailsNow);
+        if (modalCloseBtn) modalCloseBtn.addEventListener('click', closeChartModal);
+        if (chartModal){
+            chartModal.addEventListener('click', (event) => {
+                if (event.target === chartModal) closeChartModal();
+            });
+        }
+    }
+
+    function showChartLoader(){
+        if (!dashboardLoader || !mainContent) return;
+        dashboardLoader.classList.add('active');
+        mainContent.classList.add('blurred');
+        if (loaderTimeout) clearTimeout(loaderTimeout);
+        loaderTimeout = setTimeout(() => hideChartLoader(), 1000);
+    }
+
+    function hideChartLoader(){
+        if (!dashboardLoader || !mainContent) return;
+        dashboardLoader.classList.remove('active');
+        mainContent.classList.remove('blurred');
+    }
+
+    function showToast(message, type='ok'){
+        if (!toastWrap) return;
+        const el = document.createElement('div');
+        el.className = `toast-msg ${type}`;
+        el.textContent = message;
+        toastWrap.appendChild(el);
+        setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(-6px)';
+            setTimeout(() => el.remove(), 220);
+        }, 2600);
+    }
+
+    function animateCountUp(id, value){
+        const el = document.getElementById(id);
+        if (!el) return;
+        const target = Number(value) || 0;
+        const start = Number(el.dataset.currentValue ?? el.textContent.replace(/,/g, '')) || 0;
+        const duration = 600;
+        const startTime = performance.now();
+        el.dataset.target = target;
+        const step = (timestamp) => {
+            const progress = Math.min((timestamp - startTime) / duration, 1);
+            const current = Math.round(start + (target - start) * progress);
+            el.textContent = current;
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            } else {
+                el.dataset.currentValue = target;
+            }
+        };
+        requestAnimationFrame(step);
+    }
+
+    function exportKpiCsv(){
+        const cards = document.querySelectorAll('.summary-card');
+        const rows = [['Metric','Value','Trend']];
+        cards.forEach(card => {
+            const metric = card.querySelector('.card-title')?.textContent.trim() || '';
+            const valueEl = card.querySelector('.card-value .count-up');
+            const value = valueEl?.dataset.target ?? valueEl?.textContent.trim() ?? card.querySelector('.card-value')?.textContent.trim() ?? '';
+            const trend = card.querySelector('.trend-indicator')?.textContent.trim().replace(/\s+/g, ' ') || '';
+            rows.push([metric, value, trend]);
+        });
+        const csv = rows.map(row => row.map(cell => `"${cell.replace(/"/g, '""')}"`).join(',')).join('\n');
+        const link = document.createElement('a');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        link.href = URL.createObjectURL(blob);
+        link.download = 'kpi-summary.csv';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    }
+
+    async function exportKpiPdf(){
+        const PdfCtor = window.jspdf?.jsPDF || window.jsPDF?.jsPDF || window.jsPDF;
+        const target = document.querySelector('.main-content');
+        if (PdfCtor && window.html2canvas && target){
+            try {
+                const canvas = await html2canvas(target, { scale: 2, backgroundColor: '#fff' });
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new PdfCtor({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const imgProps = pdf.getImageProperties(imgData);
+                const ratio = Math.min(pageWidth / imgProps.width, pageHeight / imgProps.height);
+                const imgWidth = imgProps.width * ratio;
+                const imgHeight = imgProps.height * ratio;
+                pdf.addImage(imgData, 'PNG', (pageWidth - imgWidth) / 2, 10, imgWidth, imgHeight);
+                pdf.save('kpi-dashboard.pdf');
+                return;
+        } catch (err) {
+            console.warn('PDF export failed, falling back to print', err);
+        }
+    }
+        window.print();
+    }
+
+    async function sendAttendanceEmailsNow(){
+        if (!sendAttendanceEmailsBtn) return;
+        const oldHtml = sendAttendanceEmailsBtn.innerHTML;
+        sendAttendanceEmailsBtn.disabled = true;
+        sendAttendanceEmailsBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+        try {
+            const res = await fetch('/admin/trigger-daily-email', {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+            const data = await res.json();
+            showToast(data.message || (data.success ? 'Email job triggered.' : 'Unable to trigger email job.'), data.success ? 'ok' : 'err');
+        } catch (err) {
+            console.error('Email trigger failed:', err);
+            showToast('Unable to trigger email sending right now.', 'err');
+        } finally {
+            sendAttendanceEmailsBtn.disabled = false;
+            sendAttendanceEmailsBtn.innerHTML = oldHtml;
+        }
+    }
+
+    function getPresetRange(range){
+        const end = new Date();
+        const toISO = d => d.toISOString().split('T')[0];
+        if (range === 'week'){
+            const start = new Date(); start.setDate(end.getDate() - 6);
+            return { start: toISO(start), end: toISO(end), label: 'Last 7 days' };
+        }
+        if (range === 'month'){
+            const start = new Date(end.getFullYear(), end.getMonth(), 1);
+            return { start: toISO(start), end: toISO(end), label: 'This month' };
+        }
+        if (range === 'quarter'){
+            const qStartMonth = Math.floor(end.getMonth()/3)*3;
+            const start = new Date(end.getFullYear(), qStartMonth, 1);
+            return { start: toISO(start), end: toISO(end), label: 'This quarter' };
+        }
+        if (range === 'year'){
+            const start = new Date(end.getFullYear(), 0, 1);
+            return { start: toISO(start), end: toISO(end), label: 'This year' };
+        }
+        return { start: null, end: null, label: 'All time' };
+    }
+
+    function getFilters(){
+        const params = new URLSearchParams();
+        const range = document.querySelector('input[name="range"]:checked').value;
+        params.set('range', range);
+
+        if (range === 'custom'){
+            const sd = document.getElementById('startDate').value;
+            const ed = document.getElementById('endDate').value;
+            if (sd) params.set('start_date', sd);
+            if (ed) params.set('end_date', ed);
+        } else {
+            const p = getPresetRange(range);
+            if (p.start) params.set('start_date', p.start);
+            if (p.end) params.set('end_date', p.end);
+        }
+
+        const classYr = document.getElementById('classYr').value;
+        const semester = document.getElementById('semester').value;
+        const subject = document.getElementById('subject').value.trim();
+        if (classYr) params.set('class_yr', classYr);
+        if (semester) params.set('semester', semester);
+        if (subject) params.set('subject', subject);
+
+        return params;
+    }
+
+    let overallDonutChart = null;
+
+    function toggleChartType(){
+        const nextType = currentCourseChartType === 'bar' ? 'line' : 'bar';
+        showChartLoader();
+        requestAnimationFrame(() => {
+            renderCourseChart(nextType, courseChartData.labels, courseChartData.present, courseChartData.absent);
+        });
+    }
+
+    function openChartModal(){
+        if (!chartModal) return;
+        chartModal.classList.add('active');
+        renderModalChart();
+    }
+
+    function closeChartModal(){
+        if (!chartModal) return;
+        chartModal.classList.remove('active');
+        if (modalCourseChart){
+            modalCourseChart.destroy();
+            modalCourseChart = null;
+        }
+    }
+
+    function renderModalChart(){
+        if (!modalChartCanvas || !courseChartData.labels.length) return;
+        const ctx = modalChartCanvas.getContext('2d');
+        if (modalCourseChart) modalCourseChart.destroy();
+        modalCourseChart = new Chart(ctx, buildCourseChartConfig(currentCourseChartType, courseChartData.labels, courseChartData.present, courseChartData.absent));
+    }
+
+    function buildCourseChartConfig(type, labels, present = [], absent = []){
+        const stacked = type === 'bar';
+        const presentDataset = {
+            label: 'Present',
+            data: present,
+            borderColor: '#5B7CFA',
+            backgroundColor: stacked ? '#5B7CFA' : 'rgba(91,124,250,.15)',
+            borderWidth: stacked ? 0 : 3,
+            tension: stacked ? 0 : 0.35,
+            fill: false,
+            pointRadius: stacked ? 0 : 5,
+            pointBackgroundColor: '#fff',
+            stack: stacked ? 'stack1' : undefined,
+            borderRadius: stacked ? 6 : 0
+        };
+        const absentDataset = {
+            label: 'Absent',
+            data: absent,
+            borderColor: '#f472b6',
+            backgroundColor: stacked ? '#f472b6' : 'rgba(244,114,182,.15)',
+            borderWidth: stacked ? 0 : 3,
+            tension: stacked ? 0 : 0.35,
+            fill: false,
+            pointRadius: stacked ? 0 : 5,
+            pointBackgroundColor: '#fff',
+            stack: stacked ? 'stack1' : undefined,
+            borderRadius: stacked ? 6 : 0
+        };
+        const tooltipFooter = (items) => {
+            const index = items?.[0]?.dataIndex ?? 0;
+            const total = (present?.[index] || 0) + (absent?.[index] || 0);
+            const pctAbsent = total ? Math.round(((absent?.[index] || 0) / total) * 100) : 0;
+            return `Total: ${total} | Absent: ${pctAbsent}%`;
+        };
+
+        return {
+            type,
+            data: {
+                labels,
+                datasets: [presentDataset, absentDataset]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 44 } },
+                elements: { line: { borderWidth: 3, pointHoverRadius: 8 } },
+                scales: {
+                    x: { stacked, ticks: { autoSkip: false, maxRotation: 45, minRotation: 0 } },
+                    y: { stacked, beginAtZero: true, ticks: { precision: 0 } }
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: {
+                        callbacks: {
+                            footer: tooltipFooter
+                        }
+                    }
+                }
+            }
+        };
+    }
+
+    function renderCourseChart(type, labels, present, absent){
+        const ctx = document.getElementById('courseStacked').getContext('2d');
+        if (courseChartInstance) courseChartInstance.destroy();
+        courseChartData = {
+            labels: Array.isArray(labels) ? [...labels] : [],
+            present: Array.isArray(present) ? [...present] : [],
+            absent: Array.isArray(absent) ? [...absent] : []
+        };
+        currentCourseChartType = type;
+        courseChartInstance = new Chart(ctx, buildCourseChartConfig(type, courseChartData.labels, courseChartData.present, courseChartData.absent));
+        updateChartToggleIcon();
+    }
+
+    function updateChartToggleIcon(){
+        if (!chartTypeToggleBtn) return;
+        const icon = chartTypeToggleBtn.querySelector('i');
+        if (!icon) return;
+        icon.classList.remove('fa-chart-line', 'fa-chart-bar');
+        icon.classList.add(currentCourseChartType === 'bar' ? 'fa-chart-bar' : 'fa-chart-line');
+    }
+
+    function renderOverallDonut(totalPresent, totalAbsent){
+        const ctx = document.getElementById('overallDonut').getContext('2d');
+        if (overallDonutChart) overallDonutChart.destroy();
+
+        overallDonutChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Present','Absent'],
+                datasets: [{ data: [totalPresent, totalAbsent], backgroundColor: ['#22d3ee','#ef4444'], borderWidth: 2 }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 44 } }, // more top space => title overlap fix
+                cutout: '60%',
+                plugins: {
+                    legend: { position: 'bottom' },
+                    tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw}` } }
+                }
+            },
+            plugins: [{
+                id: 'centerTotal',
+                afterDraw(chart){ 
+                    const {ctx, chartArea:{left,right,top,bottom}} = chart;
+                    const total = chart.data.datasets[0].data.reduce((a,b)=>a+(+b||0),0);
+                    if(!total) return;
+                    ctx.save();
+                    ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillStyle='#0f172a';
+                    ctx.font='700 16px Inter';
+                    ctx.fillText(`Total ${total}`, (left+right)/2, (top+bottom)/2);
+                    ctx.restore();
+                }
+            }]
+        });
+    }
+
+    async function loadAll(){
+        showChartLoader();
+        const params = getFilters();
+        const range = (new URLSearchParams(params)).get('range') || 'all';
+        const rInfo = (range === 'custom')
+            ? (() => {
+                const sd = document.getElementById('startDate').value;
+                const ed = document.getElementById('endDate').value;
+                return { label: (sd||'…') + ' → ' + (ed||'…') };
+              })()
+            : getPresetRange(range);
+
+        try {
+            // Summary (if your backend teacher_dashboard_data supports date filters; else these may stay global)
+            const sumResp = await fetch(`{{ url_for('teacher_dashboard_data') }}?${params.toString()}`, { headers: { 'Accept':'application/json' } });
+            if (sumResp.ok){
+                const data = await sumResp.json();
+                const s = data.summary || {};
+                animateCountUp('totalUsersValue', s.total_users ?? 0);
+                animateCountUp('activeCoursesValue', s.active_courses ?? 0);
+                animateCountUp('pendingActionsValue', s.pending_actions ?? 0);
+            }
+
+            // Course-wise attendance (charts)
+            const resp = await fetch(`/api/teacher-dashboard/course-attendance?${params.toString()}`, { headers: { 'Accept':'application/json' } });
+            if (!resp.ok) throw new Error('course-attendance ' + resp.status);
+            const json = await resp.json();
+
+            const labels = json.labels || [];
+            const present = json.present || [];
+            const absent = json.absent || [];
+            renderCourseChart(currentCourseChartType, labels, present, absent);
+            renderOverallDonut((json.totals?.present)||0, (json.totals?.absent)||0);
+
+            // Update range badges
+            document.getElementById('rangeBadgeStacked').textContent = rInfo.label || 'All time';
+            document.getElementById('rangeBadgeDonut').textContent = rInfo.label || 'All time';
+        } catch (e) {
+            console.error('Load error:', e);
+            renderCourseChart(currentCourseChartType, [], [], []);
+            animateCountUp('totalUsersValue', 0);
+            animateCountUp('activeCoursesValue', 0);
+            animateCountUp('pendingActionsValue', 0);
+            renderOverallDonut(0,0);
+            document.getElementById('rangeBadgeStacked').textContent = 'All time';
+            document.getElementById('rangeBadgeDonut').textContent = 'All time';
+        }
+    }
+</script>
+</body>
+</html>

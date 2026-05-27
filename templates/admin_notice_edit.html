@@ -1,0 +1,1709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Edit Notice • Teacher Panel</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- Quill rich-text editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+        /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+
+        /* ===== DARK MODE SUPPORT ===== */
+        [data-theme="dark"] {
+            --glass-light: rgba(17, 24, 39, 0.7);
+            --glass-medium: rgba(17, 24, 39, 0.5);
+            --glass-heavy: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --gray-50: #111827;
+            --gray-100: #1f2937;
+            --gray-200: #374151;
+            --gray-300: #4b5563;
+            --gray-400: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-600: #d1d5db;
+            --gray-700: #e5e7eb;
+            --gray-800: #f3f4f6;
+            --gray-900: #f9fafb;
+            --warning-50: #422006;
+            --warning-100: #713f12;
+            --warning-200: #854d0e;
+            --warning-300: #a16207;
+            --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        html {
+            font-family: var(--font-sans);
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--gray-900);
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(245, 158, 11, 0.15), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(249, 115, 22, 0.12), transparent 60%),
+                linear-gradient(180deg, #f6f7fb 0%, #edf1f7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+
+        [data-theme="dark"] body {
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(245, 158, 11, 0.08), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(249, 115, 22, 0.06), transparent 60%),
+                linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--warning-400), var(--warning-600));
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-700));
+        }
+
+        /* Selection style */
+        ::selection {
+            background: var(--warning-500);
+            color: white;
+        }
+
+        /* ===== BACKGROUND DECORATIONS ===== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration .blob-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--warning-400);
+            animation-delay: 0s;
+        }
+
+        .bg-decoration .blob-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--primary-400);
+            animation-delay: -5s;
+        }
+
+        .bg-decoration .blob-3 {
+            top: 40%;
+            left: 30%;
+            width: 400px;
+            height: 400px;
+            background: var(--success-500);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.05); }
+            50% { transform: translate(-5%, -5%) scale(0.95); }
+            75% { transform: translate(-5%, 5%) scale(1.02); }
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: var(--z-popover);
+            transition: var(--transition-bounce);
+            color: var(--gray-900);
+            font-size: 1.4rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            background: var(--warning-500);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                bottom: var(--space-4);
+                right: var(--space-4);
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== LAYOUT ===== */
+        #main {
+            margin-left: var(--sidebar-width);
+            padding: var(--space-5) var(--space-6) var(--space-8);
+            transition: margin-left var(--transition-base);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            #main {
+                margin-left: 0;
+                padding: 80px var(--space-4) var(--space-6);
+            }
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-5);
+            padding: var(--space-6) var(--space-8);
+            border-radius: var(--radius-3xl);
+            background: linear-gradient(135deg, var(--warning-600) 0%, var(--warning-700) 100%);
+            color: white;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            animation: headerGlow 8s infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            from { box-shadow: var(--shadow-2xl); }
+            to { box-shadow: 0 30px 60px -12px rgba(217, 119, 6, 0.5); }
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 70%;
+            height: 250%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            animation: headerShimmer 10s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            from { transform: rotate(-15deg) translateX(-10%); }
+            to { transform: rotate(-15deg) translateX(10%); }
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: -60%;
+            left: -10%;
+            width: 50%;
+            height: 180%;
+            background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hdr-left {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hdr-left h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+
+        .hdr-left h1 i {
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .hdr-left p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .hdr-right {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* ===== MODE TOGGLE ===== */
+        .mode-toggle {
+            display: flex;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
+            padding: 4px;
+            gap: 4px;
+            backdrop-filter: blur(8px);
+        }
+
+        .mode-btn {
+            padding: var(--space-2) var(--space-5);
+            border-radius: var(--radius-full);
+            border: none;
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .mode-btn i {
+            font-size: 0.9rem;
+        }
+
+        .mode-btn.active {
+            background: white;
+            color: var(--warning-700);
+            box-shadow: var(--shadow-md);
+        }
+
+        .mode-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.25);
+            color: white;
+        }
+
+        /* ===== EDITOR LAYOUT ===== */
+        .editor-layout {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: var(--space-5);
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .editor-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ===== FORM CARD ===== */
+        .form-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-3xl);
+            box-shadow: var(--shadow-xl), var(--neo-light);
+            padding: var(--space-8);
+            animation: slideUp 0.6s var(--transition-bounce);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-card:hover {
+            border-color: var(--warning-300);
+        }
+
+        /* ===== SIDE PANEL ===== */
+        .side-panel {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .panel-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            padding: var(--space-5) var(--space-6);
+            transition: var(--transition-bounce);
+            animation: slideUp 0.6s var(--transition-bounce) 0.1s both;
+        }
+
+        .panel-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl), var(--neo-light);
+            border-color: var(--warning-300);
+        }
+
+        .panel-title {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-500);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .panel-title i {
+            color: var(--warning-500);
+        }
+
+        /* ===== FORM ELEMENTS ===== */
+        .form-group {
+            margin-bottom: var(--space-5);
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: var(--space-2);
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--gray-700);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .form-group label i {
+            color: var(--warning-500);
+        }
+
+        .form-control {
+            width: 100%;
+            height: 48px;
+            padding: 0 var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: 0.95rem;
+            background: white;
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .form-control:hover {
+            border-color: var(--warning-300);
+        }
+
+        .form-control:focus {
+            border-color: var(--warning-500);
+            box-shadow: 0 0 0 4px var(--warning-100);
+            transform: translateY(-1px);
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 0.7rem;
+            color: var(--gray-400);
+            margin-top: var(--space-2);
+            transition: color var(--transition-base);
+        }
+
+        .char-counter.warn {
+            color: var(--warning-600);
+        }
+
+        .char-counter.over {
+            color: var(--danger-600);
+            font-weight: 600;
+        }
+
+        /* ===== QUILL EDITOR ===== */
+        .quill-wrap {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            transition: var(--transition-base);
+            background: white;
+        }
+
+        .quill-wrap:focus-within {
+            border-color: var(--warning-500);
+            box-shadow: 0 0 0 4px var(--warning-100);
+        }
+
+        .ql-toolbar.ql-snow {
+            border: none !important;
+            border-bottom: 1px solid var(--gray-200) !important;
+            background: var(--gray-50);
+            font-family: var(--font-sans);
+        }
+
+        .ql-container.ql-snow {
+            border: none !important;
+            font-family: var(--font-sans);
+            font-size: 0.95rem;
+        }
+
+        .ql-editor {
+            min-height: 200px;
+            padding: var(--space-4);
+        }
+
+        .ql-editor.ql-blank::before {
+            color: var(--gray-400);
+            font-style: normal;
+            left: var(--space-4);
+            right: var(--space-4);
+        }
+
+        /* ===== PRIORITY GROUP ===== */
+        .priority-group {
+            display: flex;
+            gap: var(--space-2);
+        }
+
+        .priority-group input[type="radio"] {
+            display: none;
+        }
+
+        .priority-group label {
+            flex: 1;
+            text-align: center;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            border-radius: var(--radius-xl);
+            border: 2px solid var(--gray-200);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            color: var(--gray-600);
+            background: white;
+        }
+
+        .priority-group label:hover {
+            border-color: var(--warning-400);
+            color: var(--warning-600);
+            transform: translateY(-1px);
+        }
+
+        .priority-group input[value="Low"]:checked + label {
+            background: var(--success-50);
+            border-color: var(--success-500);
+            color: var(--success-700);
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.2);
+        }
+
+        .priority-group input[value="Medium"]:checked + label {
+            background: var(--warning-50);
+            border-color: var(--warning-500);
+            color: var(--warning-700);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
+        }
+
+        .priority-group input[value="High"]:checked + label {
+            background: var(--danger-50);
+            border-color: var(--danger-500);
+            color: var(--danger-700);
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.2);
+        }
+
+        /* ===== TOGGLE SWITCHES ===== */
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-3) 0;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .toggle-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .toggle-info strong {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .toggle-info span {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 48px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--gray-300);
+            border-radius: 24px;
+            transition: .3s;
+        }
+
+        .toggle-slider::before {
+            content: '';
+            position: absolute;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background: var(--success-500);
+        }
+
+        .toggle-switch.pin input:checked + .toggle-slider {
+            background: var(--warning-500);
+        }
+
+        .toggle-switch input:checked + .toggle-slider::before {
+            transform: translateX(24px);
+        }
+
+        /* ===== INFO ROW ===== */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-2) 0;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.85rem;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row .lbl {
+            color: var(--gray-500);
+        }
+
+        .info-row .val {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        /* ===== FORM ACTIONS ===== */
+        .form-actions {
+            display: flex;
+            gap: var(--space-3);
+            margin-top: var(--space-6);
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--space-2);
+            height: 48px;
+            padding: 0 var(--space-5);
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            flex: 1;
+        }
+
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::after {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, var(--success-500), var(--success-600));
+            color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-update:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-draft {
+            background: white;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-draft:hover {
+            border-color: var(--warning-400);
+            color: var(--warning-600);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: var(--gray-500);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--danger-400);
+            color: var(--danger-600);
+        }
+
+        /* ===== PREVIEW PANEL ===== */
+        #previewPanel {
+            display: none;
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-3xl);
+            box-shadow: var(--shadow-xl), var(--neo-light);
+            padding: var(--space-8);
+            animation: slideUp 0.5s var(--transition-bounce);
+        }
+
+        .preview-hdr {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-5);
+            padding-bottom: var(--space-5);
+            margin-bottom: var(--space-5);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .preview-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, var(--warning-500), var(--warning-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 8px 16px -4px rgba(245, 158, 11, 0.3);
+        }
+
+        .preview-title-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            line-height: 1.3;
+        }
+
+        .preview-tags {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+
+        .ptag {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .ptag-active {
+            background: var(--success-50);
+            color: var(--success-700);
+            border: 1px solid var(--success-200);
+        }
+
+        .ptag-inactive {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border: 1px solid var(--danger-200);
+        }
+
+        .ptag-pinned {
+            background: var(--warning-50);
+            color: var(--warning-700);
+            border: 1px solid var(--warning-200);
+        }
+
+        .ptag-priority-low {
+            background: var(--success-50);
+            color: var(--success-700);
+            border: 1px solid var(--success-200);
+        }
+
+        .ptag-priority-medium {
+            background: var(--warning-50);
+            color: var(--warning-700);
+            border: 1px solid var(--warning-200);
+        }
+
+        .ptag-priority-high {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border: 1px solid var(--danger-200);
+        }
+
+        .preview-body {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--gray-700);
+        }
+
+        .preview-body h1, .preview-body h2, .preview-body h3 {
+            margin-top: var(--space-4);
+            margin-bottom: var(--space-2);
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .preview-body p {
+            margin-bottom: var(--space-4);
+        }
+
+        .preview-body ul, .preview-body ol {
+            margin-bottom: var(--space-4);
+            padding-left: var(--space-6);
+        }
+
+        .preview-footer {
+            margin-top: var(--space-5);
+            padding-top: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            display: flex;
+            gap: var(--space-5);
+            flex-wrap: wrap;
+        }
+
+        .preview-footer i {
+            color: var(--warning-500);
+            margin-right: var(--space-1);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: var(--z-modal);
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-5);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: var(--radius-3xl);
+            padding: var(--space-8);
+            max-width: 440px;
+            width: 100%;
+            box-shadow: var(--shadow-2xl);
+            animation: modalSlide 0.4s var(--transition-bounce);
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-icon {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: var(--success-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+            font-size: 2rem;
+            color: var(--success-600);
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: var(--space-2);
+            color: var(--gray-900);
+        }
+
+        .modal-msg {
+            font-size: 0.9rem;
+            color: var(--gray-600);
+            text-align: center;
+            margin-bottom: var(--space-5);
+            line-height: 1.7;
+        }
+
+        .modal-msg strong {
+            color: var(--gray-900);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+            height: 44px;
+        }
+
+        .btn-modal-cancel {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-200);
+        }
+
+        .btn-modal-cancel:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-modal-confirm {
+            background: linear-gradient(135deg, var(--success-500), var(--success-600));
+            color: white;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-modal-confirm:hover {
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        /* ===== LOADING OVERLAY ===== */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(8px);
+            z-index: var(--z-modal);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: var(--space-4);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--gray-200);
+            border-top-color: var(--warning-500);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .loading-sub {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: var(--space-6);
+            right: var(--space-6);
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-4) var(--space-5);
+            box-shadow: var(--shadow-2xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            min-width: 300px;
+            max-width: 360px;
+            pointer-events: all;
+            border-left: 4px solid var(--success-500);
+            animation: toastIn 0.4s var(--transition-bounce) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--success-500);
+            animation: toastProgress 3.5s linear forwards;
+        }
+
+        .toast.toast-error {
+            border-left-color: var(--danger-500);
+        }
+        .toast.toast-error::before {
+            background: var(--danger-500);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px) scale(0.9);
+            }
+        }
+
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .toast-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--success-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success-600);
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .toast.toast-error .toast-icon {
+            background: var(--danger-50);
+            color: var(--danger-600);
+        }
+
+        .toast-body {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .toast-msg {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        .toast-close {
+            cursor: pointer;
+            color: var(--gray-400);
+            font-size: 0.8rem;
+            transition: var(--transition-base);
+        }
+
+        .toast-close:hover {
+            color: var(--danger-600);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 992px) {
+            .editor-layout {
+                gap: var(--space-4);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .hdr-right {
+                width: 100%;
+            }
+            
+            .mode-toggle {
+                width: 100%;
+            }
+            
+            .mode-btn {
+                flex: 1;
+                justify-content: center;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .priority-group {
+                flex-direction: column;
+            }
+            
+            .preview-hdr {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .preview-tags {
+                justify-content: center;
+            }
+            
+            .preview-footer {
+                justify-content: center;
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .form-card, #previewPanel {
+                padding: var(--space-5);
+            }
+            
+            .toast {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">Saving Changes...</div>
+        <div class="loading-sub">Please wait, do not close this page.</div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fas fa-check-circle"></i></div>
+            <div class="modal-title">Save Changes?</div>
+            <div class="modal-msg">
+                You are about to update this notice.<br>
+                <strong id="modalNoticeTitle" style="color:var(--gray-900)"></strong><br>
+                <small style="color:var(--gray-500)">This will overwrite the existing content.</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-modal-cancel" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-modal-confirm" id="modalConfirmBtn" onclick="doSubmit()">
+                    <i class="fas fa-save"></i> Yes, Update
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="main-content">
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-up">
+            <div class="hdr-left">
+                <h1><i class="fas fa-pencil-alt"></i> Edit Notice</h1>
+                <p>Update notice content, status and settings.</p>
+            </div>
+            <div class="hdr-right">
+                <div class="mode-toggle">
+                    <button class="mode-btn active" id="btnEdit" onclick="setMode('edit')">
+                        <i class="fas fa-pen"></i> Edit
+                    </button>
+                    <button class="mode-btn" id="btnPreview" onclick="setMode('preview')">
+                        <i class="fas fa-eye"></i> Preview
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Panel -->
+        <div id="editPanel">
+            <div class="editor-layout">
+                <!-- Main Form -->
+                <div class="form-card" data-aos="fade-up" data-aos-delay="50">
+                    <form id="editNoticeForm"
+                          method="POST"
+                          action="{{ url_for('edit_notice', notice_id=notice.notice_id) }}">
+
+                        <!-- Title -->
+                        <div class="form-group">
+                            <label for="title">
+                                <i class="fas fa-heading"></i>
+                                Notice Title <span style="color:var(--danger-500)">*</span>
+                            </label>
+                            <input type="text"
+                                   id="title"
+                                   name="title"
+                                   class="form-control"
+                                   value="{{ notice.title }}"
+                                   maxlength="200"
+                                   required
+                                   oninput="updateTitleCounter(); updatePreview()">
+                            <div class="char-counter" id="titleCounter">
+                                <span id="titleLen">{{ notice.title|length }}</span>/200 characters
+                            </div>
+                        </div>
+
+                        <!-- Rich-text Content -->
+                        <div class="form-group">
+                            <label>
+                                <i class="fas fa-align-left"></i>
+                                Content <span style="color:var(--danger-500)">*</span>
+                            </label>
+                            <div class="quill-wrap">
+                                <div id="quillEditor"></div>
+                            </div>
+                            <!-- Hidden textarea synced with Quill -->
+                            <textarea id="content" name="content" style="display:none" required>{{ notice.content }}</textarea>
+                            <div class="char-counter" id="contentCounter">
+                                <span id="contentLen">0</span> characters
+                            </div>
+                        </div>
+
+                        <!-- Hidden inputs for toggles -->
+                        <input type="hidden" name="is_active" id="isActiveHidden" value="{{ 'on' if notice.is_active else '' }}">
+                        <input type="hidden" name="is_pinned" id="isPinnedHidden" value="{{ 'on' if notice.is_pinned else '' }}">
+
+                        <!-- Form Actions -->
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-cancel"
+                                    onclick="window.location.href='{{ url_for('all_notices') }}'">
+                                <i class="fas fa-arrow-left"></i> Cancel
+                            </button>
+                            <button type="button" class="btn btn-draft" onclick="saveDraft()">
+                                <i class="fas fa-save"></i> Save Draft
+                            </button>
+                            <button type="button" class="btn btn-update" onclick="openModal()">
+                                <i class="fas fa-check"></i> Update Notice
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Side Panel -->
+                <div class="side-panel">
+                    <!-- Status Toggles -->
+                    <div class="panel-card" data-aos="fade-up" data-aos-delay="100">
+                        <div class="panel-title"><i class="fas fa-sliders-h"></i> Settings</div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Active</strong>
+                                <span>Show to students</span>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="activeToggle"
+                                    {{ 'checked' if notice.is_active else '' }}
+                                    onchange="syncToggle('activeToggle','isActiveHidden'); updatePreview()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="toggle-row">
+                            <div class="toggle-info">
+                                <strong>Pinned</strong>
+                                <span>Show at top of list</span>
+                            </div>
+                            <label class="toggle-switch pin">
+                                <input type="checkbox" id="pinnedToggle"
+                                    {{ 'checked' if notice.is_pinned else '' }}
+                                    onchange="syncToggle('pinnedToggle','isPinnedHidden'); updatePreview()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Priority -->
+                    <div class="panel-card" data-aos="fade-up" data-aos-delay="150">
+                        <div class="panel-title"><i class="fas fa-flag"></i> Priority</div>
+                        <div class="priority-group">
+                            <input type="radio" name="priority" id="pLow"    value="Low"    checked onchange="updatePreview()">
+                            <label for="pLow"><i class="fas fa-arrow-down"></i> Low</label>
+                            <input type="radio" name="priority" id="pMed"    value="Medium" onchange="updatePreview()">
+                            <label for="pMed"><i class="fas fa-minus"></i> Medium</label>
+                            <input type="radio" name="priority" id="pHigh"   value="High"   onchange="updatePreview()">
+                            <label for="pHigh"><i class="fas fa-arrow-up"></i> High</label>
+                        </div>
+                    </div>
+
+                    <!-- Notice Info -->
+                    <div class="panel-card" data-aos="fade-up" data-aos-delay="200">
+                        <div class="panel-title"><i class="fas fa-info-circle"></i> Notice Info</div>
+                        <div class="info-row">
+                            <span class="lbl">Notice ID</span>
+                            <span class="val">#{{ notice.notice_id }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Created</span>
+                            <span class="val">{{ notice.date_posted.strftime('%d %b %Y') }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Posted by</span>
+                            <span class="val">{{ notice.posted_by or 'Teacher' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Views</span>
+                            <span class="val">{{ notice.views or 0 }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Category</span>
+                            <span class="val">{{ notice.category or 'Academic' }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Title chars</span>
+                            <span class="val" id="infoTitleLen">{{ notice.title|length }}</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="lbl">Content chars</span>
+                            <span class="val" id="infoContentLen">—</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div id="previewPanel">
+            <div class="preview-hdr">
+                <div class="preview-icon"><i class="fas fa-bullhorn"></i></div>
+                <div>
+                    <div class="preview-title-text" id="pvTitle">{{ notice.title }}</div>
+                    <div class="preview-tags" id="pvTags"></div>
+                </div>
+            </div>
+            <div class="preview-body" id="pvBody"></div>
+            <div class="preview-footer">
+                <span><i class="fas fa-user"></i> {{ notice.posted_by or 'Teacher' }}</span>
+                <span><i class="fas fa-calendar"></i> {{ notice.date_posted.strftime('%d %b %Y') }}</span>
+                <span id="pvPriority"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quill JS -->
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out',
+            once: true,
+            offset: 20
+        });
+
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', next);
+        });
+
+        /* ===== QUILL INIT ===== */
+        const quill = new Quill('#quillEditor', {
+            theme: 'snow',
+            placeholder: 'Write notice content here...',
+            modules: {
+                toolbar: [
+                    [{ header: [1,2,3,false] }],
+                    ['bold','italic','underline','strike'],
+                    [{ color:[] },{ background:[] }],
+                    [{ list:'ordered' },{ list:'bullet' }],
+                    [{ align:[] }],
+                    ['link','clean']
+                ]
+            }
+        });
+
+        // Pre-fill Quill with existing content
+        const existingContent = document.getElementById('content').value.trim();
+        if (existingContent) {
+            if (existingContent.startsWith('<')) {
+                quill.root.innerHTML = existingContent;
+            } else {
+                quill.setText(existingContent);
+            }
+        }
+
+        quill.on('text-change', function() {
+            const html = quill.root.innerHTML;
+            document.getElementById('content').value = (html === '<p><br></p>') ? '' : html;
+            updateContentCounter();
+            updatePreview();
+        });
+
+        /* ===== CHARACTER COUNTERS ===== */
+        function updateTitleCounter() {
+            const len = document.getElementById('title').value.length;
+            document.getElementById('titleLen').textContent = len;
+            document.getElementById('infoTitleLen').textContent = len;
+            const el = document.getElementById('titleCounter');
+            el.className = 'char-counter' + (len > 180 ? ' over' : len > 150 ? ' warn' : '');
+        }
+
+        function updateContentCounter() {
+            const len = quill.getText().trim().length;
+            document.getElementById('contentLen').textContent = len;
+            document.getElementById('infoContentLen').textContent = len;
+            const el = document.getElementById('contentCounter');
+            el.className = 'char-counter' + (len > 900 ? ' over' : len > 700 ? ' warn' : '');
+        }
+
+        /* ===== TOGGLE SYNC ===== */
+        function syncToggle(checkboxId, hiddenId) {
+            const cb = document.getElementById(checkboxId);
+            const hid = document.getElementById(hiddenId);
+            hid.value = cb.checked ? 'on' : '';
+        }
+
+        /* ===== MODE TOGGLE ===== */
+        function setMode(mode) {
+            const editPanel = document.getElementById('editPanel');
+            const previewPanel = document.getElementById('previewPanel');
+            const btnEdit = document.getElementById('btnEdit');
+            const btnPreview = document.getElementById('btnPreview');
+
+            if (mode === 'preview') {
+                updatePreview();
+                editPanel.style.display = 'none';
+                previewPanel.style.display = 'block';
+                btnEdit.classList.remove('active');
+                btnPreview.classList.add('active');
+            } else {
+                editPanel.style.display = 'block';
+                previewPanel.style.display = 'none';
+                btnEdit.classList.add('active');
+                btnPreview.classList.remove('active');
+            }
+        }
+
+        /* ===== LIVE PREVIEW UPDATE ===== */
+        function updatePreview() {
+            const title = document.getElementById('title').value || 'Notice Title';
+            const isActive = document.getElementById('activeToggle').checked;
+            const isPinned = document.getElementById('pinnedToggle').checked;
+            const priority = document.querySelector('input[name="priority"]:checked')?.value || 'Low';
+
+            document.getElementById('pvTitle').textContent = title;
+            document.getElementById('pvBody').innerHTML = quill.root.innerHTML;
+
+            // Tags
+            const tagsEl = document.getElementById('pvTags');
+            tagsEl.innerHTML = '';
+            
+            const addTag = (text, cls) => {
+                const s = document.createElement('span');
+                s.className = 'ptag ' + cls;
+                s.textContent = text;
+                tagsEl.appendChild(s);
+            };
+            
+            addTag(isActive ? 'Active' : 'Inactive', isActive ? 'ptag-active' : 'ptag-inactive');
+            if (isPinned) addTag('📌 Pinned', 'ptag-pinned');
+            addTag(priority + ' Priority', 'ptag-priority-' + priority.toLowerCase());
+
+            document.getElementById('pvPriority').innerHTML =
+                `<i class="fas fa-flag"></i> ${priority} Priority`;
+        }
+
+        /* ===== CONFIRMATION MODAL ===== */
+        function openModal() {
+            // Validate
+            const title = document.getElementById('title').value.trim();
+            const content = quill.getText().trim();
+            
+            if (!title) {
+                showToast('Title Required', 'Please enter a notice title.', true);
+                return;
+            }
+            if (!content) {
+                showToast('Content Required', 'Please write some content.', true);
+                return;
+            }
+
+            // Sync Quill → hidden textarea
+            document.getElementById('content').value = quill.root.innerHTML;
+
+            document.getElementById('modalNoticeTitle').textContent = `"${title}"`;
+            document.getElementById('confirmModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.remove('open');
+        }
+
+        function doSubmit() {
+            closeModal();
+            document.getElementById('loadingOverlay').classList.add('active');
+            document.getElementById('editNoticeForm').submit();
+        }
+
+        // Close modal on overlay click
+        document.getElementById('confirmModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        /* ===== SAVE DRAFT (localStorage) ===== */
+        function saveDraft() {
+            const title = document.getElementById('title').value;
+            const content = quill.root.innerHTML;
+            
+            if (!title && !quill.getText().trim()) {
+                showToast('Nothing to Save', 'Add a title or content first.', true);
+                return;
+            }
+            
+            try {
+                localStorage.setItem('notice_draft_{{ notice.notice_id }}', JSON.stringify({
+                    title, content, savedAt: new Date().toISOString()
+                }));
+                showToast('Draft Saved', 'Your changes have been saved locally.');
+            } catch(e) {
+                showToast('Save Failed', 'Could not save draft.', true);
+            }
+        }
+
+        /* ===== TOAST ===== */
+        function showToast(title, msg, isError = false) {
+            const container = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = 'toast' + (isError ? ' toast-error' : '');
+            t.innerHTML = `
+                <div class="toast-icon">
+                    <i class="fas ${isError ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+                </div>
+                <div class="toast-body">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-msg">${msg}</div>
+                </div>
+                <i class="fas fa-times toast-close" onclick="this.closest('.toast').remove()"></i>`;
+            container.appendChild(t);
+            
+            setTimeout(() => {
+                t.style.animation = 'toastOut 0.35s ease forwards';
+                setTimeout(() => t.remove(), 350);
+            }, 4000);
+        }
+
+        /* ===== INIT ===== */
+        document.addEventListener('DOMContentLoaded', function() {
+            updateTitleCounter();
+            updateContentCounter();
+            updatePreview();
+
+            // Show success toast if redirected back after save
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for cat, msg in messages %}
+                showToast(
+                    '{{ "Success" if cat == "success" else "Error" }}',
+                    '{{ msg }}',
+                    {{ 'true' if cat != 'success' else 'false' }}
+                );
+            {% endfor %}
+            {% endwith %}
+
+            // Page entrance animation
+            gsap.from('#main', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+    </script>
+</body>
+</html>

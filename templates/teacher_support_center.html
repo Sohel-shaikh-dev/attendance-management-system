@@ -1,0 +1,2300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Support Center • Teacher Panel</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <style>
+        /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Modern color palette - Glassmorphism + Neomorphism fusion */
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #818cf8;
+            --primary-500: #6366f1;
+            --primary-600: #4f46e5;
+            --primary-700: #4338ca;
+            --primary-800: #3730a3;
+            --primary-900: #312e81;
+            
+            --success-50: #ecfdf5;
+            --success-100: #d1fae5;
+            --success-500: #10b981;
+            --success-600: #059669;
+            --success-700: #047857;
+            
+            --danger-50: #fef2f2;
+            --danger-100: #fee2e2;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --danger-700: #b91c1c;
+            
+            --warning-50: #fffbeb;
+            --warning-100: #fef3c7;
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            --warning-700: #b45309;
+            
+            --purple-50: #faf5ff;
+            --purple-100: #f3e8ff;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+            
+            --info-50: #ecfeff;
+            --info-100: #cffafe;
+            --info-500: #06b6d4;
+            --info-600: #0891b2;
+            
+            /* Neutral tones */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            
+            /* Glass effects */
+            --glass-light: rgba(255, 255, 255, 0.7);
+            --glass-medium: rgba(255, 255, 255, 0.5);
+            --glass-heavy: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Shadows */
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            
+            /* Neomorphic shadows */
+            --neo-light: 8px 8px 16px rgba(174, 190, 205, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.7);
+            
+            /* Typography */
+            --font-sans: "Inter", system-ui, sans-serif;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            
+            /* Border radius */
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.25rem;
+            --radius-3xl: 1.5rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            /* Layout */
+            --sidebar-width: 70px;
+        }
+
+        /* ===== DARK MODE SUPPORT ===== */
+        [data-theme="dark"] {
+            --glass-light: rgba(17, 24, 39, 0.7);
+            --glass-medium: rgba(17, 24, 39, 0.5);
+            --glass-heavy: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --gray-50: #111827;
+            --gray-100: #1f2937;
+            --gray-200: #374151;
+            --gray-300: #4b5563;
+            --gray-400: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-600: #d1d5db;
+            --gray-700: #e5e7eb;
+            --gray-800: #f3f4f6;
+            --gray-900: #f9fafb;
+            --primary-50: #1e1b4b;
+            --primary-100: #2e1b6b;
+            --primary-200: #3b1e8c;
+            --primary-300: #4c1d95;
+            --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        html {
+            font-family: var(--font-sans);
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--gray-900);
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(99, 102, 241, 0.15), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(168, 85, 247, 0.12), transparent 60%),
+                linear-gradient(180deg, #f6f7fb 0%, #edf1f7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+
+        [data-theme="dark"] body {
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(99, 102, 241, 0.08), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(168, 85, 247, 0.06), transparent 60%),
+                linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+        }
+
+        /* Selection style */
+        ::selection {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        /* ===== BACKGROUND DECORATIONS ===== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration .blob-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-400);
+            animation-delay: 0s;
+        }
+
+        .bg-decoration .blob-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--success-500);
+            animation-delay: -5s;
+        }
+
+        .bg-decoration .blob-3 {
+            top: 40%;
+            left: 30%;
+            width: 400px;
+            height: 400px;
+            background: var(--warning-500);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.05); }
+            50% { transform: translate(-5%, -5%) scale(0.95); }
+            75% { transform: translate(-5%, 5%) scale(1.02); }
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: var(--z-popover);
+            transition: var(--transition-bounce);
+            color: var(--gray-900);
+            font-size: 1.4rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            background: var(--primary-500);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                bottom: var(--space-4);
+                right: var(--space-4);
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== LAYOUT ===== */
+        #main {
+            margin-left: var(--sidebar-width);
+            padding: var(--space-5) var(--space-6) var(--space-8);
+            transition: margin-left var(--transition-base);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            #main {
+                margin-left: 0;
+                padding: 80px var(--space-4) var(--space-6);
+            }
+        }
+
+        /* ===== PAGE HEADER ===== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-5);
+            padding: var(--space-6) var(--space-8);
+            border-radius: var(--radius-3xl);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: white;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            animation: headerGlow 8s infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            from { box-shadow: var(--shadow-2xl); }
+            to { box-shadow: 0 30px 60px -12px rgba(79, 70, 229, 0.5); }
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 70%;
+            height: 250%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            animation: headerShimmer 10s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            from { transform: rotate(-15deg) translateX(-10%); }
+            to { transform: rotate(-15deg) translateX(10%); }
+        }
+
+        .hdr-left {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hdr-left h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            margin-bottom: var(--space-2);
+        }
+
+        .hdr-left h1 i {
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .hdr-left p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .hdr-right {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .notif-badge {
+            background: var(--danger-600);
+            color: white;
+            border-radius: var(--radius-full);
+            padding: var(--space-1) var(--space-4);
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.5); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+        }
+
+        .refresh-btn {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-full);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            backdrop-filter: blur(8px);
+            transition: var(--transition-bounce);
+        }
+
+        .refresh-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        /* ===== STATS CARDS ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5) var(--space-5);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition-bounce);
+            cursor: default;
+            opacity: 0;
+            animation: cardFloat 0.5s var(--transition-bounce) forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.12s; }
+        .stat-card:nth-child(3) { animation-delay: 0.14s; }
+        .stat-card:nth-child(4) { animation-delay: 0.16s; }
+
+        @keyframes cardFloat {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-300);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            opacity: 0.06;
+            pointer-events: none;
+        }
+
+        .sc-total::before {
+            background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
+        }
+        .sc-total::after {
+            background: var(--primary-500);
+        }
+
+        .sc-open::before {
+            background: linear-gradient(180deg, var(--success-500), var(--success-600));
+        }
+        .sc-open::after {
+            background: var(--success-500);
+        }
+
+        .sc-progress::before {
+            background: linear-gradient(180deg, var(--warning-500), var(--warning-600));
+        }
+        .sc-progress::after {
+            background: var(--warning-500);
+        }
+
+        .sc-closed::before {
+            background: linear-gradient(180deg, var(--danger-500), var(--danger-600));
+        }
+        .sc-closed::after {
+            background: var(--danger-500);
+        }
+
+        .stat-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--gray-500);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: var(--space-1);
+        }
+
+        .sc-total .stat-value {
+            color: var(--primary-600);
+        }
+
+        .sc-open .stat-value {
+            color: var(--success-600);
+        }
+
+        .sc-progress .stat-value {
+            color: var(--warning-600);
+        }
+
+        .sc-closed .stat-value {
+            color: var(--danger-600);
+        }
+
+        .stat-sub {
+            font-size: 0.7rem;
+            color: var(--gray-400);
+        }
+
+        /* ===== FILTER PANEL ===== */
+        .filter-panel {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+            box-shadow: var(--shadow-lg);
+            margin-bottom: var(--space-5);
+            animation: slideUp 0.5s var(--transition-bounce) 0.2s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filter-panel-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gray-500);
+            margin-bottom: var(--space-4);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .filter-panel-title i {
+            color: var(--primary-500);
+        }
+
+        .filter-panel-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+            align-items: flex-end;
+            margin-bottom: var(--space-3);
+        }
+
+        .filter-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+            flex: 1;
+            min-width: 140px;
+        }
+
+        .filter-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray-600);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-select {
+            height: 42px;
+            padding: 0 var(--space-3);
+            padding-right: var(--space-6);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            background: white;
+            cursor: pointer;
+            transition: var(--transition-base);
+            color: var(--gray-700);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--space-2) center;
+            background-size: 14px;
+            outline: none;
+        }
+
+        .filter-select:hover {
+            border-color: var(--primary-300);
+        }
+
+        .filter-select:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .filter-input {
+            height: 42px;
+            padding: 0 var(--space-3);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            background: white;
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .filter-input:hover {
+            border-color: var(--primary-300);
+        }
+
+        .filter-input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: var(--space-3);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            font-size: 0.8rem;
+            transition: var(--transition-base);
+        }
+
+        .search-wrap input {
+            width: 100%;
+            height: 42px;
+            padding: 0 var(--space-3) 0 var(--space-6);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: 0.85rem;
+            background: white;
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .search-wrap input:hover {
+            border-color: var(--primary-300);
+        }
+
+        .search-wrap input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .search-wrap input:focus + i {
+            color: var(--primary-500);
+        }
+
+        .filter-btns {
+            display: flex;
+            gap: var(--space-2);
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-apply {
+            height: 42px;
+            padding: 0 var(--space-5);
+            border-radius: var(--radius-xl);
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+            color: white;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-apply:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-reset {
+            height: 42px;
+            padding: 0 var(--space-5);
+            border-radius: var(--radius-xl);
+            background: white;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-600);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .btn-reset:hover {
+            border-color: var(--danger-400);
+            color: var(--danger-600);
+            transform: translateY(-1px);
+        }
+
+        /* ===== ACTIVE FILTER CHIPS ===== */
+        .active-filters {
+            display: none;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+            margin-bottom: var(--space-4);
+            align-items: center;
+            padding: var(--space-2) var(--space-3);
+            background: var(--gray-50);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--gray-200);
+            animation: slideUp 0.3s ease;
+        }
+
+        .filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            background: var(--primary-50);
+            color: var(--primary-700);
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 1px solid var(--primary-200);
+            animation: chipPop 0.3s var(--transition-bounce);
+        }
+
+        @keyframes chipPop {
+            from {
+                opacity: 0;
+                transform: scale(0.7);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .filter-chip i {
+            font-size: 0.6rem;
+            color: var(--primary-500);
+        }
+
+        /* ===== TABLE CARD ===== */
+        .table-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            animation: slideUp 0.5s var(--transition-bounce) 0.3s both;
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--gray-200);
+            background: var(--gray-50);
+            flex-wrap: wrap;
+            gap: var(--space-3);
+        }
+
+        .row-count {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 600;
+        }
+
+        .status-legend {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        .status-legend span {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-dot.high {
+            background: var(--danger-500);
+            box-shadow: 0 0 0 2px var(--danger-100);
+        }
+
+        .legend-dot.open {
+            background: var(--success-500);
+        }
+
+        .legend-dot.progress {
+            background: var(--warning-500);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1100px;
+        }
+
+        thead th {
+            background: linear-gradient(135deg, #1a1a2e, #0f3460);
+            color: white;
+            padding: var(--space-4) var(--space-4);
+            text-align: left;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: var(--transition-base);
+        }
+
+        thead th:hover {
+            background: linear-gradient(135deg, #16213e, #0a2a50);
+        }
+
+        thead th .sort-icon {
+            margin-left: var(--space-2);
+            opacity: 0.7;
+            font-size: 0.65rem;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--gray-200);
+            transition: var(--transition-base);
+            animation: rowFade 0.4s var(--transition-bounce) forwards;
+            opacity: 0;
+        }
+
+        @keyframes rowFade {
+            from {
+                opacity: 0;
+                transform: translateX(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--gray-50);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: var(--primary-50);
+        }
+
+        tbody tr.row-open {
+            border-left: 3px solid var(--success-500);
+        }
+
+        tbody tr.row-in-progress {
+            border-left: 3px solid var(--warning-500);
+        }
+
+        tbody tr.row-closed {
+            border-left: 3px solid var(--gray-400);
+            opacity: 0.75;
+        }
+
+        tbody tr.priority-high {
+            background: var(--danger-50);
+            box-shadow: inset 3px 0 0 var(--danger-500);
+        }
+
+        tbody tr.priority-high:hover {
+            background: var(--danger-100);
+        }
+
+        tbody td {
+            padding: var(--space-4) var(--space-4);
+            font-size: 0.85rem;
+            vertical-align: middle;
+        }
+
+        /* ===== BADGES ===== */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-1);
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+
+        .b-open {
+            background: var(--success-50);
+            color: var(--success-700);
+            border-color: var(--success-200);
+        }
+
+        .b-progress {
+            background: var(--warning-50);
+            color: var(--warning-700);
+            border-color: var(--warning-200);
+        }
+
+        .b-closed {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border-color: var(--danger-200);
+        }
+
+        .b-high {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border-color: var(--danger-200);
+        }
+
+        .b-medium {
+            background: var(--primary-50);
+            color: var(--primary-700);
+            border-color: var(--primary-200);
+        }
+
+        .b-low {
+            background: var(--gray-100);
+            color: var(--gray-600);
+            border-color: var(--gray-300);
+        }
+
+        /* ===== UNREAD BADGE ===== */
+        .unread-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--danger-600);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            animation: pulse 2s ease-in-out infinite;
+            margin-left: var(--space-2);
+        }
+
+        /* ===== STUDENT CELL ===== */
+        .student-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .student-name {
+            font-weight: 600;
+            color: var(--gray-900);
+            font-size: 0.85rem;
+        }
+
+        .student-meta {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== SLA CELL ===== */
+        .sla-cell {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .sla-time {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .sla-ok {
+            color: var(--success-600);
+        }
+
+        .sla-warn {
+            color: var(--warning-600);
+        }
+
+        .sla-over {
+            color: var(--danger-600);
+        }
+
+        .sla-bar {
+            height: 4px;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+            overflow: hidden;
+            width: 80px;
+        }
+
+        .sla-fill {
+            height: 100%;
+            border-radius: var(--radius-full);
+            transition: width 0.5s var(--transition-base);
+        }
+
+        /* ===== QUICK ACTION BUTTONS ===== */
+        .qa-wrap {
+            display: flex;
+            gap: var(--space-1);
+            flex-wrap: nowrap;
+            align-items: center;
+        }
+
+        .qa-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-size: 0.8rem;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .qa-btn:hover {
+            transform: scale(1.15);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .qa-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gray-900);
+            color: white;
+            padding: var(--space-1) var(--space-2);
+            border-radius: var(--radius-md);
+            font-size: 0.65rem;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 10;
+            box-shadow: var(--shadow-md);
+        }
+
+        .qa-view {
+            background: var(--primary-50);
+            color: var(--primary-600);
+        }
+
+        .qa-view:hover {
+            background: var(--primary-600);
+            color: white;
+        }
+
+        .qa-reply {
+            background: var(--success-50);
+            color: var(--success-600);
+        }
+
+        .qa-reply:hover {
+            background: var(--success-600);
+            color: white;
+        }
+
+        .qa-progress {
+            background: var(--warning-50);
+            color: var(--warning-600);
+        }
+
+        .qa-progress:hover {
+            background: var(--warning-600);
+            color: white;
+        }
+
+        .qa-close {
+            background: var(--danger-50);
+            color: var(--danger-600);
+        }
+
+        .qa-close:hover {
+            background: var(--danger-600);
+            color: white;
+        }
+
+        .qa-btn.qa-disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            text-align: center;
+            padding: var(--space-10) var(--space-5);
+        }
+
+        .empty-icon {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--primary-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--space-4);
+            font-size: 2.5rem;
+            color: var(--primary-500);
+            opacity: 0.5;
+            animation: emptyBob 3s ease-in-out infinite;
+        }
+
+        @keyframes emptyBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .empty-state h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+
+        .empty-state p {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            z-index: var(--z-modal);
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-5);
+        }
+
+        .modal-overlay.open {
+            display: flex;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-6);
+            max-width: 480px;
+            width: 100%;
+            box-shadow: var(--shadow-2xl);
+            animation: modalSlide 0.4s var(--transition-bounce);
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: var(--space-2);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .modal-title i {
+            color: var(--primary-500);
+        }
+
+        .modal-sub {
+            font-size: 0.85rem;
+            color: var(--gray-500);
+            margin-bottom: var(--space-4);
+        }
+
+        .modal-textarea {
+            width: 100%;
+            padding: var(--space-3) var(--space-4);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            font-size: 0.9rem;
+            font-family: var(--font-sans);
+            resize: vertical;
+            min-height: 120px;
+            outline: none;
+            transition: var(--transition-base);
+            margin-bottom: var(--space-4);
+        }
+
+        .modal-textarea:hover {
+            border-color: var(--primary-300);
+        }
+
+        .modal-textarea:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: var(--space-3);
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+            justify-content: center;
+            height: 44px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: var(--gray-700);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-300);
+            transform: translateY(-1px);
+        }
+
+        .btn-spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-container {
+            position: fixed;
+            top: var(--space-6);
+            right: var(--space-6);
+            z-index: var(--z-toast);
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-2);
+            pointer-events: none;
+        }
+
+        .toast {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-3) var(--space-4);
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            min-width: 280px;
+            pointer-events: all;
+            border-left: 4px solid var(--success-500);
+            animation: toastIn 0.4s var(--transition-bounce) forwards;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .toast::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--success-500);
+            animation: toastProgress 3.5s linear forwards;
+        }
+
+        .toast.toast-error {
+            border-left-color: var(--danger-500);
+        }
+        .toast.toast-error::before {
+            background: var(--danger-500);
+        }
+
+        .toast.toast-warn {
+            border-left-color: var(--warning-500);
+        }
+        .toast.toast-warn::before {
+            background: var(--warning-500);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+
+        @keyframes toastOut {
+            from {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(30px) scale(0.9);
+            }
+        }
+
+        @keyframes toastProgress {
+            from { width: 100%; }
+            to { width: 0%; }
+        }
+
+        .toast-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--success-50);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--success-600);
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        .toast.toast-error .toast-icon {
+            background: var(--danger-50);
+            color: var(--danger-600);
+        }
+
+        .toast.toast-warn .toast-icon {
+            background: var(--warning-50);
+            color: var(--warning-600);
+        }
+
+        .toast-body {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 2px;
+        }
+
+        .toast-msg {
+            font-size: 0.75rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1100px) {
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filter-row {
+                flex-direction: column;
+            }
+            
+            .filter-group {
+                width: 100%;
+            }
+            
+            .search-wrap {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .hdr-right {
+                width: 100%;
+            }
+            
+            .refresh-btn {
+                flex: 1;
+            }
+            
+            .stats-row {
+                grid-template-columns: repeat(2, 1fr);
+                gap: var(--space-3);
+            }
+            
+            .stat-value {
+                font-size: 1.6rem;
+            }
+            
+            .table-toolbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .status-legend {
+                flex-wrap: wrap;
+            }
+            
+            .qa-wrap {
+                gap: 2px;
+            }
+            
+            .qa-btn {
+                width: 30px;
+                height: 30px;
+                font-size: 0.7rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+            
+            .modal-box {
+                padding: var(--space-5);
+            }
+            
+            .modal-actions {
+                flex-direction: column;
+            }
+            
+            .toast {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Quick Reply Modal -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal-box">
+            <div class="modal-title"><i class="fas fa-reply"></i> Quick Reply</div>
+            <div class="modal-sub" id="replyModalSub">Replying to ticket —</div>
+            <textarea class="modal-textarea" id="replyModalMsg" placeholder="Type your reply here..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeReplyModal()"><i class="fas fa-times"></i> Cancel</button>
+                <button class="btn-primary" id="replyModalBtn" onclick="submitQuickReply()">
+                    <div class="btn-spinner" id="replyModalSpinner"></div>
+                    <i class="fas fa-paper-plane" id="replyModalIcon"></i>
+                    <span id="replyModalText">Send Reply</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main">
+        <!-- Page Header -->
+        <div class="page-header" data-aos="fade-up">
+            <div class="hdr-left">
+                <h1><i class="fas fa-headset"></i> Support Center</h1>
+                <p>Manage and respond to student support tickets in real-time.</p>
+            </div>
+            <div class="hdr-right">
+                {% if open_count > 0 %}
+                <div class="notif-badge">
+                    <i class="fas fa-bell"></i> {{ open_count }} Open
+                </div>
+                {% endif %}
+                <a href="{{ url_for('teacher_support_center') }}" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </a>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="stats-row" data-aos="fade-up" data-aos-delay="50">
+            <div class="stat-card sc-total">
+                <div class="stat-label"><i class="fas fa-layer-group"></i> Total Tickets</div>
+                <div class="stat-value" id="kTotal">{{ total_count }}</div>
+                <div class="stat-sub">All time</div>
+            </div>
+            <div class="stat-card sc-open">
+                <div class="stat-label"><i class="fas fa-circle"></i> Open</div>
+                <div class="stat-value" id="kOpen">{{ open_count }}</div>
+                <div class="stat-sub">Awaiting response</div>
+            </div>
+            <div class="stat-card sc-progress">
+                <div class="stat-label"><i class="fas fa-spinner"></i> In Progress</div>
+                <div class="stat-value" id="kProgress">{{ progress_count }}</div>
+                <div class="stat-sub">Being handled</div>
+            </div>
+            <div class="stat-card sc-closed">
+                <div class="stat-label"><i class="fas fa-check-circle"></i> Closed</div>
+                <div class="stat-value" id="kClosed">{{ closed_count }}</div>
+                <div class="stat-sub">Resolved</div>
+            </div>
+        </div>
+
+        <!-- Active Filters -->
+        <div class="active-filters" id="activeFilters"></div>
+
+        <!-- Filter Panel -->
+        <div class="filter-panel" data-aos="fade-up" data-aos-delay="100">
+            <div class="filter-panel-title"><i class="fas fa-sliders-h"></i> Filters & Search</div>
+
+            <!-- Row 1: Search + Status + Priority + Sort -->
+            <div class="filter-row">
+                <div class="search-wrap" style="max-width: 300px;">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="searchInput" placeholder="Ticket ID, student, subject..." oninput="applyAllFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>Status</label>
+                    <select id="jsStatusFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="all">All Status</option>
+                        <option value="Open" {{ 'selected' if status_filter=='Open' }}>Open</option>
+                        <option value="In Progress" {{ 'selected' if status_filter=='In Progress' }}>In Progress</option>
+                        <option value="Closed" {{ 'selected' if status_filter=='Closed' }}>Closed</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Priority</label>
+                    <select id="jsPriorityFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="all">All Priority</option>
+                        <option value="High" {{ 'selected' if priority_filter=='High' }}>🔴 High</option>
+                        <option value="Medium" {{ 'selected' if priority_filter=='Medium' }}>🔵 Medium</option>
+                        <option value="Low" {{ 'selected' if priority_filter=='Low' }}>⚪ Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sort By</label>
+                    <select id="sortFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="priority">Priority (High→Low)</option>
+                        <option value="replies">Most Replies</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Row 2: Academic filters + Date range -->
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Course</label>
+                    <select id="courseFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="all">All Courses</option>
+                        <option value="BBA">BBA</option>
+                        <option value="BSc IT">BSc IT</option>
+                        <option value="BCom">BCom</option>
+                        <option value="BA">BA</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Class</label>
+                    <select id="classFilter" class="filter-select" onchange="updateSemFilter(); applyAllFilters()">
+                        <option value="all">All Classes</option>
+                        <option value="FY">First Year (FY)</option>
+                        <option value="SY">Second Year (SY)</option>
+                        <option value="TY">Third Year (TY)</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Semester</label>
+                    <select id="semFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="all">All Semesters</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Category</label>
+                    <select id="catFilter" class="filter-select" onchange="applyAllFilters()">
+                        <option value="all">All Categories</option>
+                        <option value="Attendance">Attendance</option>
+                        <option value="Fees">Fees</option>
+                        <option value="Exam">Exam</option>
+                        <option value="Technical">Technical</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>From Date</label>
+                    <input type="date" id="dateFrom" class="filter-input" oninput="applyAllFilters()">
+                </div>
+                <div class="filter-group">
+                    <label>To Date</label>
+                    <input type="date" id="dateTo" class="filter-input" oninput="applyAllFilters()">
+                </div>
+                <div class="filter-btns">
+                    <button class="btn-reset" onclick="resetAllFilters()"><i class="fas fa-times"></i> Reset</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="table-card" data-aos="fade-up" data-aos-delay="150">
+            <div class="table-toolbar">
+                <span class="row-count" id="rowCount">{{ tickets|length }} tickets</span>
+                <div class="status-legend">
+                    <span><span class="legend-dot high"></span> High Priority</span>
+                    <span><span class="legend-dot open"></span> Open</span>
+                    <span><span class="legend-dot progress"></span> In Progress</span>
+                </div>
+            </div>
+
+            {% if tickets %}
+            <div class="table-wrap">
+                <table id="ticketsTable">
+                    <thead>
+                        <tr>
+                            <th onclick="sortTable(0)" data-col="0">Ticket ID <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(1)" data-col="1">Student <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(2)" data-col="2">Subject <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(3)" data-col="3">Category <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(4)" data-col="4">Priority <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(5)" data-col="5">Status <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(6)" data-col="6">Replies <span class="sort-icon"></span></th>
+                            <th onclick="sortTable(7)" data-col="7">SLA / Age <span class="sort-icon"></span></th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for t in tickets %}
+                        <tr id="tr-{{ t.ticket_id }}"
+                            class="row-{{ t.status|lower|replace(' ','-') }} {{ 'priority-high' if t.priority == 'High' else '' }}"
+                            data-ticket-id="{{ t.ticket_id }}"
+                            data-ticket-ref="{{ t.ticket_ref|lower }}"
+                            data-subject="{{ t.subject|lower }}"
+                            data-student="{{ t.student.full_name|lower if t.student else '' }}"
+                            data-course="{{ t.student.course if t.student else '' }}"
+                            data-class="{{ t.student.class_yr if t.student else '' }}"
+                            data-semester="{{ t.student.semester if t.student else '' }}"
+                            data-status="{{ t.status }}"
+                            data-priority="{{ t.priority }}"
+                            data-category="{{ t.category }}"
+                            data-replies="{{ t.replies|length }}"
+                            data-created="{{ t.created_at.isoformat() }}"
+                            style="animation-delay:{{ loop.index0 * 0.02 }}s">
+
+                            <!-- Ticket ID -->
+                            <td>
+                                <strong style="color:var(--primary-600); font-size:0.85rem;">{{ t.ticket_ref }}</strong>
+                            </td>
+
+                            <!-- Student -->
+                            <td>
+                                <div class="student-cell">
+                                    <span class="student-name">{{ t.student.full_name if t.student else '—' }}</span>
+                                    <span class="student-meta">
+                                        {{ t.student.course if t.student else '' }}
+                                        {% if t.student and t.student.class_yr %} · {{ t.student.class_yr }}{% endif %}
+                                        {% if t.student and t.student.semester %} · Sem {{ t.student.semester }}{% endif %}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- Subject -->
+                            <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ t.subject }}">
+                                {{ t.subject }}
+                            </td>
+
+                            <!-- Category -->
+                            <td>
+                                <span class="badge" style="background:var(--gray-100); color:var(--gray-600); border-color:var(--gray-300);">{{ t.category }}</span>
+                            </td>
+
+                            <!-- Priority -->
+                            <td>
+                                {% if t.priority == 'High' %}
+                                    <span class="badge b-high"><i class="fas fa-arrow-up"></i> High</span>
+                                {% elif t.priority == 'Medium' %}
+                                    <span class="badge b-medium"><i class="fas fa-minus"></i> Medium</span>
+                                {% else %}
+                                    <span class="badge b-low"><i class="fas fa-arrow-down"></i> Low</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td>
+                                <span class="badge {% if t.status=='Open' %}b-open{% elif t.status=='In Progress' %}b-progress{% else %}b-closed{% endif %}" id="status-badge-{{ t.ticket_id }}">
+                                    {% if t.status == 'Open' %}<i class="fas fa-circle" style="font-size:0.5rem;"></i> Open
+                                    {% elif t.status == 'In Progress' %}<i class="fas fa-spinner fa-spin"></i> In Progress
+                                    {% else %}<i class="fas fa-check-circle"></i> Closed{% endif %}
+                                </span>
+                            </td>
+
+                            <!-- Replies + unread badge -->
+                            <td style="text-align:center">
+                                <span style="background:var(--primary-50); color:var(--primary-600); padding:2px 8px; border-radius:var(--radius-full); font-size:0.7rem; font-weight:700;" id="reply-count-{{ t.ticket_id }}">{{ t.replies|length }}</span>
+                                {% set student_replies = t.replies|selectattr('sender_type','equalto','student')|list %}
+                                {% if student_replies and t.status != 'Closed' %}
+                                <span class="unread-badge" title="{{ student_replies|length }} student reply/replies">{{ student_replies|length }}</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- SLA / Age -->
+                            <td>
+                                <div class="sla-cell" data-created="{{ t.created_at.isoformat() }}">
+                                    <span class="sla-time" id="sla-{{ t.ticket_id }}">—</span>
+                                    <div class="sla-bar"><div class="sla-fill" id="sla-bar-{{ t.ticket_id }}" style="width:0%"></div></div>
+                                </div>
+                            </td>
+
+                            <!-- Quick Actions -->
+                            <td>
+                                <div class="qa-wrap">
+                                    <a href="{{ url_for('teacher_ticket_detail', ticket_id=t.ticket_id) }}"
+                                       class="qa-btn qa-view" title="View Ticket">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <button class="qa-btn qa-reply {{ 'qa-disabled' if t.status == 'Closed' else '' }}"
+                                            title="Quick Reply"
+                                            onclick="openReplyModal({{ t.ticket_id }}, '{{ t.ticket_ref }}')">
+                                        <i class="fas fa-reply"></i>
+                                    </button>
+                                    <button class="qa-btn qa-progress {{ 'qa-disabled' if t.status == 'In Progress' or t.status == 'Closed' else '' }}"
+                                            title="Mark In Progress"
+                                            onclick="quickStatus({{ t.ticket_id }}, 'In Progress')">
+                                        <i class="fas fa-spinner"></i>
+                                    </button>
+                                    <button class="qa-btn qa-close {{ 'qa-disabled' if t.status == 'Closed' else '' }}"
+                                            title="Close Ticket"
+                                            onclick="quickStatus({{ t.ticket_id }}, 'Closed')">
+                                        <i class="fas fa-lock"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-ticket-alt"></i></div>
+                <h3>No Tickets Found</h3>
+                <p>No support tickets match the current filters.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out',
+            once: true,
+            offset: 20
+        });
+
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', next);
+        });
+
+        /* ===== SLA TIMER ===== */
+        function formatAge(ms) {
+            const m = Math.floor(ms / 60000);
+            if (m < 60) return m + 'm';
+            const h = Math.floor(m / 60);
+            if (h < 24) return h + 'h ' + (m % 60) + 'm';
+            const d = Math.floor(h / 24);
+            return d + 'd ' + (h % 24) + 'h';
+        }
+
+        function renderSLA() {
+            document.querySelectorAll('.sla-cell[data-created]').forEach(cell => {
+                const created = new Date(cell.dataset.created);
+                const ageMs = Date.now() - created.getTime();
+                const ageH = ageMs / 3600000;
+                const ticketId = cell.closest('tr').dataset.ticketId;
+
+                const label = document.getElementById('sla-' + ticketId);
+                const bar = document.getElementById('sla-bar-' + ticketId);
+                if (!label) return;
+
+                label.textContent = formatAge(ageMs);
+
+                // SLA target: 24h for normal, 4h for high priority
+                const priority = cell.closest('tr').dataset.priority;
+                const slaH = priority === 'High' ? 4 : 24;
+                const pct = Math.min((ageH / slaH) * 100, 100);
+
+                if (pct < 50) {
+                    label.className = 'sla-time sla-ok';
+                    bar.style.background = 'var(--success-500)';
+                } else if (pct < 85) {
+                    label.className = 'sla-time sla-warn';
+                    bar.style.background = 'var(--warning-500)';
+                } else {
+                    label.className = 'sla-time sla-over';
+                    bar.style.background = 'var(--danger-500)';
+                }
+                bar.style.width = pct + '%';
+            });
+        }
+        renderSLA();
+        setInterval(renderSLA, 60000);
+
+        /* ===== SEMESTER FILTER ===== */
+        function updateSemFilter() {
+            const cls = document.getElementById('classFilter').value;
+            const semDD = document.getElementById('semFilter');
+            semDD.innerHTML = '<option value="all">All Semesters</option>';
+            const map = { FY:[1,2], SY:[3,4], TY:[5,6] };
+            (map[cls] || []).forEach(s => {
+                semDD.innerHTML += `<option value="${s}">Semester ${s}</option>`;
+            });
+        }
+        updateSemFilter();
+
+        /* ===== CLIENT-SIDE FILTERS ===== */
+        function applyAllFilters() {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            const status = document.getElementById('jsStatusFilter').value;
+            const priority = document.getElementById('jsPriorityFilter').value;
+            const sort = document.getElementById('sortFilter').value;
+            const course = document.getElementById('courseFilter').value;
+            const cls = document.getElementById('classFilter').value;
+            const sem = document.getElementById('semFilter').value;
+            const cat = document.getElementById('catFilter').value;
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+
+            let visible = 0;
+            const rows = Array.from(document.querySelectorAll('#tableBody tr'));
+
+            rows.forEach(row => {
+                const matchQ = !q || row.dataset.subject.includes(q) ||
+                               (row.dataset.student || '').includes(q) ||
+                               (row.dataset.ticketRef || '').includes(q);
+                const matchSt = status === 'all' || row.dataset.status === status;
+                const matchPr = priority === 'all' || row.dataset.priority === priority;
+                const matchCo = course === 'all' || row.dataset.course === course;
+                const matchCl = cls === 'all' || row.dataset.class === cls;
+                const matchSem = sem === 'all' || row.dataset.semester === sem;
+                const matchCat = cat === 'all' || row.dataset.category === cat;
+
+                let matchDate = true;
+                if (dateFrom || dateTo) {
+                    const created = new Date(row.dataset.created);
+                    if (dateFrom && created < new Date(dateFrom)) matchDate = false;
+                    if (dateTo && created > new Date(dateTo + 'T23:59:59')) matchDate = false;
+                }
+
+                const show = matchQ && matchSt && matchPr && matchCo && matchCl && matchSem && matchCat && matchDate;
+                row.style.display = show ? 'table-row' : 'none';
+                if (show) visible++;
+            });
+
+            // Sort visible rows
+            const tbody = document.getElementById('tableBody');
+            const visibleRows = rows.filter(r => r.style.display !== 'none');
+            const priorityOrder = { High:0, Medium:1, Low:2 };
+
+            visibleRows.sort((a, b) => {
+                if (sort === 'oldest') return new Date(a.dataset.created) - new Date(b.dataset.created);
+                if (sort === 'priority') return (priorityOrder[a.dataset.priority] || 2) - (priorityOrder[b.dataset.priority] || 2);
+                if (sort === 'replies') return parseInt(b.dataset.replies || 0) - parseInt(a.dataset.replies || 0);
+                return new Date(b.dataset.created) - new Date(a.dataset.created); // newest
+            });
+            visibleRows.forEach(r => tbody.appendChild(r));
+
+            // Update row count
+            const rc = document.getElementById('rowCount');
+            if (rc) rc.textContent = `${visible} of ${rows.length} tickets`;
+
+            // Update active filter chips
+            renderFilterChips({ q, status, priority, course, cls, sem, cat, dateFrom, dateTo });
+        }
+
+        function renderFilterChips(f) {
+            const wrap = document.getElementById('activeFilters');
+            const chips = [];
+            
+            if (f.q) chips.push(`<span class="filter-chip"><i class="fas fa-search"></i> "${f.q}"</span>`);
+            if (f.status !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-circle"></i> ${f.status}</span>`);
+            if (f.priority !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-flag"></i> ${f.priority}</span>`);
+            if (f.course !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-graduation-cap"></i> ${f.course}</span>`);
+            if (f.cls !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-building"></i> ${f.cls}</span>`);
+            if (f.sem !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-layer-group"></i> Sem ${f.sem}</span>`);
+            if (f.cat !== 'all') chips.push(`<span class="filter-chip"><i class="fas fa-tag"></i> ${f.cat}</span>`);
+            if (f.dateFrom) chips.push(`<span class="filter-chip"><i class="fas fa-calendar"></i> From ${f.dateFrom}</span>`);
+            if (f.dateTo) chips.push(`<span class="filter-chip"><i class="fas fa-calendar"></i> To ${f.dateTo}</span>`);
+
+            if (chips.length) {
+                wrap.style.display = 'flex';
+                wrap.innerHTML = chips.join('');
+            } else {
+                wrap.style.display = 'none';
+            }
+        }
+
+        function resetAllFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('jsStatusFilter').value = 'all';
+            document.getElementById('jsPriorityFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'newest';
+            document.getElementById('courseFilter').value = 'all';
+            document.getElementById('classFilter').value = 'all';
+            document.getElementById('catFilter').value = 'all';
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            updateSemFilter();
+            applyAllFilters();
+        }
+
+        /* ===== COLUMN SORT ===== */
+        let sortState = { col: -1, dir: 'asc' };
+        
+        function sortTable(colIdx) {
+            const tbody = document.getElementById('tableBody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            const dir = (sortState.col === colIdx && sortState.dir === 'asc') ? 'desc' : 'asc';
+            sortState = { col: colIdx, dir };
+
+            rows.sort((a, b) => {
+                const aT = a.cells[colIdx]?.textContent.trim() || '';
+                const bT = b.cells[colIdx]?.textContent.trim() || '';
+                const aN = parseFloat(aT), bN = parseFloat(bT);
+                const cmp = (!isNaN(aN) && !isNaN(bN)) ? aN - bN : aT.localeCompare(bT);
+                return dir === 'asc' ? cmp : -cmp;
+            });
+            
+            rows.forEach(r => tbody.appendChild(r));
+
+            document.querySelectorAll('thead th').forEach(th => th.classList.remove('sort-asc', 'sort-desc'));
+            const th = document.querySelector(`thead th[data-col="${colIdx}"]`);
+            if (th) th.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+
+        /* ===== QUICK STATUS CHANGE ===== */
+        function quickStatus(ticketId, newStatus) {
+            const fd = new FormData();
+            fd.append('action', 'change_status');
+            fd.append('new_status', newStatus);
+
+            fetch(`/support/ticket/${ticketId}`, { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    updateRowStatus(ticketId, newStatus);
+                    showToast('Status Updated', `Ticket marked as "${newStatus}".`,
+                              newStatus === 'Closed' ? 'warn' : 'success');
+                } else {
+                    showToast('Error', data.error || 'Failed to update.', 'error');
+                }
+            })
+            .catch(() => showToast('Error', 'Network error.', 'error'));
+        }
+
+        function updateRowStatus(ticketId, newStatus) {
+            const row = document.getElementById('tr-' + ticketId);
+            if (!row) return;
+
+            // Update row class
+            row.classList.remove('row-open', 'row-in-progress', 'row-closed');
+            row.classList.add('row-' + newStatus.toLowerCase().replace(' ', '-'));
+            row.dataset.status = newStatus;
+
+            // Update status badge
+            const badge = document.getElementById('status-badge-' + ticketId);
+            if (badge) {
+                const cls = newStatus === 'Open' ? 'b-open' : newStatus === 'In Progress' ? 'b-progress' : 'b-closed';
+                const ico = newStatus === 'Open'
+                    ? '<i class="fas fa-circle" style="font-size:0.5rem;"></i>'
+                    : newStatus === 'In Progress'
+                    ? '<i class="fas fa-spinner fa-spin"></i>'
+                    : '<i class="fas fa-check-circle"></i>';
+                badge.className = `badge ${cls}`;
+                badge.innerHTML = `${ico} ${newStatus}`;
+            }
+
+            // Disable/enable quick action buttons
+            const qaReply = row.querySelector('.qa-reply');
+            const qaProgress = row.querySelector('.qa-progress');
+            const qaClose = row.querySelector('.qa-close');
+            
+            if (newStatus === 'Closed') {
+                [qaReply, qaProgress, qaClose].forEach(b => b && b.classList.add('qa-disabled'));
+            } else if (newStatus === 'In Progress') {
+                qaProgress && qaProgress.classList.add('qa-disabled');
+                qaReply && qaReply.classList.remove('qa-disabled');
+                qaClose && qaClose.classList.remove('qa-disabled');
+            } else {
+                [qaReply, qaProgress, qaClose].forEach(b => b && b.classList.remove('qa-disabled'));
+            }
+
+            // Update KPI counters
+            refreshKPIs();
+        }
+
+        function refreshKPIs() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let open = 0, progress = 0, closed = 0;
+            
+            rows.forEach(r => {
+                const s = r.dataset.status;
+                if (s === 'Open') open++;
+                else if (s === 'In Progress') progress++;
+                else if (s === 'Closed') closed++;
+            });
+            
+            document.getElementById('kOpen').textContent = open;
+            document.getElementById('kProgress').textContent = progress;
+            document.getElementById('kClosed').textContent = closed;
+        }
+
+        /* ===== QUICK REPLY MODAL ===== */
+        let activeReplyTicketId = null;
+
+        function openReplyModal(ticketId, ticketRef) {
+            activeReplyTicketId = ticketId;
+            document.getElementById('replyModalSub').textContent = `Replying to ${ticketRef}`;
+            document.getElementById('replyModalMsg').value = '';
+            document.getElementById('replyModal').classList.add('open');
+            setTimeout(() => document.getElementById('replyModalMsg').focus(), 100);
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyModal').classList.remove('open');
+            activeReplyTicketId = null;
+        }
+
+        function submitQuickReply() {
+            if (!activeReplyTicketId) return;
+            
+            const msg = document.getElementById('replyModalMsg').value.trim();
+            if (!msg) {
+                showToast('Empty', 'Please type a reply.', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('replyModalBtn');
+            const spinner = document.getElementById('replyModalSpinner');
+            const icon = document.getElementById('replyModalIcon');
+            const text = document.getElementById('replyModalText');
+            
+            btn.disabled = true;
+            spinner.style.display = 'block';
+            icon.style.display = 'none';
+            text.textContent = 'Sending...';
+
+            const fd = new FormData();
+            fd.append('action', 'reply');
+            fd.append('message', msg);
+
+            fetch(`/support/ticket/${activeReplyTicketId}`, { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = '';
+                text.textContent = 'Send Reply';
+
+                if (data.success) {
+                    closeReplyModal();
+                    // Increment reply count
+                    const rc = document.getElementById('reply-count-' + activeReplyTicketId);
+                    if (rc) rc.textContent = parseInt(rc.textContent || 0) + 1;
+                    
+                    // Auto-set to In Progress if was Open
+                    const row = document.getElementById('tr-' + activeReplyTicketId);
+                    if (row && row.dataset.status === 'Open') {
+                        updateRowStatus(activeReplyTicketId, 'In Progress');
+                    }
+                    showToast('Reply Sent', 'Your reply has been sent to the student.');
+                } else {
+                    showToast('Error', data.error || 'Failed to send.', 'error');
+                }
+            })
+            .catch(() => {
+                btn.disabled = false;
+                spinner.style.display = 'none';
+                icon.style.display = '';
+                text.textContent = 'Send Reply';
+                showToast('Error', 'Network error.', 'error');
+            });
+        }
+
+        // Close modal on overlay click
+        document.getElementById('replyModal').addEventListener('click', function(e) {
+            if (e.target === this) closeReplyModal();
+        });
+
+        // Ctrl+Enter to send
+        document.getElementById('replyModalMsg').addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'Enter') submitQuickReply();
+        });
+
+        /* ===== TOAST ===== */
+        function showToast(title, msg, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (type === 'error' ? ' toast-error' : type === 'warn' ? ' toast-warn' : '');
+            
+            const icon = type === 'error' ? 'fa-exclamation-circle' : type === 'warn' ? 'fa-exclamation-triangle' : 'fa-check-circle';
+            
+            toast.innerHTML = `
+                <div class="toast-icon"><i class="fas ${icon}"></i></div>
+                <div class="toast-body">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-msg">${msg}</div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'toastOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 3500);
+        }
+
+        /* ===== INIT ===== */
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sync server-side filter values
+            const urlParams = new URLSearchParams(window.location.search);
+            const st = urlParams.get('status');
+            const pr = urlParams.get('priority');
+            if (st) document.getElementById('jsStatusFilter').value = st;
+            if (pr) document.getElementById('jsPriorityFilter').value = pr;
+
+            applyAllFilters();
+
+            // Page entrance animation
+            gsap.from('#main', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+    </script>
+</body>
+</html>

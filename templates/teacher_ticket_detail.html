@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ ticket.ticket_ref }} | Support Center</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+    /* ═══════════════════════════════════════════════
+       VARIABLES
+    ═══════════════════════════════════════════════ */
+    :root {
+        --primary:   #4361ee;
+        --primary-d: #3a0ca3;
+        --primary-l: #4895ef;
+        --success:   #2ecc71;
+        --success-d: #27ae60;
+        --danger:    #e74c3c;
+        --danger-d:  #c0392b;
+        --warning:   #f39c12;
+        --warning-d: #e67e22;
+        --purple:    #9b59b6;
+        --dark:      #2c3e50;
+        --gray-100:  #f8fafc;
+        --gray-200:  #e2e8f0;
+        --gray-300:  #cbd5e1;
+        --gray-400:  #94a3b8;
+        --gray-500:  #64748b;
+        --gray-600:  #475569;
+        --gray-700:  #334155;
+        --radius:    14px;
+        --radius-lg: 20px;
+        --shadow:    0 4px 24px rgba(0,0,0,.07);
+        --shadow-lg: 0 16px 48px rgba(0,0,0,.13);
+        --shadow-xl: 0 28px 64px rgba(0,0,0,.18);
+        --transition: all .3s cubic-bezier(.25,.8,.25,1);
+        --glass:     rgba(255,255,255,.88);
+        --glass-b:   rgba(255,255,255,.55);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #f0f4ff 0%, #e8f4fd 50%, #f5f7fa 100%);
+        background-attachment: fixed;
+        color: var(--dark);
+        min-height: 100vh;
+    }
+
+    /* sidebar uses #main */
+    #main { padding: 28px 32px; }
+    @media(max-width:768px) { #main { padding: 70px 16px 24px; } }
+
+    /* ═══════════════════════════════════════════════
+       PAGE HEADER
+    ═══════════════════════════════════════════════ */
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 24px 28px;
+        border-radius: var(--radius-lg);
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        color: #fff;
+        box-shadow: var(--shadow-lg);
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        flex-wrap: wrap;
+        gap: 14px;
+    }
+    .page-header::before {
+        content: '';
+        position: absolute; top:-40%; right:-15%;
+        width:65%; height:220%;
+        background: radial-gradient(circle, rgba(255,255,255,.1) 0%, transparent 65%);
+        animation: hdrGlow 7s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+    @keyframes hdrGlow {
+        from { transform: scale(1)    rotate(-8deg); }
+        to   { transform: scale(1.15) rotate(-8deg); }
+    }
+    .hdr-left { position: relative; z-index: 1; }
+    .hdr-left h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.4rem; font-weight: 800;
+        display: flex; align-items: center; gap: 12px;
+        margin-bottom: 4px;
+    }
+    .hdr-left p { font-size: .82rem; opacity: .88; }
+    .hdr-right { position: relative; z-index: 1; display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ═══════════════════════════════════════════════
+       BREADCRUMB
+    ═══════════════════════════════════════════════ */
+    .breadcrumb {
+        display: flex; align-items: center; gap: 8px;
+        font-size: .8rem; color: var(--gray-500);
+        margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .breadcrumb a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .breadcrumb a:hover { text-decoration: underline; }
+    .breadcrumb i { font-size: .65rem; color: var(--gray-400); }
+
+    /* ═══════════════════════════════════════════════
+       LAYOUT
+    ═══════════════════════════════════════════════ */
+    .detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 300px;
+        gap: 22px;
+        align-items: start;
+    }
+    @media(max-width:1050px) { .detail-layout { grid-template-columns: 1fr; } }
+
+    /* ═══════════════════════════════════════════════
+       CARDS
+    ═══════════════════════════════════════════════ */
+    .card {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-b);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 26px 28px;
+        animation: fadeUp .5s ease-out;
+    }
+    @keyframes fadeUp {
+        from { opacity:0; transform:translateY(14px); }
+        to   { opacity:1; transform:translateY(0); }
+    }
+    .panel-card {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-b);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        padding: 20px 22px;
+        margin-bottom: 16px;
+        animation: fadeUp .5s ease-out .1s both;
+    }
+    .panel-title {
+        font-size: .7rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .7px;
+        color: var(--gray-500); margin-bottom: 14px;
+        display: flex; align-items: center; gap: 7px;
+    }
+
+    /* ═══════════════════════════════════════════════
+       BADGES
+    ═══════════════════════════════════════════════ */
+    .badge {
+        display: inline-flex; align-items: center; gap: 4px;
+        padding: 4px 12px; border-radius: 50px;
+        font-size: .7rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .4px;
+        white-space: nowrap;
+    }
+    .b-open     { background:rgba(46,204,113,.12); color:var(--success-d); }
+    .b-progress { background:rgba(243,156,18,.12);  color:var(--warning-d); }
+    .b-closed   { background:rgba(231,76,60,.1);    color:var(--danger); }
+    .b-low      { background:rgba(100,116,139,.1);  color:var(--gray-600); }
+    .b-medium   { background:rgba(67,97,238,.1);    color:var(--primary); }
+    .b-high     { background:rgba(231,76,60,.1);    color:var(--danger); }
+
+    /* ═══════════════════════════════════════════════
+       TICKET HEADER
+    ═══════════════════════════════════════════════ */
+    .ticket-subject {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem; font-weight: 700;
+        color: var(--dark); margin-bottom: 12px; line-height: 1.3;
+    }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+
+    /* ═══════════════════════════════════════════════
+       ORIGINAL MESSAGE
+    ═══════════════════════════════════════════════ */
+    .msg-label {
+        font-size: .7rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .6px;
+        color: var(--primary); margin-bottom: 8px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .original-msg {
+        background: linear-gradient(135deg, rgba(67,97,238,.05), rgba(58,12,163,.03));
+        border: 1px solid rgba(67,97,238,.12);
+        border-radius: var(--radius);
+        padding: 18px 20px;
+        margin-bottom: 24px;
+        font-size: .9rem; line-height: 1.8;
+        color: var(--gray-600);
+        white-space: pre-wrap; word-break: break-word;
+    }
+
+    /* ═══════════════════════════════════════════════
+       CONVERSATION THREAD
+    ═══════════════════════════════════════════════ */
+    .conv-title {
+        font-size: .72rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: .7px;
+        color: var(--gray-500); margin-bottom: 16px;
+        display: flex; align-items: center; gap: 7px;
+    }
+    .conv-title::after { content:''; flex:1; height:1px; background:var(--gray-200); }
+
+    .reply-bubble {
+        display: flex; gap: 12px;
+        margin-bottom: 16px;
+        animation: fadeUp .3s ease-out;
+    }
+    .reply-bubble.teacher-reply { flex-direction: row-reverse; }
+
+    .avatar {
+        width: 36px; height: 36px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: .85rem; font-weight: 700; flex-shrink: 0;
+    }
+    .av-student { background:rgba(67,97,238,.15); color:var(--primary); }
+    .av-teacher { background:rgba(46,204,113,.15); color:var(--success-d); }
+
+    .bubble-content { max-width: 75%; }
+    .bubble-meta {
+        font-size: .7rem; color: var(--gray-400);
+        margin-bottom: 4px;
+        display: flex; align-items: center; gap: 6px;
+    }
+    .reply-bubble.teacher-reply .bubble-meta { justify-content: flex-end; }
+
+    .bubble-text {
+        background: #fff;
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        padding: 12px 16px;
+        font-size: .88rem; line-height: 1.7;
+        color: var(--gray-700);
+        white-space: pre-wrap; word-break: break-word;
+        box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    }
+    .reply-bubble.teacher-reply .bubble-text {
+        background: rgba(46,204,113,.06);
+        border-color: rgba(46,204,113,.15);
+    }
+
+    /* ═══════════════════════════════════════════════
+       REPLY FORM
+    ═══════════════════════════════════════════════ */
+    .reply-form-wrap {
+        margin-top: 20px; padding-top: 20px;
+        border-top: 1px solid var(--gray-200);
+    }
+    textarea.reply-input {
+        width: 100%; padding: 12px 16px;
+        border: 1.5px solid var(--gray-300);
+        border-radius: var(--radius);
+        font-size: .88rem; font-family: 'Inter', sans-serif;
+        background: rgba(255,255,255,.9); color: var(--dark);
+        transition: var(--transition);
+        resize: vertical; min-height: 100px;
+        margin-bottom: 12px;
+    }
+    textarea.reply-input:focus {
+        outline: none; border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67,97,238,.12);
+        background: #fff;
+    }
+    .reply-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    .btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        padding: 11px 22px; border-radius: 50px;
+        font-family: 'Inter', sans-serif;
+        font-size: .85rem; font-weight: 700;
+        cursor: pointer; border: none;
+        transition: var(--transition);
+        position: relative; overflow: hidden;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+
+    .btn-reply {
+        background: linear-gradient(135deg, var(--primary), var(--primary-d));
+        color: #fff; box-shadow: 0 4px 14px rgba(67,97,238,.3);
+    }
+    .btn-reply:hover { box-shadow: 0 8px 20px rgba(67,97,238,.4); }
+
+    .btn-close-ticket {
+        background: linear-gradient(135deg, var(--danger), var(--danger-d));
+        color: #fff; box-shadow: 0 4px 14px rgba(231,76,60,.3);
+    }
+    .btn-close-ticket:hover { box-shadow: 0 8px 20px rgba(231,76,60,.4); }
+
+    .btn-outline {
+        background: rgba(255,255,255,.9);
+        border: 1.5px solid var(--gray-300);
+        color: var(--gray-600);
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+
+    .spinner {
+        width: 15px; height: 15px;
+        border: 2px solid rgba(255,255,255,.4);
+        border-top-color: #fff; border-radius: 50%;
+        animation: spin .7s linear infinite; display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ═══════════════════════════════════════════════
+       STATUS CHANGE CONTROLS
+    ═══════════════════════════════════════════════ */
+    .status-controls {
+        display: flex; gap: 8px; flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+    .status-btn {
+        padding: 8px 16px; border-radius: 50px;
+        font-size: .78rem; font-weight: 700;
+        cursor: pointer; border: 1.5px solid transparent;
+        transition: var(--transition); font-family: 'Inter', sans-serif;
+    }
+    .sb-open     { border-color:var(--success-d); color:var(--success-d); background:rgba(46,204,113,.08); }
+    .sb-open:hover     { background:var(--success-d); color:#fff; }
+    .sb-progress { border-color:var(--warning-d); color:var(--warning-d); background:rgba(243,156,18,.08); }
+    .sb-progress:hover { background:var(--warning-d); color:#fff; }
+    .sb-closed   { border-color:var(--danger); color:var(--danger); background:rgba(231,76,60,.08); }
+    .sb-closed:hover   { background:var(--danger); color:#fff; }
+    .status-btn.active-status { opacity: .45; cursor: default; pointer-events: none; }
+
+    /* ═══════════════════════════════════════════════
+       INFO ROWS
+    ═══════════════════════════════════════════════ */
+    .info-row {
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: .82rem; padding: 7px 0;
+        border-bottom: 1px solid var(--gray-200);
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-lbl { color: var(--gray-500); }
+    .info-val  { font-weight: 600; color: var(--dark); }
+
+    /* student info */
+    .student-card {
+        display: flex; align-items: center; gap: 14px;
+        padding: 14px 16px;
+        background: rgba(255,255,255,.7);
+        border: 1px solid var(--gray-200);
+        border-radius: var(--radius);
+        margin-bottom: 14px;
+    }
+    .student-avatar {
+        width: 44px; height: 44px; border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--primary-d));
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; font-size: 1.1rem; font-weight: 700; flex-shrink: 0;
+    }
+    .student-name { font-weight: 700; font-size: .9rem; color: var(--dark); margin-bottom: 2px; }
+    .student-meta { font-size: .75rem; color: var(--gray-500); }
+
+    /* ═══════════════════════════════════════════════
+       CONFIRMATION MODAL
+    ═══════════════════════════════════════════════ */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.52);
+        z-index: var(--z-toast); align-items: center; justify-content: center;
+        backdrop-filter: blur(4px);
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: #fff; border-radius: var(--radius-lg);
+        padding: 34px 30px; max-width: 420px; width: 90%;
+        box-shadow: var(--shadow-xl);
+        animation: modalIn .3s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(20px) scale(.95); }
+        to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .modal-icon {
+        width: 58px; height: 58px; border-radius: 50%;
+        background: rgba(231,76,60,.1);
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 1.5rem; color: var(--danger);
+    }
+    .modal-title { font-family:'Poppins',sans-serif; font-size:1.2rem; font-weight:700; text-align:center; margin-bottom:8px; color:var(--dark); }
+    .modal-msg   { font-size:.85rem; color:var(--gray-500); text-align:center; margin-bottom:22px; line-height:1.6; }
+    .modal-actions { display:flex; gap:10px; }
+    .modal-actions .btn { flex:1; justify-content:center; }
+    .btn-modal-cancel { background:var(--gray-100); color:var(--gray-700); border:1.5px solid var(--gray-200); }
+    .btn-modal-cancel:hover { background:var(--gray-200); }
+
+    /* ═══════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════ */
+    .toast-container {
+        position: fixed; top: 20px; right: 20px;
+        z-index: var(--z-toast); display: flex; flex-direction: column; gap: 8px;
+        pointer-events: none;
+    }
+    .toast {
+        background: #fff; border-radius: var(--radius);
+        padding: 13px 16px; box-shadow: 0 8px 30px rgba(0,0,0,.13);
+        display: flex; align-items: center; gap: 11px;
+        min-width: 260px; pointer-events: all;
+        border-left: 4px solid var(--success);
+        animation: toastIn .4s cubic-bezier(.175,.885,.32,1.275) forwards;
+    }
+    .toast.toast-error { border-left-color: var(--danger); }
+    .toast.toast-warn  { border-left-color: var(--warning); }
+    @keyframes toastIn  { from{opacity:0;transform:translateX(40px) scale(.9)} to{opacity:1;transform:translateX(0) scale(1)} }
+    @keyframes toastOut { from{opacity:1;transform:translateX(0) scale(1)} to{opacity:0;transform:translateX(40px) scale(.9)} }
+    .toast-icon { width:32px; height:32px; border-radius:50%; background:rgba(46,204,113,.1); display:flex; align-items:center; justify-content:center; color:var(--success-d); font-size:.85rem; flex-shrink:0; }
+    .toast.toast-error .toast-icon { background:rgba(231,76,60,.1); color:var(--danger); }
+    .toast.toast-warn  .toast-icon { background:rgba(243,156,18,.1); color:var(--warning-d); }
+    .toast-body { flex:1; }
+    .toast-title { font-size:.82rem; font-weight:700; color:var(--dark); margin-bottom:1px; }
+    .toast-msg   { font-size:.72rem; color:var(--gray-400); }
+
+    /* ═══════════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════════ */
+    @media(max-width:768px) {
+        .reply-actions { flex-direction: column; align-items: stretch; }
+        .reply-actions .btn { justify-content: center; }
+        .status-controls { flex-direction: column; }
+        .status-btn { text-align: center; }
+    }
+    </style>
+</head>
+<body>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <!-- ══ TOAST CONTAINER ══ -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- ══ CLOSE CONFIRMATION MODAL ══ -->
+    <div class="modal-overlay" id="closeModal">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fas fa-lock"></i></div>
+            <div class="modal-title">Close Ticket?</div>
+            <div class="modal-msg">
+                Are you sure you want to close ticket
+                <strong>{{ ticket.ticket_ref }}</strong>?<br>
+                <small style="color:var(--gray-400)">The student will no longer be able to reply.</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-modal-cancel" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="btn btn-close-ticket" onclick="changeStatus('Closed')">
+                    <i class="fas fa-lock"></i> Yes, Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main">
+
+        <!-- ══ PAGE HEADER ══ -->
+        <div class="page-header">
+            <div class="hdr-left">
+                <h1><i class="fas fa-ticket-alt"></i> {{ ticket.ticket_ref }}</h1>
+                <p>{{ ticket.subject }}</p>
+            </div>
+            <div class="hdr-right">
+                <a href="{{ url_for('teacher_support_center') }}"
+                   style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:#fff;padding:9px 18px;border-radius:50px;text-decoration:none;font-size:.82rem;font-weight:600;display:flex;align-items:center;gap:7px;backdrop-filter:blur(4px)">
+                    <i class="fas fa-arrow-left"></i> Support Center
+                </a>
+            </div>
+        </div>
+
+        <!-- ══ BREADCRUMB ══ -->
+        <div class="breadcrumb">
+            <a href="/teacher_dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <i class="fas fa-chevron-right"></i>
+            <a href="{{ url_for('teacher_support_center') }}">Support Center</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>{{ ticket.ticket_ref }}</span>
+        </div>
+
+        <div class="detail-layout">
+
+            <!-- ══ LEFT: CONVERSATION ══ -->
+            <div class="card">
+
+                <!-- ticket subject + badges -->
+                <div class="ticket-subject">{{ ticket.subject }}</div>
+                <div class="badge-row">
+                    <span class="badge {% if ticket.status=='Open' %}b-open{% elif ticket.status=='In Progress' %}b-progress{% else %}b-closed{% endif %}" id="statusBadge">
+                        {% if ticket.status == 'Open' %}
+                            <i class="fas fa-circle" style="font-size:.5rem"></i> Open
+                        {% elif ticket.status == 'In Progress' %}
+                            <i class="fas fa-spinner" style="font-size:.6rem"></i> In Progress
+                        {% else %}
+                            <i class="fas fa-check" style="font-size:.6rem"></i> Closed
+                        {% endif %}
+                    </span>
+                    {% if ticket.priority == 'High' %}
+                        <span class="badge b-high"><i class="fas fa-arrow-up" style="font-size:.6rem"></i> High</span>
+                    {% elif ticket.priority == 'Medium' %}
+                        <span class="badge b-medium"><i class="fas fa-minus" style="font-size:.6rem"></i> Medium</span>
+                    {% else %}
+                        <span class="badge b-low"><i class="fas fa-arrow-down" style="font-size:.6rem"></i> Low</span>
+                    {% endif %}
+                    <span class="badge" style="background:var(--gray-100);color:var(--gray-500)">{{ ticket.category }}</span>
+                </div>
+
+                <!-- original message -->
+                <div class="msg-label"><i class="fas fa-comment-alt"></i> Original Message</div>
+                <div class="original-msg">{{ ticket.message }}</div>
+
+                <!-- replies -->
+                <div class="conv-title" id="convTitle">
+                    <i class="fas fa-comments"></i>
+                    Conversation (<span id="convCount">{{ ticket.replies|length }}</span>)
+                </div>
+                <div id="replyThread">
+                    {% if ticket.replies %}
+                        {% for r in ticket.replies %}
+                        <div class="reply-bubble {{ 'teacher-reply' if r.sender_type == 'teacher' else '' }}" data-reply-id="{{ r.reply_id }}">
+                            <div class="avatar {{ 'av-teacher' if r.sender_type == 'teacher' else 'av-student' }}">
+                                {{ r.sender_name[0]|upper if r.sender_name else '?' }}
+                            </div>
+                            <div class="bubble-content">
+                                <div class="bubble-meta">
+                                    <strong>{{ r.sender_name }}</strong>
+                                    <span>·</span>
+                                    <span>{{ r.created_at.strftime('%d %b %Y, %I:%M %p') }}</span>
+                                    {% if r.sender_type == 'teacher' %}
+                                    <span style="background:rgba(46,204,113,.1);color:var(--success-d);padding:1px 7px;border-radius:50px;font-size:.65rem;font-weight:700">ADMIN</span>
+                                    {% else %}
+                                    <span style="background:rgba(67,97,238,.1);color:var(--primary);padding:1px 7px;border-radius:50px;font-size:.65rem;font-weight:700">STUDENT</span>
+                                    {% endif %}
+                                </div>
+                                <div class="bubble-text">{{ r.message }}</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div id="noRepliesMsg" style="text-align:center;padding:24px;color:var(--gray-400);font-size:.85rem">
+                        <i class="fas fa-comment-slash" style="font-size:1.5rem;margin-bottom:8px;display:block;opacity:.4"></i>
+                        No replies yet. Be the first to respond.
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- reply form -->
+                <div class="reply-form-wrap" id="replyFormWrap">
+                    <div class="conv-title"><i class="fas fa-reply"></i> Reply to Student</div>
+                    <textarea class="reply-input" id="replyMsg"
+                              placeholder="Type your reply here..."
+                              {% if ticket.status == 'Closed' %}disabled{% endif %}></textarea>
+                    <div class="reply-actions">
+                        <button class="btn btn-reply" id="replyBtn" onclick="sendReply()"
+                                {% if ticket.status == 'Closed' %}disabled{% endif %}>
+                            <div class="spinner" id="replySpinner"></div>
+                            <i class="fas fa-paper-plane" id="replyIcon"></i>
+                            <span id="replyText">Send Reply</span>
+                        </button>
+                        {% if ticket.status != 'Closed' %}
+                        <button class="btn btn-close-ticket" onclick="openCloseModal()">
+                            <i class="fas fa-lock"></i> Close Ticket
+                        </button>
+                        {% else %}
+                        <button class="btn btn-outline" onclick="changeStatus('Open')">
+                            <i class="fas fa-lock-open"></i> Reopen Ticket
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% if ticket.status == 'Closed' %}
+                    <div style="margin-top:12px;background:rgba(231,76,60,.07);border:1px solid rgba(231,76,60,.15);border-radius:var(--radius);padding:11px 14px;font-size:.82rem;color:var(--danger);display:flex;align-items:center;gap:8px">
+                        <i class="fas fa-lock"></i> This ticket is closed. Reopen it to send a reply.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- ══ RIGHT: SIDE PANEL ══ -->
+            <div>
+
+                <!-- Status Controls -->
+                <div class="panel-card">
+                    <div class="panel-title"><i class="fas fa-sliders-h"></i> Change Status</div>
+                    <div class="status-controls">
+                        <button class="status-btn sb-open {{ 'active-status' if ticket.status == 'Open' else '' }}"
+                                onclick="changeStatus('Open')">
+                            <i class="fas fa-circle" style="font-size:.6rem"></i> Open
+                        </button>
+                        <button class="status-btn sb-progress {{ 'active-status' if ticket.status == 'In Progress' else '' }}"
+                                onclick="changeStatus('In Progress')">
+                            <i class="fas fa-spinner" style="font-size:.7rem"></i> In Progress
+                        </button>
+                        <button class="status-btn sb-closed {{ 'active-status' if ticket.status == 'Closed' else '' }}"
+                                onclick="openCloseModal()">
+                            <i class="fas fa-lock" style="font-size:.7rem"></i> Close
+                        </button>
+                    </div>
+                    <div style="font-size:.72rem;color:var(--gray-400);margin-top:6px">
+                        Current: <strong id="currentStatusText" style="color:var(--dark)">{{ ticket.status }}</strong>
+                    </div>
+                </div>
+
+                <!-- Ticket Info -->
+                <div class="panel-card">
+                    <div class="panel-title"><i class="fas fa-info-circle"></i> Ticket Info</div>
+                    <div class="info-row">
+                        <span class="info-lbl">Ticket ID</span>
+                        <span class="info-val" style="color:var(--primary);font-family:'Poppins',sans-serif">{{ ticket.ticket_ref }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Category</span>
+                        <span class="info-val">{{ ticket.category }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Priority</span>
+                        <span class="info-val">{{ ticket.priority }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Status</span>
+                        <span class="badge {% if ticket.status=='Open' %}b-open{% elif ticket.status=='In Progress' %}b-progress{% else %}b-closed{% endif %}" id="sideStatusBadge">
+                            {{ ticket.status }}
+                        </span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Raised On</span>
+                        <span class="info-val">{{ ticket.created_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Last Updated</span>
+                        <span class="info-val">{{ ticket.updated_at.strftime('%d %b %Y') }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Replies</span>
+                        <span class="info-val" id="replyCount">{{ ticket.replies|length }}</span>
+                    </div>
+                </div>
+
+                <!-- Student Info -->
+                <div class="panel-card">
+                    <div class="panel-title"><i class="fas fa-user-graduate"></i> Student</div>
+                    <div class="student-card">
+                        <div class="student-avatar">
+                            {{ ticket.student.full_name[0]|upper if ticket.student and ticket.student.full_name else '?' }}
+                        </div>
+                        <div>
+                            <div class="student-name">{{ ticket.student.full_name if ticket.student else '—' }}</div>
+                            <div class="student-meta">
+                                {{ ticket.student.course if ticket.student else '' }}
+                                {% if ticket.student and ticket.student.class_yr %} · {{ ticket.student.class_yr }}{% endif %}
+                            </div>
+                            <div class="student-meta" style="margin-top:2px">
+                                {{ ticket.student.gmail_id if ticket.student else '' }}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Student ID</span>
+                        <span class="info-val">{{ ticket.student.student_id if ticket.student else '—' }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-lbl">Semester</span>
+                        <span class="info-val">{{ ticket.student.semester if ticket.student else '—' }}</span>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="panel-card">
+                    <div class="panel-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+                    <a href="{{ url_for('teacher_support_center') }}"
+                       style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius);background:rgba(255,255,255,.7);border:1px solid var(--gray-200);text-decoration:none;color:var(--dark);font-size:.82rem;font-weight:500;transition:var(--transition);margin-bottom:8px">
+                        <i class="fas fa-list" style="color:var(--primary)"></i> All Tickets
+                    </a>
+                    <a href="{{ url_for('teacher_support_center') }}?status=Open"
+                       style="display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:var(--radius);background:rgba(255,255,255,.7);border:1px solid var(--gray-200);text-decoration:none;color:var(--dark);font-size:.82rem;font-weight:500;transition:var(--transition)">
+                        <i class="fas fa-circle" style="color:var(--success-d);font-size:.7rem"></i> Open Tickets
+                    </a>
+                </div>
+
+            </div><!-- side panel -->
+        </div><!-- detail-layout -->
+    </div><!-- #main -->
+
+    <script>
+    const TICKET_ID = {{ ticket.ticket_id }};
+    let currentStatus = {{ ticket.status | tojson }};
+
+    /* ═══════════════════════════════════════════════════════
+       SEND REPLY
+    ═══════════════════════════════════════════════════════ */
+    function sendReply() {
+        const msg = (document.getElementById('replyMsg').value || '').trim();
+        if (!msg) { showToast('Empty Message', 'Please type a reply first.', 'error'); return; }
+
+        const btn     = document.getElementById('replyBtn');
+        const spinner = document.getElementById('replySpinner');
+        const icon    = document.getElementById('replyIcon');
+        const text    = document.getElementById('replyText');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        icon.style.display    = 'none';
+        text.textContent      = 'Sending...';
+
+        const fd = new FormData();
+        fd.append('action',  'reply');
+        fd.append('message', msg);
+
+        fetch(`/support/ticket/${TICKET_ID}`, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
+            text.textContent      = 'Send Reply';
+
+            if (data.success) {
+                document.getElementById('replyMsg').value = '';
+                appendReply(data, 'teacher');
+                updateReplyCount(1);
+                showToast('Reply Sent', 'Your reply has been sent to the student.');
+            } else {
+                showToast('Error', data.error || 'Failed to send reply.', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
+            text.textContent      = 'Send Reply';
+            showToast('Error', 'Network error. Please try again.', 'error');
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CHANGE STATUS
+    ═══════════════════════════════════════════════════════ */
+    function changeStatus(newStatus) {
+        closeModal();
+
+        const fd = new FormData();
+        fd.append('action',     'change_status');
+        fd.append('new_status', newStatus);
+
+        fetch(`/support/ticket/${TICKET_ID}`, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                currentStatus = newStatus;
+                updateStatusUI(newStatus);
+                showToast(
+                    'Status Updated',
+                    `Ticket marked as "${newStatus}".`,
+                    newStatus === 'Closed' ? 'warn' : 'success'
+                );
+                // Disable/enable reply textarea
+                const ta  = document.getElementById('replyMsg');
+                const btn = document.getElementById('replyBtn');
+                if (ta)  ta.disabled  = (newStatus === 'Closed');
+                if (btn) btn.disabled = (newStatus === 'Closed');
+            } else {
+                showToast('Error', data.error || 'Failed to update status.', 'error');
+            }
+        })
+        .catch(() => showToast('Error', 'Network error.', 'error'));
+    }
+
+    function updateStatusUI(status) {
+        // Update header badge
+        const hdrBadge  = document.getElementById('statusBadge');
+        const sideBadge = document.getElementById('sideStatusBadge');
+        const statusTxt = document.getElementById('currentStatusText');
+
+        const cls = status === 'Open' ? 'b-open' : status === 'In Progress' ? 'b-progress' : 'b-closed';
+        const ico = status === 'Open'
+            ? '<i class="fas fa-circle" style="font-size:.5rem"></i>'
+            : status === 'In Progress'
+            ? '<i class="fas fa-spinner" style="font-size:.6rem"></i>'
+            : '<i class="fas fa-check" style="font-size:.6rem"></i>';
+
+        if (hdrBadge) {
+            hdrBadge.className = `badge ${cls}`;
+            hdrBadge.innerHTML = `${ico} ${status}`;
+        }
+        if (sideBadge) {
+            sideBadge.className = `badge ${cls}`;
+            sideBadge.textContent = status;
+        }
+        if (statusTxt) statusTxt.textContent = status;
+
+        // Update status buttons active state
+        document.querySelectorAll('.status-btn').forEach(btn => btn.classList.remove('active-status'));
+        const map = { 'Open': '.sb-open', 'In Progress': '.sb-progress', 'Closed': '.sb-closed' };
+        const activeBtn = document.querySelector(map[status]);
+        if (activeBtn) activeBtn.classList.add('active-status');
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       APPEND REPLY BUBBLE
+    ═══════════════════════════════════════════════════════ */
+    function appendReply(data, senderType) {
+        const thread = document.getElementById('replyThread');
+
+        // Remove "no replies yet" placeholder on first reply
+        const placeholder = document.getElementById('noRepliesMsg');
+        if (placeholder) placeholder.remove();
+
+        const isTeacher = senderType === 'teacher';
+        const initial   = (data.sender_name || '?')[0].toUpperCase();
+        const div = document.createElement('div');
+        div.className = 'reply-bubble' + (isTeacher ? ' teacher-reply' : '');
+        if (data.reply_id) div.dataset.replyId = data.reply_id;
+        div.innerHTML = `
+            <div class="avatar ${isTeacher ? 'av-teacher' : 'av-student'}">${initial}</div>
+            <div class="bubble-content">
+                <div class="bubble-meta">
+                    <strong>${escHtml(data.sender_name)}</strong>
+                    <span>·</span>
+                    <span>${escHtml(data.created_at)}</span>
+                    ${isTeacher
+                        ? '<span style="background:rgba(46,204,113,.1);color:#27ae60;padding:1px 7px;border-radius:50px;font-size:.65rem;font-weight:700">ADMIN</span>'
+                        : '<span style="background:rgba(67,97,238,.1);color:#4361ee;padding:1px 7px;border-radius:50px;font-size:.65rem;font-weight:700">STUDENT</span>'
+                    }
+                </div>
+                <div class="bubble-text">${escHtml(data.message)}</div>
+            </div>`;
+        thread.appendChild(div);
+        div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }
+
+    function updateReplyCount(delta) {
+        // side panel count
+        const el = document.getElementById('replyCount');
+        if (el) el.textContent = parseInt(el.textContent || 0) + delta;
+        // conversation title count
+        const cc = document.getElementById('convCount');
+        if (cc) cc.textContent = parseInt(cc.textContent || 0) + delta;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MODAL
+    ═══════════════════════════════════════════════════════ */
+    function openCloseModal() {
+        document.getElementById('closeModal').classList.add('open');
+    }
+    function closeModal() {
+        document.getElementById('closeModal').classList.remove('open');
+    }
+    document.getElementById('closeModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+
+    /* ═══════════════════════════════════════════════════════
+       TOAST
+    ═══════════════════════════════════════════════════════ */
+    function showToast(title, msg, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const t = document.createElement('div');
+        t.className = 'toast' + (type === 'error' ? ' toast-error' : type === 'warn' ? ' toast-warn' : '');
+        const iconClass = type === 'error'
+            ? 'fa-exclamation-circle'
+            : type === 'warn'
+            ? 'fa-exclamation-triangle'
+            : 'fa-check-circle';
+        t.innerHTML = `
+            <div class="toast-icon"><i class="fas ${iconClass}"></i></div>
+            <div class="toast-body">
+                <div class="toast-title">${escHtml(title)}</div>
+                <div class="toast-msg">${escHtml(msg)}</div>
+            </div>`;
+        container.appendChild(t);
+        setTimeout(() => {
+            t.style.animation = 'toastOut .3s ease forwards';
+            setTimeout(() => t.remove(), 300);
+        }, 3500);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       HELPERS
+    ═══════════════════════════════════════════════════════ */
+    function escHtml(s) {
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\n/g, '<br>');
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       REAL-TIME SSE  — receive new replies without reload
+    ═══════════════════════════════════════════════════════ */
+    (function initSSE() {
+        // Track the highest reply_id already rendered on page load
+        let lastKnownId = 0;
+        document.querySelectorAll('#replyThread .reply-bubble').forEach(el => {
+            const id = parseInt(el.dataset.replyId || 0);
+            if (id > lastKnownId) lastKnownId = id;
+        });
+
+        // My own sender_type so we don't duplicate our own just-sent reply
+        const MY_TYPE = 'teacher';
+
+        // IDs we appended via AJAX this session (skip duplicates from SSE)
+        const locallyAdded = new Set();
+
+        function connectSSE() {
+            const url = `/support/ticket/${TICKET_ID}/stream?since=${lastKnownId}`;
+            const es  = new EventSource(url);
+
+            es.onmessage = function(e) {
+                try {
+                    const data = JSON.parse(e.data);
+
+                    // Status update event
+                    if (data.type === 'status') {
+                        if (data.status !== currentStatus) {
+                            currentStatus = data.status;
+                            updateStatusUI(data.status);
+                            // Update reply textarea disabled state
+                            const ta  = document.getElementById('replyMsg');
+                            const btn = document.getElementById('replyBtn');
+                            if (ta)  ta.disabled  = (data.status === 'Closed');
+                            if (btn) btn.disabled = (data.status === 'Closed');
+                        }
+                        return;
+                    }
+
+                    // New reply event
+                    if (!data.reply_id) return;
+                    if (data.reply_id <= lastKnownId) return;   // already shown
+                    if (locallyAdded.has(data.reply_id)) {       // we sent this
+                        lastKnownId = data.reply_id;
+                        return;
+                    }
+
+                    lastKnownId = data.reply_id;
+                    appendReply(data, data.sender_type);
+                    updateReplyCount(1);
+
+                    // Toast only for the OTHER side's reply
+                    if (data.sender_type !== MY_TYPE) {
+                        showToast(
+                            'New Reply',
+                            `${data.sender_name} replied to this ticket.`
+                        );
+                    }
+                } catch (_) {}
+            };
+
+            es.onerror = function() {
+                es.close();
+                // Reconnect after 4 seconds
+                setTimeout(connectSSE, 4000);
+            };
+
+            // Patch appendReply to register locally-added IDs
+            const _orig = appendReply;
+            window._sseRegister = function(id) { locallyAdded.add(id); };
+        }
+
+        connectSSE();
+    })();
+
+    // Patch sendReply to register the reply_id returned by AJAX
+    const _origSendReply = sendReply;
+    sendReply = function() {
+        const msg = (document.getElementById('replyMsg').value || '').trim();
+        if (!msg) { showToast('Empty Message', 'Please type a reply first.', 'error'); return; }
+
+        const btn     = document.getElementById('replyBtn');
+        const spinner = document.getElementById('replySpinner');
+        const icon    = document.getElementById('replyIcon');
+        const text    = document.getElementById('replyText');
+        btn.disabled = true;
+        spinner.style.display = 'block';
+        icon.style.display    = 'none';
+        text.textContent      = 'Sending...';
+
+        const fd = new FormData();
+        fd.append('action',  'reply');
+        fd.append('message', msg);
+
+        fetch(`/support/ticket/${TICKET_ID}`, { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => {
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
+            text.textContent      = 'Send Reply';
+
+            if (data.success) {
+                document.getElementById('replyMsg').value = '';
+                // Mark as locally added so SSE doesn't duplicate it
+                if (window._sseRegister) window._sseRegister(data.reply_id);
+                appendReply(data, 'teacher');
+                updateReplyCount(1);
+                showToast('Reply Sent', 'Your reply has been sent to the student.');
+            } else {
+                showToast('Error', data.error || 'Failed to send reply.', 'error');
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            spinner.style.display = 'none';
+            icon.style.display    = '';
+            text.textContent      = 'Send Reply';
+            showToast('Error', 'Network error. Please try again.', 'error');
+        });
+    };
+    </script>
+</body>
+</html>

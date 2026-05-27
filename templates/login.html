@@ -1,0 +1,99 @@
+<!-- File: templates/login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Nexus Platform - Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Flash message display area using toast system -->
+<div id="toastWrap" class="toast-wrap">
+{% with msgs = get_flashed_messages() %}
+  {% if msgs %}
+    {% for m in msgs %}
+      <div class="toast-msg err">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+</div>
+
+<div class="container" id="container">
+    
+    <!-- Student Form -->
+    <div class="form-container sign-up-container">
+        <form method="POST" action="/login">
+            <img src="{{ url_for('static', filename='navneetcollege.png') }}" class="form-logo" alt="Logo" />
+            <h1>Student Zone</h1>
+            <input type="hidden" name="user_type" value="student">
+            <input type="email" name="username" placeholder="Email ID" required />
+            <input type="text" name="password" placeholder="Mobile Number" required />
+            <button type="submit">Student Login</button>
+            {% if error and user_type == 'student' %}
+                <div class="teacher-error">Invalid user and credentials</div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Teacher Form -->
+    <div class="form-container sign-in-container">
+        <form method="POST" action="/login">
+            <img src="{{ url_for('static', filename='navneetcollege.png') }}" class="form-logo" alt="Logo" />
+            <h1>Teacher Zone</h1>
+            <input type="hidden" name="user_type" value="teacher">
+            <input type="text" name="username" placeholder="Teacher Username" required />
+            <input type="password" name="password" placeholder="Teacher Password" required />
+            <button type="submit">Teacher Login</button>
+            {% if error and user_type == 'teacher' %}
+                <div class="teacher-error">Invalid user and credentials</div>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <h1>Register Student Or LogIn</h1>
+                <p>Enter your personal details and start your journey with us</p>
+                <button class="ghost" id="signIn">Teacher login</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+                <h1>Welcome Teacher!</h1>
+                <p>To keep connected with us please login with your teacher info</p>
+                <button class="ghost" id="signUp">Student login</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const signUpButton = document.getElementById('signUp');
+const signInButton = document.getElementById('signIn');
+const container = document.getElementById('container');
+
+signUpButton.addEventListener('click', () =>
+    container.classList.add("right-panel-active")
+);
+
+signInButton.addEventListener('click', () =>
+    container.classList.remove("right-panel-active")
+);
+
+// Auto-hide toast messages after 3.5 seconds
+setTimeout(() => {
+    const toasts = document.querySelectorAll('.toast-msg');
+    toasts.forEach(toast => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(-10px)';
+        toast.style.transition = 'all 0.4s ease';
+        setTimeout(() => toast.remove(), 400);
+    });
+}, 3500);
+</script>
+</body>
+</html>

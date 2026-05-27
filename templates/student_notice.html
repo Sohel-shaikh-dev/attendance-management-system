@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexus Notice Board • Student Portal</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- Splide for carousels -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+        /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+        
+
+        :root {
+            /* Modern color palette - Glassmorphism + Neomorphism fusion */
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #7b94fa;
+            --primary-500: #5B7CFA;
+            --primary-600: #3F6DFF;
+            --primary-700: #4338ca;
+            --primary-800: #3730a3;
+            --primary-900: #312e81;
+            
+            /* Success, Warning, Danger with softer tones */
+            --success-50: #ecfdf5;
+            --success-100: #d1fae5;
+            --success-500: #10b981;
+            --success-600: #059669;
+            --success-700: #047857;
+            
+            --warning-50: #fffbeb;
+            --warning-100: #fef3c7;
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            --warning-700: #b45309;
+            
+            --danger-50: #fef2f2;
+            --danger-100: #fee2e2;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --danger-700: #b91c1c;
+            
+            /* Neutral tones - more sophisticated */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --gray-950: #030712;
+            
+            /* Glass effects */
+            --glass-light: rgba(255, 255, 255, 0.7);
+            --glass-medium: rgba(255, 255, 255, 0.5);
+            --glass-heavy: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Shadows - layered for depth */
+            --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+            
+            /* Neomorphic shadows */
+            --neo-light: 8px 8px 16px rgba(174, 190, 205, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.7);
+            --neo-inset: inset 3px 3px 6px rgba(174, 190, 205, 0.2), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+            
+            /* Typography */
+            --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Border radius */
+            --radius-xs: 0.375rem;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            --radius-3xl: 3rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            /* Z-index layers */
+            --z-dropdown: 100;
+            --z-sticky: 200;
+            --z-modal: 300;
+            --z-popover: 400;
+            --z-toast: 500;
+            
+            /* Layout */
+            --sidebar-width: 80px;
+        }
+
+        /* ===== DARK MODE SUPPORT ===== */
+        [data-theme="dark"] {
+            --glass-light: rgba(17, 24, 39, 0.7);
+            --glass-medium: rgba(17, 24, 39, 0.5);
+            --glass-heavy: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --gray-50: #111827;
+            --gray-100: #1f2937;
+            --gray-200: #374151;
+            --gray-300: #4b5563;
+            --gray-400: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-600: #d1d5db;
+            --gray-700: #e5e7eb;
+            --gray-800: #f3f4f6;
+            --gray-900: #f9fafb;
+            --primary-50: #1e1b4b;
+            --primary-100: #2e1b6b;
+            --primary-200: #3b1e8c;
+            --primary-300: #4c1d95;
+            --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        
+
+        body {
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--gray-900);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.5;
+            font-weight: 400;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+
+        /* Custom scrollbar - modern thin design */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+        }
+
+        /* Selection style */
+        ::selection {
+            background: var(--primary-500);
+            color: white;
+            text-shadow: none;
+        }
+
+        /* ===== BACKGROUND DECORATIONS ===== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration .blob-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-400);
+            animation-delay: 0s;
+        }
+
+        .bg-decoration .blob-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--success-500);
+            animation-delay: -5s;
+        }
+
+        .bg-decoration .blob-3 {
+            top: 40%;
+            left: 30%;
+            width: 400px;
+            height: 400px;
+            background: var(--warning-500);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.05); }
+            50% { transform: translate(-5%, -5%) scale(0.95); }
+            75% { transform: translate(-5%, 5%) scale(1.02); }
+        }
+
+        /* ===== LAYOUT ===== */
+        .main {
+            min-height: 100vh;
+            padding: var(--space-8) var(--space-10) var(--space-16);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+            padding: var(--space-5) var(--space-6);
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            animation: slideDown 0.6s var(--transition-bounce);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header h1 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            margin: 0;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-400));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .header h1 i {
+            font-size: 2rem;
+            color: var(--primary-500);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: var(--space-4);
+            align-items: center;
+        }
+
+        /* Theme toggle */
+        .theme-toggle {
+            cursor: pointer;
+            width: 48px;
+            height: 48px;
+            background: var(--glass-medium);
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            color: var(--primary-500);
+            transition: var(--transition-bounce);
+            border: 1px solid var(--glass-border);
+        }
+
+        .theme-toggle:hover {
+            transform: rotate(180deg) scale(1.1);
+            background: var(--primary-500);
+            color: white;
+        }
+
+        /* Notification bell */
+        .notification-bell {
+            position: relative;
+            background: var(--glass-medium);
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            border: 1px solid var(--glass-border);
+        }
+
+        .notification-bell:hover {
+            transform: translateY(-3px) scale(1.05);
+            background: var(--primary-500);
+            color: white;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-500);
+            color: white;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 600;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* ===== STATS BAR ===== */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-8);
+        }
+
+        .stat-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            padding: var(--space-5);
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            transition: var(--transition-bounce);
+            opacity: 0;
+            animation: cardFloatIn 0.6s var(--transition-bounce) forwards;
+        }
+
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardFloatIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-2xl), var(--neo-light);
+            border-color: var(--primary-300);
+        }
+
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--primary-500);
+        }
+
+        .stat-value {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* ===== FEATURED NOTICES CAROUSEL ===== */
+        .featured-notices {
+            margin-bottom: var(--space-8);
+        }
+
+        .featured-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            overflow: hidden;
+            box-shadow: var(--shadow-xl);
+            margin: 0 var(--space-2);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition-bounce);
+        }
+
+        .featured-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .featured-card-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .featured-card-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: var(--space-5);
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            color: white;
+        }
+
+        .featured-card-overlay h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: var(--space-1);
+        }
+
+        .featured-card-body {
+            padding: var(--space-5);
+            font-size: 0.95rem;
+            color: var(--gray-700);
+        }
+
+        /* ===== SEARCH FILTER SECTION ===== */
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: var(--space-5);
+            margin-bottom: var(--space-8);
+            flex-wrap: wrap;
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            padding: var(--space-5);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-sort {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+            flex: 1;
+            min-width: 320px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: var(--space-4) var(--space-5) var(--space-4) var(--space-12);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-full);
+            font-size: 0.95rem;
+            background: white;
+            color: var(--gray-900);
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .search-box input:hover {
+            border-color: var(--primary-300);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: var(--space-5);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-500);
+            font-size: 1rem;
+        }
+
+        .sort-select {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-full);
+            padding: var(--space-4) var(--space-5);
+            background: white;
+            font-weight: 600;
+            min-width: 180px;
+            color: var(--gray-900);
+            cursor: pointer;
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .sort-select:hover {
+            border-color: var(--primary-300);
+        }
+
+        .sort-select:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 4px var(--primary-100);
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: var(--space-3) var(--space-5);
+            background: white;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 2px solid var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .filter-chip:hover {
+            border-color: var(--primary-400);
+            transform: translateY(-2px);
+        }
+
+        .filter-chip.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        /* ===== NOTICE CARDS GRID ===== */
+        .notice-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: var(--space-6);
+        }
+
+        .notice-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+            transition: var(--transition-bounce);
+            position: relative;
+            cursor: pointer;
+            border: 1px solid var(--glass-border);
+            opacity: 0;
+            animation: cardPopIn 0.6s var(--transition-bounce) forwards;
+        }
+
+        @keyframes cardPopIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .notice-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--primary-300);
+        }
+
+        .notice-card.pinned {
+            border-top: 6px solid var(--warning-500);
+        }
+
+        .notice-card.important {
+            border-top: 6px solid var(--danger-500);
+        }
+
+        .notice-card-header {
+            padding: var(--space-5);
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .notice-card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            transition: transform 0.6s;
+        }
+
+        .notice-card:hover .notice-card-header::before {
+            transform: rotate(45deg) translate(10%, 10%);
+        }
+
+        .notice-card-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            line-height: 1.4;
+            position: relative;
+            z-index: 1;
+        }
+
+        .notice-card-snippet {
+            padding: var(--space-5) var(--space-5) var(--space-3);
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            min-height: 70px;
+            line-height: 1.6;
+        }
+
+        .notice-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-4) var(--space-5) var(--space-5);
+            background-color: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .notice-date {
+            color: var(--gray-500);
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .notice-category {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--primary-100);
+            color: var(--primary-700);
+            letter-spacing: 0.05em;
+        }
+
+        .notice-views {
+            display: flex;
+            align-items: center;
+            gap: var(--space-1);
+            color: var(--gray-500);
+            font-size: 0.8rem;
+        }
+
+        /* Ribbon styles */
+        .ribbon-slot {
+            position: relative;
+        }
+
+        .ribbon {
+            position: absolute;
+            top: var(--space-4);
+            right: -8px;
+            padding: var(--space-2) var(--space-4);
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: white;
+            border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+            letter-spacing: 0.5px;
+            box-shadow: var(--shadow-md);
+            z-index: 2;
+            animation: ribbonSlide 0.6s var(--transition-bounce);
+        }
+
+        .ribbon::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: -8px;
+            border-style: solid;
+            border-width: 8px 8px 0 0;
+            border-color: rgba(0,0,0,0.2) transparent transparent transparent;
+        }
+
+        @keyframes ribbonSlide {
+            from {
+                transform: translateX(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .ribbon.urgent {
+            background: var(--danger-500);
+        }
+
+        .ribbon.pinned {
+            background: var(--warning-500);
+        }
+
+        .ribbon.new {
+            background: var(--success-500);
+        }
+
+        /* ===== MODAL ===== */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-modal);
+            padding: var(--space-5);
+        }
+
+        .modal-card {
+            width: min(700px, 100%);
+            max-height: 85vh;
+            overflow-y: auto;
+            border-radius: var(--radius-2xl);
+            background: white;
+            box-shadow: var(--shadow-2xl);
+            transform-origin: center;
+            border: 1px solid var(--glass-border);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            color: white;
+            padding: var(--space-6) var(--space-8);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-full);
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .modal-content-wrap {
+            padding: var(--space-8);
+        }
+
+        .modal-meta {
+            color: var(--gray-500);
+            font-size: 0.9rem;
+            margin-bottom: var(--space-5);
+            padding-bottom: var(--space-4);
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            gap: var(--space-4);
+            flex-wrap: wrap;
+        }
+
+        .modal-body {
+            line-height: 1.8;
+            color: var(--gray-700);
+            font-size: 1rem;
+        }
+
+        .attachment-list {
+            margin-top: var(--space-6);
+            padding-top: var(--space-5);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .attachment-list a {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-2);
+            text-decoration: none;
+            color: var(--primary-600);
+            font-weight: 600;
+            padding: var(--space-2) var(--space-4);
+            background: var(--primary-50);
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        .attachment-list a:hover {
+            background: var(--primary-100);
+            transform: translateX(4px);
+        }
+
+        /* ===== NOTIFICATION PANEL ===== */
+        .notif-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background: white;
+            box-shadow: var(--shadow-2xl);
+            z-index: var(--z-popover);
+            display: flex;
+            flex-direction: column;
+            transition: right 0.4s var(--transition-bounce);
+            border-left: 1px solid var(--glass-border);
+        }
+
+        .notif-header {
+            padding: var(--space-5);
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-700));
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notif-header h4 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .notif-list {
+            padding: var(--space-4);
+            overflow-y: auto;
+            flex: 1;
+            background: var(--gray-50);
+        }
+
+        .notif-item {
+            background: white;
+            border: 1px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4);
+            margin-bottom: var(--space-3);
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .notif-item:hover {
+            transform: translateX(4px) scale(1.02);
+            border-color: var(--primary-300);
+            box-shadow: var(--shadow-md);
+        }
+
+        .notif-item h5 {
+            margin: 0 0 var(--space-2);
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .notif-item p {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        .notif-actions {
+            padding: var(--space-4);
+            border-top: 1px solid var(--gray-200);
+            display: flex;
+            gap: var(--space-3);
+            background: white;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+            color: white;
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-full);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            flex: 1;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-700), var(--primary-600));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: var(--space-3) var(--space-5);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--gray-300);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-base);
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            transform: translateY(-2px);
+        }
+
+        /* No notices state */
+        .no-notices {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: var(--space-16) var(--space-5);
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .no-notices i {
+            font-size: 4rem;
+            color: var(--gray-400);
+            margin-bottom: var(--space-4);
+        }
+
+        .no-notices h3 {
+            font-size: 1.5rem;
+            color: var(--gray-700);
+            margin-bottom: var(--space-2);
+        }
+
+        .no-notices p {
+            color: var(--gray-500);
+            margin-bottom: var(--space-5);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .main {
+                padding: var(--space-6) var(--space-5);
+            }
+        }
+
+        @media (max-width: 900px) {
+            .stats-bar {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            
+            .search-sort {
+                min-width: 100%;
+            }
+            
+            .notice-container {
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+            
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            
+            .search-filter {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-chips {
+                justify-content: center;
+            }
+            
+            .notice-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .notif-panel {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: var(--space-4);
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+            
+            .stat-card {
+                padding: var(--space-4);
+            }
+            
+            .search-sort {
+                flex-direction: column;
+                gap: var(--space-3);
+            }
+            
+            .sort-select {
+                width: 100%;
+            }
+            
+            .modal-card {
+                max-height: 90vh;
+            }
+            
+            .modal-content-wrap {
+                padding: var(--space-5);
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Include student sidebar -->
+    {% include 'components/student_sidebar.html' %}
+
+    <!-- Notice data from backend -->
+    {% set featured_notices = featured_notices if featured_notices is defined else [] %}
+
+    <div class="main" id="pageRoot">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-bullhorn"></i> Notice Board</h1>
+            <div class="header-actions">
+                <div class="notification-bell" id="notifBell" aria-label="Notifications">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notifCount">0</span>
+                </div>
+                <div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" id="statsBar">
+            <div class="stat-card">
+                <i class="fas fa-list"></i>
+                <div>
+                    <div class="stat-value" id="statTotal">0</div>
+                    <div class="stat-label">Total Notices</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-exclamation-triangle"></i>
+                <div>
+                    <div class="stat-value" id="statImportant">0</div>
+                    <div class="stat-label">Important</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-calendar-days"></i>
+                <div>
+                    <div class="stat-value" id="statEvents">0</div>
+                    <div class="stat-label">Events</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-envelope-open-text"></i>
+                <div>
+                    <div class="stat-value" id="statUnread">0</div>
+                    <div class="stat-label">Unread</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Featured Notices Carousel -->
+        {% if featured_notices %}
+        <div class="featured-notices">
+            <div class="splide" id="featuredSplide">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        {% for n in featured_notices %}
+                        <li class="splide__slide">
+                            <div class="featured-card">
+                                <div class="featured-card-image" style="background-image:url('{{ n.image_url }}');">
+                                    <div class="featured-card-overlay">
+                                        <h3>{{ n.title }}</h3>
+                                        <p>{{ n.subtitle }}</p>
+                                    </div>
+                                </div>
+                                <div class="featured-card-body">
+                                    <p>{{ n.description }}</p>
+                                </div>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Search & Filter Section -->
+        <div class="search-filter">
+            <div class="search-sort">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="noticeSearch" placeholder="Search notices by title, content, category...">
+                </div>
+                <select id="sortSelect" class="sort-select">
+                    <option value="latest">📅 Latest First</option>
+                    <option value="views">👀 Most Viewed</option>
+                    <option value="important">⚠️ Important First</option>
+                </select>
+            </div>
+            <div class="filter-chips">
+                <button class="filter-chip active" data-filter="all">All</button>
+                <button class="filter-chip" data-filter="academic">Academic</button>
+                <button class="filter-chip" data-filter="events">Events</button>
+                <button class="filter-chip" data-filter="important">Important</button>
+                <button class="filter-chip" data-filter="pinned">Pinned</button>
+                <button class="filter-chip" data-filter="news">News</button>
+            </div>
+        </div>
+
+        <!-- Notice Cards Grid -->
+        <div class="notice-container" id="noticeContainer">
+            {% if notices %}
+                {% for notice in notices %}
+                    <article class="notice-card {% if notice.is_pinned %}pinned{% endif %} {% if notice.is_important %}important{% endif %}"
+                             data-id="{{ notice.notice_id }}"
+                             data-title="{{ notice.title|e }}"
+                             data-content="{{ notice.content|e }}"
+                             data-category="{{ (notice.category or 'general')|lower }}"
+                             data-date="{{ notice.date_posted.strftime('%Y-%m-%d') }}"
+                             data-views="{{ notice.views or 0 }}"
+                             data-important="{{ 1 if notice.is_important else 0 }}"
+                             data-pinned="{{ 1 if notice.is_pinned else 0 }}"
+                             data-attachment="{{ notice.attachment_path or '' }}">
+
+                        <div class="ribbon-slot"></div>
+
+                        <div class="notice-card-header">
+                            <h3>{{ notice.title }}</h3>
+                        </div>
+                        
+                        <div class="notice-card-snippet">
+                            {{ notice.content[:150] }}{% if notice.content|length > 150 %}...{% endif %}
+                        </div>
+                        
+                        <div class="notice-card-footer">
+                            <div>
+                                <div class="notice-date">
+                                    <i class="far fa-calendar-alt"></i>
+                                    {{ notice.date_posted.strftime('%d %b %Y') }}
+                                </div>
+                                <span class="notice-category">{{ notice.category or 'General' }}</span>
+                            </div>
+                            <div class="notice-views">
+                                <i class="fas fa-eye"></i>
+                                {{ notice.views or 0 }}
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            {% else %}
+                <div class="no-notices">
+                    <i class="far fa-bell-slash"></i>
+                    <h3>No Notices Available</h3>
+                    <p>No notices have been published yet. Please check back later.</p>
+                    <button class="btn-primary" onclick="location.reload()">Refresh Notices</button>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Notice Detail Modal -->
+    <div class="modal-backdrop" id="noticeModal">
+        <div class="modal-card" id="modalCard">
+            <div class="modal-header">
+                <h3 id="modalTitle"></h3>
+                <button class="modal-close" id="modalClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-content-wrap">
+                <div class="modal-meta" id="modalMeta"></div>
+                <div class="modal-body" id="modalBody"></div>
+                <div class="attachment-list" id="modalAttachment"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <aside class="notif-panel" id="notifPanel">
+        <div class="notif-header">
+            <h4><i class="fas fa-bell"></i> Unread Notices</h4>
+            <button id="notifClose" class="modal-close"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notif-list" id="notifList"></div>
+        <div class="notif-actions">
+            <button class="btn-secondary" id="markReadBtn">Mark Read</button>
+            <button class="btn-primary" id="openFirstBtn">Open First</button>
+        </div>
+    </aside>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', next);
+        });
+
+        // Initialize Splide Carousel
+        const splideEl = document.getElementById('featuredSplide');
+        if (splideEl) {
+            new Splide(splideEl, {
+                type: 'loop',
+                perPage: 1,
+                gap: '20px',
+                autoplay: true,
+                interval: 4000,
+                arrows: true,
+                pagination: true,
+                pauseOnHover: true,
+                speed: 800,
+                easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+            }).mount();
+        }
+
+        // Get all notice cards
+        const cards = Array.from(document.querySelectorAll('.notice-card'));
+        const noticeContainer = document.getElementById('noticeContainer');
+        const searchInput = document.getElementById('noticeSearch');
+        const sortSelect = document.getElementById('sortSelect');
+        const chips = Array.from(document.querySelectorAll('.filter-chip'));
+        let activeFilter = 'all';
+
+        // Read status management
+        const readStoreKey = 'student_notice_read_ids';
+        let readIds = new Set(JSON.parse(localStorage.getItem(readStoreKey) || '[]'));
+
+        // Check if notice is new (within last 3 days)
+        function isNewCard(card) {
+            const posted = new Date(card.dataset.date + 'T00:00:00');
+            const diffDays = (Date.now() - posted.getTime()) / (1000 * 60 * 60 * 24);
+            return diffDays <= 3;
+        }
+
+        // Apply ribbons to cards
+        function applyRibbons() {
+            cards.forEach(card => {
+                const slot = card.querySelector('.ribbon-slot');
+                const important = card.dataset.important === '1';
+                const pinned = card.dataset.pinned === '1';
+                const isNew = isNewCard(card);
+                
+                slot.innerHTML = '';
+                
+                if (important) {
+                    slot.innerHTML = '<span class="ribbon urgent">URGENT</span>';
+                } else if (pinned) {
+                    slot.innerHTML = '<span class="ribbon pinned">PINNED</span>';
+                } else if (isNew) {
+                    slot.innerHTML = '<span class="ribbon new">NEW</span>';
+                }
+            });
+        }
+
+        // Get visible cards based on search and filter
+        function getVisibleCards() {
+            const term = searchInput.value.toLowerCase().trim();
+            
+            return cards.filter(card => {
+                const title = card.dataset.title.toLowerCase();
+                const content = card.dataset.content.toLowerCase();
+                const category = card.dataset.category;
+                const important = card.dataset.important === '1';
+                const pinned = card.dataset.pinned === '1';
+
+                // Search filter
+                const searchOk = !term || 
+                    title.includes(term) || 
+                    content.includes(term) || 
+                    category.includes(term);
+
+                // Category filter
+                let filterOk = true;
+                if (activeFilter === 'important') {
+                    filterOk = important;
+                } else if (activeFilter === 'pinned') {
+                    filterOk = pinned;
+                } else if (activeFilter !== 'all') {
+                    filterOk = category === activeFilter;
+                }
+
+                return searchOk && filterOk;
+            });
+        }
+
+        // Sort cards
+        function sortCards(list) {
+            const mode = sortSelect.value;
+            
+            return [...list].sort((a, b) => {
+                if (mode === 'views') {
+                    return Number(b.dataset.views) - Number(a.dataset.views);
+                }
+                if (mode === 'important') {
+                    const impDiff = Number(b.dataset.important) - Number(a.dataset.important);
+                    if (impDiff !== 0) return impDiff;
+                }
+                // Default: latest first
+                return new Date(b.dataset.date) - new Date(a.dataset.date);
+            });
+        }
+
+        // Render cards with animation
+        function renderCards() {
+            const visible = sortCards(getVisibleCards());
+            
+            // Hide all cards first
+            cards.forEach(c => c.style.display = 'none');
+            
+            // Show and animate visible cards
+            visible.forEach(c => {
+                c.style.display = 'block';
+                noticeContainer.appendChild(c);
+            });
+
+            // Animate with GSAP
+            gsap.fromTo(visible, 
+                { opacity: 0, y: 20 }, 
+                { 
+                    opacity: 1, 
+                    y: 0, 
+                    duration: 0.5, 
+                    stagger: 0.05, 
+                    ease: 'power2.out',
+                    onComplete: updateStats
+                }
+            );
+        }
+
+        // Update statistics
+        function updateStats() {
+            const total = cards.length;
+            const important = cards.filter(c => c.dataset.important === '1').length;
+            const events = cards.filter(c => c.dataset.category === 'events').length;
+            const unread = cards.filter(c => !readIds.has(c.dataset.id)).length;
+
+            document.getElementById('statTotal').textContent = total;
+            document.getElementById('statImportant').textContent = important;
+            document.getElementById('statEvents').textContent = events;
+            document.getElementById('statUnread').textContent = unread;
+            document.getElementById('notifCount').textContent = unread;
+        }
+
+        // Modal functionality
+        const modal = document.getElementById('noticeModal');
+        const modalCard = document.getElementById('modalCard');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalMeta = document.getElementById('modalMeta');
+        const modalBody = document.getElementById('modalBody');
+        const modalAttachment = document.getElementById('modalAttachment');
+
+        function openModal(card) {
+            const id = card.dataset.id;
+            
+            // Mark as read
+            readIds.add(id);
+            localStorage.setItem(readStoreKey, JSON.stringify([...readIds]));
+
+            // Update modal content
+            modalTitle.textContent = card.dataset.title;
+            modalMeta.innerHTML = `
+                <span><i class="fas fa-calendar"></i> ${card.dataset.date}</span>
+                <span><i class="fas fa-tag"></i> ${card.dataset.category || 'general'}</span>
+                <span><i class="fas fa-eye"></i> ${card.dataset.views} views</span>
+            `;
+            modalBody.textContent = card.dataset.content;
+
+            // Handle attachment
+            const attachment = card.dataset.attachment;
+            modalAttachment.innerHTML = '';
+            if (attachment) {
+                modalAttachment.innerHTML = `
+                    <a href="${attachment}" target="_blank">
+                        <i class="fas fa-paperclip"></i> View Attachment
+                    </a>
+                `;
+            }
+
+            // Show modal with animation
+            modal.style.display = 'flex';
+            gsap.fromTo(modal, 
+                { opacity: 0 }, 
+                { opacity: 1, duration: 0.2 }
+            );
+            gsap.fromTo(modalCard, 
+                { y: 40, opacity: 0, scale: 0.98 }, 
+                { y: 0, opacity: 1, scale: 1, duration: 0.4, ease: 'power2.out' }
+            );
+
+            updateStats();
+            updateNotificationPanel();
+        }
+
+        function closeModal() {
+            gsap.to(modalCard, {
+                y: 20,
+                opacity: 0,
+                duration: 0.2,
+                ease: 'power1.in'
+            });
+            gsap.to(modal, {
+                opacity: 0,
+                duration: 0.2,
+                onComplete: () => {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+
+        // Add click handlers to cards
+        cards.forEach(card => card.addEventListener('click', () => openModal(card)));
+
+        // Modal close handlers
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        // Notification panel
+        const notifPanel = document.getElementById('notifPanel');
+        const notifList = document.getElementById('notifList');
+
+        function updateNotificationPanel() {
+            const unreadCards = cards.filter(c => !readIds.has(c.dataset.id));
+            notifList.innerHTML = '';
+
+            if (!unreadCards.length) {
+                notifList.innerHTML = '<p style="text-align:center;color:var(--gray-500);padding:var(--space-5);">No unread notices.</p>';
+                return;
+            }
+
+            unreadCards.slice(0, 15).forEach(card => {
+                const div = document.createElement('div');
+                div.className = 'notif-item';
+                div.innerHTML = `
+                    <h5>${card.dataset.title}</h5>
+                    <p><i class="fas fa-calendar"></i> ${card.dataset.date} • ${card.dataset.category || 'general'}</p>
+                `;
+                div.addEventListener('click', () => {
+                    closeNotificationPanel();
+                    openModal(card);
+                });
+                notifList.appendChild(div);
+            });
+        }
+
+        function openNotificationPanel() {
+            updateNotificationPanel();
+            gsap.to(notifPanel, {
+                right: 0,
+                duration: 0.4,
+                ease: 'power2.out'
+            });
+        }
+
+        function closeNotificationPanel() {
+            gsap.to(notifPanel, {
+                right: '-400px',
+                duration: 0.3,
+                ease: 'power2.in'
+            });
+        }
+
+        // Notification panel event handlers
+        document.getElementById('notifBell').addEventListener('click', openNotificationPanel);
+        document.getElementById('notifClose').addEventListener('click', closeNotificationPanel);
+
+        document.getElementById('markReadBtn').addEventListener('click', () => {
+            cards.forEach(c => readIds.add(c.dataset.id));
+            localStorage.setItem(readStoreKey, JSON.stringify([...readIds]));
+            updateStats();
+            updateNotificationPanel();
+        });
+
+        document.getElementById('openFirstBtn').addEventListener('click', () => {
+            const firstUnread = cards.find(c => !readIds.has(c.dataset.id));
+            if (firstUnread) {
+                closeNotificationPanel();
+                openModal(firstUnread);
+            }
+        });
+
+        // Search and filter event handlers
+        searchInput.addEventListener('input', renderCards);
+        sortSelect.addEventListener('change', renderCards);
+        
+        chips.forEach(chip => chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            activeFilter = chip.dataset.filter;
+            renderCards();
+        }));
+
+        // Initialize
+        applyRibbons();
+        renderCards();
+
+        // Page entrance animation
+        gsap.from('#pageRoot', {
+            opacity: 0,
+            y: 30,
+            duration: 0.6,
+            ease: 'power2.out'
+        });
+    </script>
+</body>
+</html>

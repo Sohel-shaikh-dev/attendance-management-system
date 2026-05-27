@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Post Notice</title>
+    <style>
+        body {
+            font-family: Poppins, sans-serif;
+            margin: 40px;
+        }
+        form {
+            max-width: 500px;
+        }
+        textarea, input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: teal;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>📢 Post a New Notice</h2>
+    <form method="POST">
+        <input type="text" name="title" placeholder="Notice Title" required><br>
+        <textarea name="content" rows="5" placeholder="Write notice here..." required></textarea><br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <hr>
+    <h3>📜 All Notices</h3>
+    {% for notice in notices %}
+        <div style="margin-bottom: 20px; border: 1px solid #ddd; padding: 10px;">
+            <strong>{{ notice.title }}</strong><br>
+            <small>Posted on: {{ notice.date_posted.strftime('%Y-%m-%d') }}</small><br>
+            <p>{{ notice.content }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>

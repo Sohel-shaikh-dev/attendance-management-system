@@ -1,0 +1,61 @@
+from flask import Flask, render_template, request, redirect
+from flask_sqlalchemy import SQLAlchemy
+from datetime import date
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:passwordd@localhost/attendance_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+class Student(db.Model):
+    __tablename__ = 'students'
+    student_id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(100))
+    gmail_id = db.Column(db.String(100))
+    mobile_number = db.Column(db.String(20))
+    class_ = db.Column("class", db.String(50))
+
+class Attendance(db.Model):
+    __tablename__ = 'attendance'
+    attendance_id = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey('students.student_id'))
+    date = db.Column(db.Date)
+    status = db.Column(db.String(10))
+    marked_by = db.Column(db.String(100))
+
+@app.route('/')
+def home():
+    return render_template('login.html')
+
+@app.route('/student', methods=['POST'])
+def student_login():
+    gmail = request.form['gmail_id']
+    mobile = request.form['mobile_number']
+    student = Student.query.filter_by(gmail_id=gmail, mobile_number=mobile).first()
+    if student:
+        records = Attendance.query.filter_by(student_id=student.student_id).all()
+        return render_template('student_dashboard.html', student=student, records=records)
+    return "Invalid login"
+
+@app.route('/teacher', methods=['POST'])
+def teacher_login():
+    return render_template('teacher_dashboard.html', students=Student.query.all())
+
+@app.route('/mark_attendance', methods=['POST'])
+def mark_attendance():
+    for key in request.form:
+        if key.startswith("status_"):
+            student_id = int(key.split("_")[1])
+            status = request.form[key]
+            new_attendance = Attendance(
+                student_id=student_id,
+                date=date.today(),
+                status=status,
+                marked_by="Teacher"
+            )
+            db.session.add(new_attendance)
+    db.session.commit()
+    return "Attendance saved!"
+
+if __name__ == '__main__':
+    app.run(debug=True)

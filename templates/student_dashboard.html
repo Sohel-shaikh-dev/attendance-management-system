@@ -1,0 +1,1707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexus Dashboard • Student Portal</title>
+    
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+        /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+        
+
+        :root {
+            /* Modern color palette - Glassmorphism + Neomorphism fusion */
+            --primary-50: #eef2ff;
+            --primary-100: #e0e7ff;
+            --primary-200: #c7d2fe;
+            --primary-300: #a5b4fc;
+            --primary-400: #7b94fa;
+            --primary-500: #5B7CFA;
+            --primary-600: #3F6DFF;
+            --primary-700: #4338ca;
+            --primary-800: #3730a3;
+            --primary-900: #312e81;
+            
+            /* Success, Warning, Danger with softer tones */
+            --success-50: #ecfdf5;
+            --success-100: #d1fae5;
+            --success-500: #10b981;
+            --success-600: #059669;
+            --success-700: #047857;
+            
+            --warning-50: #fffbeb;
+            --warning-100: #fef3c7;
+            --warning-500: #f59e0b;
+            --warning-600: #d97706;
+            --warning-700: #b45309;
+            
+            --danger-50: #fef2f2;
+            --danger-100: #fee2e2;
+            --danger-500: #ef4444;
+            --danger-600: #dc2626;
+            --danger-700: #b91c1c;
+            
+            /* Neutral tones - more sophisticated */
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --gray-950: #030712;
+            
+            /* Glass effects */
+            --glass-light: rgba(255, 255, 255, 0.7);
+            --glass-medium: rgba(255, 255, 255, 0.5);
+            --glass-heavy: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            
+            /* Shadows - layered for depth */
+            --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.05);
+            
+            /* Neomorphic shadows */
+            --neo-light: 8px 8px 16px rgba(174, 190, 205, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.7);
+            --neo-inset: inset 3px 3px 6px rgba(174, 190, 205, 0.2), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
+            
+            /* Typography */
+            --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+            
+            /* Spacing */
+            --space-1: 0.25rem;
+            --space-2: 0.5rem;
+            --space-3: 0.75rem;
+            --space-4: 1rem;
+            --space-5: 1.25rem;
+            --space-6: 1.5rem;
+            --space-8: 2rem;
+            --space-10: 2.5rem;
+            --space-12: 3rem;
+            --space-16: 4rem;
+            
+            /* Border radius */
+            --radius-xs: 0.375rem;
+            --radius-sm: 0.5rem;
+            --radius-md: 0.75rem;
+            --radius-lg: 1rem;
+            --radius-xl: 1.5rem;
+            --radius-2xl: 2rem;
+            --radius-3xl: 3rem;
+            --radius-full: 9999px;
+            
+            /* Transitions */
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-bounce: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
+            
+            /* Z-index layers */
+            --z-dropdown: 100;
+            --z-sticky: 200;
+            --z-modal: 300;
+            --z-popover: 400;
+            --z-toast: 500;
+            
+            /* Layout */
+            --sidebar-width: 80px;
+            --header-height: 72px;
+        }
+
+        /* ===== DARK MODE SUPPORT ===== */
+        [data-theme="dark"] {
+            --glass-light: rgba(17, 24, 39, 0.7);
+            --glass-medium: rgba(17, 24, 39, 0.5);
+            --glass-heavy: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --gray-50: #111827;
+            --gray-100: #1f2937;
+            --gray-200: #374151;
+            --gray-300: #4b5563;
+            --gray-400: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-600: #d1d5db;
+            --gray-700: #e5e7eb;
+            --gray-800: #f3f4f6;
+            --gray-900: #f9fafb;
+            --primary-50: #1e1b4b;
+            --primary-100: #2e1b6b;
+            --primary-200: #3b1e8c;
+            --primary-300: #4c1d95;
+            --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        
+
+        body {
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--gray-900);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.5;
+            font-weight: 400;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+
+        /* Custom scrollbar - modern thin design */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+        }
+
+        /* Selection style */
+        ::selection {
+            background: var(--primary-500);
+            color: white;
+            text-shadow: none;
+        }
+
+        /* ===== BACKGROUND DECORATIONS ===== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration .blob-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-400);
+            animation-delay: 0s;
+        }
+
+        .bg-decoration .blob-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--success-500);
+            animation-delay: -5s;
+        }
+
+        .bg-decoration .blob-3 {
+            top: 40%;
+            left: 30%;
+            width: 400px;
+            height: 400px;
+            background: var(--warning-500);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.05); }
+            50% { transform: translate(-5%, -5%) scale(0.95); }
+            75% { transform: translate(-5%, 5%) scale(1.02); }
+        }
+
+        /* ===== LAYOUT ===== */
+        .main {
+            min-height: 100vh;
+            padding: var(--space-8) var(--space-10) var(--space-16);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== WELCOME HEADER ===== */
+        .welcome-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-8);
+            gap: var(--space-5);
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 2;
+            animation: slideDown 0.6s var(--transition-bounce);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .welcome-header h1 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-400));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .welcome-header h1 span {
+            position: relative;
+            display: inline-block;
+        }
+
+        .welcome-header h1 span::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+            border-radius: var(--radius-full);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s var(--transition-bounce);
+        }
+
+        .welcome-header h1:hover span::after {
+            transform: scaleX(1);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: var(--space-4);
+        }
+
+        /* Theme toggle button */
+        .theme-toggle {
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-full);
+            display: grid;
+            place-items: center;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .theme-toggle::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .theme-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+
+        .theme-toggle i {
+            color: var(--gray-900);
+            font-size: 1.4rem;
+            transition: transform 0.3s;
+        }
+
+        /* Profile badge */
+        .profile-badge {
+            display: flex;
+            align-items: center;
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            padding: var(--space-2) var(--space-5);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            border: 1px solid var(--glass-border);
+            transition: var(--transition-bounce);
+            cursor: pointer;
+        }
+
+        .profile-badge:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-xl), var(--neo-light);
+            border-color: var(--primary-300);
+        }
+
+        .profile-badge img {
+            width: 52px;
+            height: 52px;
+            border-radius: var(--radius-full);
+            margin-right: var(--space-3);
+            object-fit: cover;
+            border: 3px solid var(--primary-500);
+            transition: transform 0.5s var(--transition-bounce);
+        }
+
+        .profile-badge:hover img {
+            transform: rotate(5deg) scale(1.1);
+        }
+
+        .profile-info div:first-child {
+            font-weight: 700;
+            color: var(--gray-900);
+            font-size: 1rem;
+        }
+
+        .profile-info div:last-child {
+            font-size: 0.8rem;
+            color: var(--gray-500);
+        }
+
+        /* ===== INFO CARDS ===== */
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: var(--space-5);
+            margin-bottom: var(--space-8);
+            position: relative;
+            z-index: 2;
+        }
+
+        .info-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            padding: var(--space-6);
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: cardFloatIn 0.6s var(--transition-bounce) forwards;
+        }
+
+        .info-card:nth-child(1) { animation-delay: 0.1s; }
+        .info-card:nth-child(2) { animation-delay: 0.2s; }
+        .info-card:nth-child(3) { animation-delay: 0.3s; }
+        .info-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes cardFloatIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .info-card:hover::before {
+            opacity: 1;
+        }
+
+        .info-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: var(--shadow-2xl), var(--neo-light);
+            border-color: var(--primary-300);
+        }
+
+        .info-card h3 {
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+            margin-bottom: var(--space-3);
+        }
+
+        .info-card h3 i {
+            color: var(--primary-500);
+            font-size: 0.9rem;
+        }
+
+        .info-card .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            line-height: 1.1;
+        }
+
+        .info-card .value i {
+            font-size: 2rem;
+            color: var(--primary-500);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .info-card small {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+            display: block;
+            margin-top: var(--space-3);
+        }
+
+        /* Attendance progress bar */
+        .attendance-progress {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: var(--radius-full);
+            margin-top: var(--space-4);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-500), var(--primary-400));
+            border-radius: var(--radius-full);
+            transition: width 1.2s var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255,255,255,0.15) 25%,
+                transparent 25%,
+                transparent 50%,
+                rgba(255,255,255,0.15) 50%,
+                rgba(255,255,255,0.15) 75%,
+                transparent 75%,
+                transparent
+            );
+            background-size: 20px 20px;
+            animation: moveStripes 1s linear infinite;
+        }
+
+        @keyframes moveStripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+
+        /* ===== FILTER SECTION ===== */
+        .controls-and-charts {
+            margin-bottom: var(--space-8);
+            position: relative;
+            z-index: 2;
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            align-items: center;
+            margin-bottom: var(--space-6);
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            padding: var(--space-4);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .period-tabs {
+            display: inline-flex;
+            padding: 0.25rem;
+            border-radius: var(--radius-full);
+            background: var(--gray-200);
+            gap: 0.25rem;
+        }
+
+        .period-tab {
+            border: none;
+            border-radius: var(--radius-full);
+            padding: 0.5rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: transparent;
+            color: var(--gray-600);
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .period-tab::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--primary-500);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s;
+            z-index: -1;
+        }
+
+        .period-tab:hover:not(.active) {
+            color: var(--primary-600);
+        }
+
+        .period-tab.active {
+            background: var(--primary-500);
+            color: white;
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-3);
+            margin-left: auto;
+        }
+
+        .filters select,
+        .filters input {
+            border-radius: var(--radius-full);
+            border: 1px solid var(--gray-300);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.85rem;
+            background: var(--glass-heavy);
+            backdrop-filter: blur(4px);
+            color: var(--gray-900);
+            min-width: 140px;
+            transition: var(--transition-base);
+            outline: none;
+        }
+
+        .filters select:hover,
+        .filters input:hover {
+            border-color: var(--primary-400);
+        }
+
+        .filters select:focus,
+        .filters input:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .filters button {
+            border-radius: var(--radius-full);
+            border: none;
+            padding: 0.6rem 1.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--primary-500);
+            color: white;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition-bounce);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .filters button:hover {
+            background: var(--primary-600);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(79, 70, 229, 0.4);
+        }
+
+        .filters button.reset-btn {
+            background: var(--gray-300);
+            color: var(--gray-700);
+            box-shadow: none;
+        }
+
+        .filters button.reset-btn:hover {
+            background: var(--gray-400);
+            transform: translateY(-2px);
+        }
+
+        /* ===== CHARTS GRID ===== */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.8fr);
+            gap: var(--space-5);
+            height: 420px;
+        }
+
+        .chart-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-2xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            padding: var(--space-6);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition-bounce);
+        }
+
+        .chart-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-2xl), var(--neo-light);
+            border-color: var(--primary-300);
+        }
+
+        .chart-card canvas {
+            max-height: 280px !important;
+            width: 100% !important;
+            flex: 1;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .chart-header h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .chart-header h3 i {
+            color: var(--primary-500);
+        }
+
+        /* ===== ATTENDANCE SECTION ===== */
+        .attendance-section {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border-radius: var(--radius-3xl);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg), var(--neo-light);
+            padding: var(--space-8);
+            margin-bottom: var(--space-8);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.6s var(--transition-bounce) forwards;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .attendance-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+            pointer-events: none;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-5);
+        }
+
+        .section-header h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .section-header h2 i {
+            color: var(--primary-500);
+        }
+
+        .view-toggle {
+            border: none;
+            background: var(--glass-heavy);
+            backdrop-filter: blur(4px);
+            color: var(--primary-600);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            border-radius: var(--radius-full);
+            transition: var(--transition-bounce);
+            border: 1px solid var(--glass-border);
+        }
+
+        .view-toggle:hover {
+            background: var(--primary-500);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        /* ===== TABLE STYLES ===== */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-2xl);
+            background: var(--glass-heavy);
+            backdrop-filter: blur(4px);
+            box-shadow: var(--shadow-lg);
+            max-height: 500px;
+            overflow-y: auto;
+            border: 1px solid var(--glass-border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 800px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: linear-gradient(180deg, var(--primary-500), var(--primary-600));
+            color: white;
+        }
+
+        th {
+            padding: var(--space-4) var(--space-5);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: rgba(255,255,255,0.9);
+        }
+
+        td {
+            padding: var(--space-4) var(--space-5);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            color: var(--gray-800);
+            transition: var(--transition-base);
+        }
+
+        tbody tr {
+            transition: var(--transition-base);
+            cursor: pointer;
+        }
+
+        tbody tr:hover {
+            background: var(--glass-medium);
+            transform: scale(1.01);
+            box-shadow: var(--shadow-md);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(0,0,0,0.02);
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: var(--radius-full);
+            font-size: 0.8rem;
+            font-weight: 600;
+            transition: var(--transition-bounce);
+        }
+
+        .status-badge:hover {
+            transform: scale(1.05);
+        }
+
+        .present {
+            background: var(--success-50);
+            color: var(--success-700);
+            border: 1px solid var(--success-200);
+        }
+
+        .absent {
+            background: var(--danger-50);
+            color: var(--danger-700);
+            border: 1px solid var(--danger-200);
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: var(--space-6);
+            gap: var(--space-2);
+            flex-wrap: wrap;
+        }
+
+        .pagination a {
+            color: var(--primary-600);
+            padding: 0.6rem 1rem;
+            text-decoration: none;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-full);
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 44px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: var(--glass-light);
+        }
+
+        .pagination a.active {
+            background: var(--primary-500);
+            color: white;
+            border-color: var(--primary-500);
+            transform: scale(1.1);
+            box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3);
+        }
+
+        .pagination a:hover:not(.active) {
+            background: var(--primary-50);
+            transform: scale(1.05);
+            border-color: var(--primary-400);
+        }
+
+        .pagination.hidden {
+            display: none;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1280px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+                height: auto;
+                gap: var(--space-5);
+            }
+            
+            .chart-card {
+                height: 380px;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .main {
+                padding: var(--space-6) var(--space-5);
+            }
+            
+            .controls-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filters {
+                margin-left: 0;
+                justify-content: center;
+            }
+            
+            .period-tabs {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .welcome-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .info-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .filters {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .filters select,
+            .filters input,
+            .filters button {
+                width: 100%;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: var(--space-4);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .profile-badge {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .info-card .value {
+                font-size: 2rem;
+            }
+            
+            .pagination {
+                gap: 0.25rem;
+            }
+            
+            .pagination a {
+                padding: 0.5rem 0.8rem;
+                min-width: 38px;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Include student sidebar -->
+    {% include 'components/student_sidebar.html' %}
+
+    <div class="main">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <h1>Welcome back, <span>{{ student.full_name }}</span></h1>
+            <div class="header-right">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <div class="profile-badge">
+                    <img src="https://ui-avatars.com/api/?name={{ student.full_name }}&background=6366f1&color=fff&bold=true" alt="Profile">
+                    <div class="profile-info">
+                        <div>{{ student.class_yr }}</div>
+                        <div>{{ student.gmail_id }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards (data from Flask) -->
+        <div class="info-cards">
+            <div class="info-card">
+                <h3><i class="fas fa-calendar-check"></i> Attendance</h3>
+                <div class="value">
+                    <span id="attendancePercentage" data-value="{{ percentage }}">{{ percentage }}%</span>
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <div class="attendance-progress">
+                    <div id="attendanceProgressBar" class="progress-bar" style="width: {{ percentage }}%"></div>
+                </div>
+                <small>Overall attendance based on all classes</small>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Classes Attended</h3>
+                <div class="value">
+                    <span id="classesAttended" data-value="{{ attended_classes }}">{{ attended_classes }}</span>
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <small>Out of <span id="totalClasses">{{ total_classes }}</span> total classes</small>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-fire"></i> Current Streak</h3>
+                <div class="value">
+                    <span id="currentStreak" data-value="{{ current_streak }}">{{ current_streak }}</span>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <small>Consecutive lectures marked present</small>
+            </div>
+
+            <div class="info-card">
+                <h3><i class="fas fa-book-open"></i> Lecture Summary</h3>
+                <div class="value">
+                    <span id="lectureSummary">{{ attended_classes }}/{{ total_classes }}</span>
+                    <i class="fas fa-list-check"></i>
+                </div>
+                <small>Attended lectures out of total lectures</small>
+            </div>
+        </div>
+
+        <!-- Filters + Charts Section -->
+        <section class="controls-and-charts">
+            <div class="controls-row">
+                <div class="period-tabs" id="periodTabs">
+                    <button type="button" class="period-tab active" data-period="all">All</button>
+                    <button type="button" class="period-tab" data-period="last7">Last 7 Days</button>
+                    <button type="button" class="period-tab" data-period="last30">Last 30 Days</button>
+                    <button type="button" class="period-tab" data-period="today">Today</button>
+                    <button type="button" class="period-tab" data-period="yesterday">Yesterday</button>
+                </div>
+
+                <div class="filters">
+                    <select id="semesterFilter">
+                        {% for sem in ['1','2','3','4','5','6'] %}
+                        <option value="{{ sem }}" {% if selected_semester == sem %}selected{% endif %}>Semester {{ sem }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select id="subjectFilter">
+                        <option value="">All Subjects</option>
+                        {% set subjects = records|map(attribute='subject')|list %}
+                        {% for s in subjects|unique %}
+                        <option value="{{ s }}">{{ s }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <input type="date" id="startDateFilter" placeholder="Start Date" />
+                    <input type="date" id="endDateFilter" placeholder="End Date" />
+
+                    <button type="button" id="applyFilterBtn">
+                        <i class="fas fa-filter"></i> Apply
+                    </button>
+                    <button type="button" class="reset-btn" id="resetFilterBtn">
+                        <i class="fas fa-undo"></i> Reset
+                    </button>
+                </div>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-pie"></i> Present vs Absent</h3>
+                    </div>
+                    <canvas id="presentAbsentChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3><i class="fas fa-chart-bar"></i> Subject-wise Attendance</h3>
+                    </div>
+                    <canvas id="subjectChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Attendance Table Section -->
+        <div class="attendance-section">
+            <div class="section-header">
+                <h2><i class="fas fa-calendar-check"></i> Attendance Record</h2>
+                <button class="view-toggle" id="viewAll">
+                    <i class="fas fa-expand"></i> <span>View All</span>
+                </button>
+            </div>
+
+            <p style="font-size:0.9rem; color:var(--gray-500); margin-bottom:var(--space-4);">
+                <i class="fas fa-info-circle"></i> Filtered records are loaded live from backend based on selected period, subject and date range.
+            </p>
+
+            <div class="table-container">
+                <table id="attendanceTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Day</th>
+                            <th>Time</th>
+                            <th>Subject</th>
+                            <th>Status</th>
+                            <th>Marked By</th>
+                            <th>Remarks</th>
+                        </tr>
+                    </thead>
+                    <tbody id="attendanceBody">
+                        <!-- JS will render from embedded JSON -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme');
+        const initialRecords = {{ initial_records | tojson }};
+
+        function setTheme(theme) {
+            document.body.setAttribute('data-theme', theme);
+            themeToggle.innerHTML = theme === 'dark' 
+                ? '<i class="fas fa-sun"></i>' 
+                : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', theme);
+        }
+
+        if (savedTheme) {
+            setTheme(savedTheme);
+        } else {
+            setTheme(prefersDarkScheme.matches ? 'dark' : 'light');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = document.body.getAttribute('data-theme');
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+
+        // State Management
+        const state = {
+            period: 'all',
+            semester: '{{ selected_semester or "1" }}',
+            subject: '',
+            startDate: '',
+            endDate: '',
+            records: [],
+            viewAll: false,
+            rowsPerPage: 10,
+            currentPage: 1
+        };
+
+        // URL Parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const semesterFromUrl = urlParams.get('semester');
+        if (semesterFromUrl) state.semester = semesterFromUrl;
+
+        // Chart Instances
+        let presentAbsentChart = null;
+        let subjectChart = null;
+
+        // Utility Functions
+        function toDateOnly(dateStr) {
+            return new Date((dateStr || '').split('T')[0] || dateStr);
+        }
+
+        function formatDate(d) {
+            return d.toLocaleDateString(undefined, { 
+                day: '2-digit', 
+                month: 'short', 
+                year: 'numeric' 
+            });
+        }
+
+        function formatDay(d) {
+            return d.toLocaleDateString(undefined, { 
+                weekday: 'long' 
+            });
+        }
+
+        function buildQueryParams() {
+            const params = new URLSearchParams();
+            if (state.period) params.set('period', state.period);
+            if (state.semester) params.set('semester', state.semester);
+            if (state.subject) params.set('subject', state.subject);
+            if (state.startDate) params.set('start_date', state.startDate);
+            if (state.endDate) params.set('end_date', state.endDate);
+            return params.toString();
+        }
+
+        function syncSemesterInUrl() {
+            const url = new URL(window.location.href);
+            if (state.semester) {
+                url.searchParams.set('semester', state.semester);
+            } else {
+                url.searchParams.delete('semester');
+            }
+            window.history.replaceState({}, '', url);
+        }
+
+        // Data Loading Functions
+        async function loadDashboardData() {
+            try {
+                const query = buildQueryParams();
+                const res = await fetch(`/api/student/dashboard-data?${query}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+                const data = await res.json();
+                state.records = data.records || [];
+                state.currentPage = 1;
+
+                updateSubjectOptions(data.subjects || []);
+                updateSummary(data.summary || {});
+                renderTable();
+                renderCharts(data.charts || {});
+            } catch (err) {
+                console.error('Dashboard API failed:', err);
+                // Fallback to initial records
+                state.records = initialRecords;
+                state.currentPage = 1;
+                
+                const present = initialRecords.filter(r => 
+                    (r.status || '').toLowerCase() === 'present'
+                ).length;
+                const total = initialRecords.length;
+                const percentage = total ? ((present / total) * 100).toFixed(2) : 0;
+                
+                updateSummary({
+                    present: present,
+                    total: total,
+                    percentage: percentage,
+                    current_streak: 0
+                });
+                renderTable();
+                renderCharts({});
+            }
+        }
+
+        function updateSubjectOptions(subjects) {
+            const select = document.getElementById('subjectFilter');
+            const previous = state.subject || '';
+            
+            select.innerHTML = '<option value="">All Subjects</option>';
+            
+            let exists = false;
+            subjects.forEach(sub => {
+                const opt = document.createElement('option');
+                opt.value = sub;
+                opt.textContent = sub;
+                if (sub === previous) {
+                    exists = true;
+                    opt.selected = true;
+                }
+                select.appendChild(opt);
+            });
+            
+            if (!exists) {
+                state.subject = '';
+                select.value = '';
+            }
+        }
+
+        async function loadSubjectsForSemester() {
+            try {
+                const res = await fetch(`/api/student/subjects?semester=${encodeURIComponent(state.semester)}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const subjects = await res.json();
+                updateSubjectOptions(Array.isArray(subjects) ? subjects : []);
+            } catch (err) {
+                console.error('Subjects API failed:', err);
+                updateSubjectOptions([]);
+            }
+        }
+
+        function updateSummary(summary) {
+            const present = Number(summary.present || 0);
+            const total = Number(summary.total || 0);
+            const percentage = Number(summary.percentage || 0);
+            const streakEl = document.getElementById('currentStreak');
+            const streak = (summary.current_streak !== undefined && summary.current_streak !== null)
+                ? Number(summary.current_streak)
+                : Number(streakEl.textContent || 0);
+
+            const pct = Number.isFinite(percentage) ? percentage : 0;
+            
+            document.getElementById('attendancePercentage').textContent = `${pct}%`;
+            document.getElementById('classesAttended').textContent = present;
+            document.getElementById('totalClasses').textContent = total;
+            document.getElementById('lectureSummary').textContent = `${present}/${total}`;
+            streakEl.textContent = streak;
+            
+            const progressBar = document.getElementById('attendanceProgressBar');
+            progressBar.style.width = `${Math.max(0, Math.min(100, pct))}%`;
+        }
+
+        // Table Rendering
+        function createAttendanceRow(r) {
+            const d = toDateOnly(r.date);
+            const statusRaw = (r.status || '').toLowerCase();
+            const isPresent = ['present', 'p', '1', 'true', 'yes'].includes(statusRaw);
+            const statusClass = isPresent ? 'present' : 'absent';
+            const icon = isPresent ? 'fa-check-circle' : 'fa-times-circle';
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${r.date ? formatDate(d) : '-'}</td>
+                <td>${r.date ? formatDay(d) : '-'}</td>
+                <td>${r.time || '-'}</td>
+                <td>${r.subject || '-'}</td>
+                <td>
+                    <span class="status-badge ${statusClass}">
+                        <i class="fas ${icon}"></i> ${r.status || '-'}
+                    </span>
+                </td>
+                <td>${r.marked_by || '-'}</td>
+                <td>${r.remarks || '-'}</td>
+            `;
+            return tr;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('attendanceBody');
+            const pagination = document.getElementById('pagination');
+            tbody.innerHTML = '';
+
+            if (!state.records.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 3rem;">No attendance records found for selected filters.</td></tr>';
+                pagination.classList.add('hidden');
+                pagination.innerHTML = '';
+                return;
+            }
+
+            let rows = state.records;
+            if (!state.viewAll) {
+                const start = (state.currentPage - 1) * state.rowsPerPage;
+                const end = start + state.rowsPerPage;
+                rows = state.records.slice(start, end);
+            }
+
+            rows.forEach(r => tbody.appendChild(createAttendanceRow(r)));
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const container = document.getElementById('pagination');
+            container.innerHTML = '';
+            
+            if (state.viewAll) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            const pages = Math.ceil(state.records.length / state.rowsPerPage);
+            if (pages <= 1) {
+                container.classList.add('hidden');
+                return;
+            }
+
+            container.classList.remove('hidden');
+
+            const addBtn = (label, page, disabled = false, active = false) => {
+                const a = document.createElement('a');
+                a.innerHTML = label;
+                a.href = '#';
+                
+                if (active) a.classList.add('active');
+                if (disabled) {
+                    a.style.opacity = '0.4';
+                    a.style.pointerEvents = 'none';
+                } else {
+                    a.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        state.currentPage = page;
+                        renderTable();
+                    });
+                }
+                container.appendChild(a);
+            };
+
+            addBtn('«', state.currentPage - 1, state.currentPage === 1);
+            
+            for (let i = 1; i <= pages; i++) {
+                addBtn(i, i, false, i === state.currentPage);
+            }
+            
+            addBtn('»', state.currentPage + 1, state.currentPage === pages);
+        }
+
+        // Chart Rendering
+        function renderCharts(charts) {
+            const pva = charts.present_vs_absent || { 
+                labels: ['Present', 'Absent'], 
+                data: [0, 0] 
+            };
+            
+            const subjectWise = charts.subject_wise || { 
+                labels: [], 
+                present: [] 
+            };
+
+            // Present vs Absent Chart
+            const ctx1 = document.getElementById('presentAbsentChart').getContext('2d');
+            const pvaConfig = {
+                labels: pva.labels,
+                datasets: [{
+                    data: pva.data,
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.9)',
+                        'rgba(239, 68, 68, 0.9)'
+                    ],
+                    borderColor: [
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(239, 68, 68, 1)'
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 8
+                }]
+            };
+
+            if (presentAbsentChart) {
+                presentAbsentChart.data = pvaConfig;
+                presentAbsentChart.update();
+            } else {
+                presentAbsentChart = new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: pvaConfig,
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { 
+                                position: 'bottom',
+                                labels: {
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-900')
+                                }
+                            }
+                        },
+                        cutout: '65%',
+                        animation: {
+                            animateScale: true,
+                            animateRotate: true
+                        }
+                    }
+                });
+            }
+
+            // Subject-wise Chart
+            const ctx2 = document.getElementById('subjectChart').getContext('2d');
+            const gradient = ctx2.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(99, 102, 241, 1)');
+            gradient.addColorStop(0.5, 'rgba(79, 70, 229, 0.9)');
+            gradient.addColorStop(1, 'rgba(67, 56, 202, 0.8)');
+
+            const subjectConfig = {
+                labels: subjectWise.labels || [],
+                datasets: [{
+                    label: 'Classes Attended',
+                    data: subjectWise.present || [],
+                    backgroundColor: gradient,
+                    borderColor: 'rgba(99, 102, 241, 1)',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    hoverBackgroundColor: 'rgba(79, 70, 229, 1)'
+                }]
+            };
+
+            if (subjectChart) {
+                subjectChart.data = subjectConfig;
+                subjectChart.update();
+            } else {
+                subjectChart = new Chart(ctx2, {
+                    type: 'bar',
+                    data: subjectConfig,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { 
+                            legend: { 
+                                display: false 
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { 
+                                    display: true, 
+                                    text: 'Subject',
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-600')
+                                },
+                                ticks: {
+                                    autoSkip: false,
+                                    maxRotation: 45,
+                                    minRotation: 45,
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-600')
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            },
+                            y: { 
+                                title: { 
+                                    display: true, 
+                                    text: 'Classes Attended',
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-600')
+                                }, 
+                                beginAtZero: true, 
+                                ticks: { 
+                                    precision: 0,
+                                    stepSize: 1,
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-600')
+                                },
+                                grid: {
+                                    color: getComputedStyle(document.body).getPropertyValue('--gray-200')
+                                }
+                            }
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        }
+                    }
+                });
+            }
+        }
+
+        // Event Listeners
+        document.getElementById('applyFilterBtn').addEventListener('click', async () => {
+            state.semester = document.getElementById('semesterFilter').value;
+            state.subject = document.getElementById('subjectFilter').value;
+            state.startDate = document.getElementById('startDateFilter').value;
+            state.endDate = document.getElementById('endDateFilter').value;
+            
+            syncSemesterInUrl();
+            
+            if (state.startDate || state.endDate) {
+                state.period = 'all';
+                document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+                document.querySelector('.period-tab[data-period="all"]').classList.add('active');
+            }
+            
+            await loadDashboardData();
+        });
+
+        document.getElementById('resetFilterBtn').addEventListener('click', async () => {
+            state.period = 'all';
+            state.semester = '{{ selected_semester or "1" }}';
+            state.subject = '';
+            state.startDate = '';
+            state.endDate = '';
+            state.currentPage = 1;
+            
+            syncSemesterInUrl();
+            
+            document.getElementById('semesterFilter').value = state.semester;
+            document.getElementById('subjectFilter').value = '';
+            document.getElementById('startDateFilter').value = '';
+            document.getElementById('endDateFilter').value = '';
+            
+            document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+            document.querySelector('.period-tab[data-period="all"]').classList.add('active');
+            
+            await loadDashboardData();
+        });
+
+        document.querySelectorAll('.period-tab').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                state.period = btn.dataset.period;
+                state.startDate = '';
+                state.endDate = '';
+                
+                document.getElementById('startDateFilter').value = '';
+                document.getElementById('endDateFilter').value = '';
+                
+                await loadDashboardData();
+            });
+        });
+
+        document.getElementById('semesterFilter').addEventListener('change', async () => {
+            state.semester = document.getElementById('semesterFilter').value;
+            state.subject = '';
+            document.getElementById('subjectFilter').value = '';
+            state.currentPage = 1;
+            
+            syncSemesterInUrl();
+            await loadSubjectsForSemester();
+            await loadDashboardData();
+        });
+
+        document.getElementById('viewAll').addEventListener('click', () => {
+            state.viewAll = !state.viewAll;
+            const viewAllBtn = document.querySelector('#viewAll span');
+            const viewAllIcon = document.querySelector('#viewAll i');
+            
+            viewAllBtn.textContent = state.viewAll ? 'Paginate' : 'View All';
+            viewAllIcon.className = state.viewAll ? 'fas fa-compress' : 'fas fa-expand';
+            
+            renderTable();
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            const semesterSelect = document.getElementById('semesterFilter');
+            
+            if (semesterFromUrl) {
+                state.semester = semesterFromUrl;
+                semesterSelect.value = state.semester;
+            } else {
+                state.semester = semesterSelect.value || state.semester;
+            }
+            
+            syncSemesterInUrl();
+            state.subject = document.getElementById('subjectFilter').value || '';
+            
+            await loadSubjectsForSemester();
+            await loadDashboardData();
+        });
+    </script>
+</body>
+</html>

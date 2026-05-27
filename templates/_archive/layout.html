@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Dashboard{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+        }
+        .main-container {
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #333;
+            color: white;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding-top: 20px;
+        }
+        .sidebar .logo {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .sidebar .menu {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .menu li {
+            padding: 15px 20px;
+        }
+        .sidebar .menu li a {
+            color: white;
+            text-decoration: none;
+        }
+        .content {
+            margin-left: 250px;
+            padding: 30px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+  {% include 'components/teacher_sidebar.html' %}
+
+  <div class="main-content">
+    {% block content %}{% endblock %}
+  </div>
+
+</body>
+</html>

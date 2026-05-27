@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nexus Fees • Teacher Dashboard</title>
+
+    <!-- Google Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- GSAP for animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet"/>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+        /* ===== MODERN CSS RESET + CUSTOM PROPERTIES ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        
+
+        /* ===== DARK MODE SUPPORT ===== */
+        [data-theme="dark"] {
+            --glass-light: rgba(17, 24, 39, 0.7);
+            --glass-medium: rgba(17, 24, 39, 0.5);
+            --glass-heavy: rgba(0, 0, 0, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --gray-50: #111827;
+            --gray-100: #1f2937;
+            --gray-200: #374151;
+            --gray-300: #4b5563;
+            --gray-400: #6b7280;
+            --gray-500: #9ca3af;
+            --gray-600: #d1d5db;
+            --gray-700: #e5e7eb;
+            --gray-800: #f3f4f6;
+            --gray-900: #f9fafb;
+            --primary-50: #022c22;
+            --primary-100: #064e3b;
+            --primary-200: #065f46;
+            --primary-300: #047857;
+            --neo-light: 8px 8px 16px rgba(0, 0, 0, 0.3), -8px -8px 16px rgba(255, 255, 255, 0.05);
+        }
+
+        /* ===== GLOBAL STYLES ===== */
+        html {
+            font-family: var(--font-sans);
+            scroll-behavior: smooth;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--gray-900);
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(16, 185, 129, 0.15), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(6, 182, 212, 0.12), transparent 60%),
+                linear-gradient(180deg, #f6f7fb 0%, #edf1f7 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            transition: background-color var(--transition-base), color var(--transition-base);
+        }
+
+        [data-theme="dark"] body {
+            background: 
+                radial-gradient(900px 450px at 95% -10%, rgba(16, 185, 129, 0.08), transparent 60%),
+                radial-gradient(1200px 550px at -5% 0%, rgba(6, 182, 212, 0.06), transparent 60%),
+                linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-400), var(--primary-600));
+            border-radius: var(--radius-full);
+            transition: var(--transition-base);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-500), var(--primary-700));
+        }
+
+        /* Selection style */
+        ::selection {
+            background: var(--primary-500);
+            color: white;
+        }
+
+        /* ===== BACKGROUND DECORATIONS ===== */
+        .bg-decoration {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-decoration .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .bg-decoration .blob-1 {
+            top: -10%;
+            right: -5%;
+            width: 500px;
+            height: 500px;
+            background: var(--primary-400);
+            animation-delay: 0s;
+        }
+
+        .bg-decoration .blob-2 {
+            bottom: -10%;
+            left: -5%;
+            width: 600px;
+            height: 600px;
+            background: var(--teal-500);
+            animation-delay: -5s;
+        }
+
+        .bg-decoration .blob-3 {
+            top: 40%;
+            left: 30%;
+            width: 400px;
+            height: 400px;
+            background: var(--warning-500);
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            25% { transform: translate(5%, 5%) scale(1.05); }
+            50% { transform: translate(-5%, -5%) scale(0.95); }
+            75% { transform: translate(-5%, 5%) scale(1.02); }
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: var(--space-6);
+            right: var(--space-6);
+            width: 56px;
+            height: 56px;
+            border-radius: var(--radius-full);
+            background: var(--glass-light);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: var(--z-popover);
+            transition: var(--transition-bounce);
+            color: var(--gray-900);
+            font-size: 1.4rem;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            background: var(--primary-500);
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .theme-toggle {
+                bottom: var(--space-4);
+                right: var(--space-4);
+                width: 48px;
+                height: 48px;
+                font-size: 1.2rem;
+            }
+        }
+
+        /* ===== LAYOUT ===== */
+        #main {
+            margin-left: var(--sidebar-width);
+            padding: var(--space-5) var(--space-6);
+            transition: margin-left var(--transition-base);
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            #main {
+                margin-left: 0;
+                padding: 80px var(--space-4) var(--space-5);
+            }
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-5);
+            padding: var(--space-6) var(--space-8);
+            border-radius: var(--radius-3xl);
+            background: linear-gradient(135deg, var(--primary-600) 0%, var(--teal-600) 100%);
+            color: white;
+            box-shadow: var(--shadow-2xl);
+            position: relative;
+            overflow: hidden;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            animation: headerGlow 8s infinite alternate;
+        }
+
+        @keyframes headerGlow {
+            from { box-shadow: var(--shadow-2xl); }
+            to { box-shadow: 0 30px 60px -12px rgba(5, 150, 105, 0.5); }
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 70%;
+            height: 250%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
+            transform: rotate(-15deg);
+            animation: headerShimmer 10s infinite alternate;
+            pointer-events: none;
+        }
+
+        @keyframes headerShimmer {
+            from { transform: rotate(-15deg) translateX(-10%); }
+            to { transform: rotate(-15deg) translateX(10%); }
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 i {
+            font-size: 2rem;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+
+        .header p {
+            margin: var(--space-2) 0 0;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header > div:last-child {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
+            padding: var(--space-2) var(--space-4);
+            font-weight: 600;
+            backdrop-filter: blur(8px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== FILTERS SECTION ===== */
+        .filters {
+            background: var(--glass-light);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+            transition: var(--transition-bounce);
+            animation: slideUp 0.5s var(--transition-bounce) 0.1s both;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .filters:hover {
+            border-color: var(--primary-300);
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: var(--space-3);
+            align-items: end;
+        }
+
+        .fg {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-1);
+        }
+
+        .fg label {
+            font-size: 0.7rem;
+            color: var(--gray-500);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .fg select,
+        .fg button,
+        .fg a {
+            height: 44px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-xl);
+            padding: 0 var(--space-3);
+            background: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: var(--gray-700);
+            transition: var(--transition-base);
+            outline: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .fg select:hover,
+        .fg a:hover {
+            border-color: var(--primary-300);
+        }
+
+        .fg select:focus {
+            border-color: var(--primary-500);
+            box-shadow: 0 0 0 3px var(--primary-100);
+        }
+
+        .fg button {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-500));
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+        }
+
+        .fg button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(5, 150, 105, 0.4);
+        }
+
+        .fg a {
+            background: var(--gray-800);
+            color: white;
+            border-color: var(--gray-800);
+        }
+
+        .fg a:hover {
+            background: var(--gray-900);
+            transform: translateY(-2px);
+        }
+
+        /* ===== CARDS GRID ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: var(--space-3);
+            margin-bottom: var(--space-5);
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: var(--space-4) var(--space-4);
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition-bounce);
+            opacity: 0;
+            animation: cardFloat 0.5s var(--transition-bounce) forwards;
+        }
+
+        .card:nth-child(1) { animation-delay: 0.1s; }
+        .card:nth-child(2) { animation-delay: 0.12s; }
+        .card:nth-child(3) { animation-delay: 0.14s; }
+        .card:nth-child(4) { animation-delay: 0.16s; }
+        .card:nth-child(5) { animation-delay: 0.18s; }
+        .card:nth-child(6) { animation-delay: 0.2s; }
+
+        @keyframes cardFloat {
+            from {
+                opacity: 0;
+                transform: translateY(15px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-300);
+        }
+
+        .card .label {
+            color: var(--gray-500);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .card .value {
+            margin-top: var(--space-2);
+            font-size: 1.32rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            line-height: 1.2;
+        }
+
+        /* ===== CHARTS SECTION ===== */
+        .charts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: var(--space-4);
+            margin-bottom: var(--space-5);
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            transition: var(--transition-bounce);
+            animation: slideUp 0.5s var(--transition-bounce) 0.3s both;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--primary-300);
+        }
+
+        .chart-title {
+            margin: 0 0 var(--space-4);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .chart-title i {
+            color: var(--primary-500);
+        }
+
+        .chart-wrap {
+            height: 280px;
+            position: relative;
+        }
+
+        /* ===== TABLE CARD ===== */
+        .table-card {
+            background: white;
+            border-radius: var(--radius-2xl);
+            padding: var(--space-5);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            animation: slideUp 0.5s var(--transition-bounce) 0.4s both;
+        }
+
+        .table-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+        }
+
+        .table-head h2 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .table-head h2 i {
+            color: var(--primary-500);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+
+        th {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            padding: var(--space-3) var(--space-3);
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: var(--space-3) var(--space-3);
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        tbody tr {
+            transition: var(--transition-base);
+        }
+
+        tbody tr:hover {
+            background: var(--primary-50);
+        }
+
+        .status {
+            padding: var(--space-1) var(--space-3);
+            border-radius: var(--radius-full);
+            font-size: 0.7rem;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .paid {
+            background: var(--success-50);
+            color: var(--success-600);
+            border: 1px solid #bbf7d0;
+        }
+
+        .partial {
+            background: var(--warning-50);
+            color: var(--warning-600);
+            border: 1px solid #fed7aa;
+        }
+
+        .pending {
+            background: var(--danger-50);
+            color: var(--danger-600);
+            border: 1px solid #fecaca;
+        }
+
+        .view-btn {
+            border: 2px solid var(--gray-200);
+            background: white;
+            border-radius: var(--radius-full);
+            padding: var(--space-1) var(--space-3);
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: var(--transition-bounce);
+            color: var(--gray-700);
+        }
+
+        .view-btn:hover {
+            background: var(--primary-600);
+            border-color: var(--primary-600);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .empty {
+            text-align: center;
+            padding: var(--space-8) !important;
+            color: var(--gray-400);
+        }
+
+        /* ===== MODAL ===== */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: var(--z-popover);
+            padding: var(--space-4);
+        }
+
+        .modal.show {
+            display: flex;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-card {
+            width: min(800px, 100%);
+            max-height: 80vh;
+            overflow-y: auto;
+            background: white;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-2xl);
+            padding: var(--space-6);
+            animation: modalSlide 0.4s var(--transition-bounce);
+        }
+
+        @keyframes modalSlide {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-4);
+            padding-bottom: var(--space-3);
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .modal-head h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
+        }
+
+        .modal-head h3 i {
+            color: var(--primary-500);
+        }
+
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--gray-100);
+            color: var(--gray-600);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition-bounce);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: var(--danger-500);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 992px) {
+            .filter-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .card .value {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body data-theme="light">
+    <!-- Background decorations -->
+    <div class="bg-decoration">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Theme Toggle Button -->
+    <div class="theme-toggle" id="themeToggle" title="Toggle Theme">
+        <i class="fas fa-moon"></i>
+    </div>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <div id="main" class="main-content">
+        <!-- Header -->
+        <section class="header" data-aos="fade-up">
+            <div>
+                <h1><i class="fas fa-wallet"></i> Teacher Fees Dashboard</h1>
+                <p>Professional fee tracking with filters, charts, history, and export</p>
+            </div>
+            <div>
+                <i class="fas fa-users"></i> {{ summary.total_students }} students
+            </div>
+        </section>
+
+        <!-- Filters -->
+        <section class="filters" data-aos="fade-up" data-aos-delay="50">
+            <form method="GET" action="{{ url_for('teacher_fees') }}">
+                <div class="filter-grid">
+                    <div class="fg">
+                        <label for="course"><i class="fas fa-graduation-cap"></i> Course</label>
+                        <select id="course" name="course">
+                            <option value="">All Courses</option>
+                            {% for c in course_options %}
+                            <option value="{{ c }}" {% if selected_course == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label for="class_yr"><i class="fas fa-building"></i> Class</label>
+                        <select id="class_yr" name="class_yr">
+                            <option value="">All Classes</option>
+                            {% for c in class_options %}
+                            <option value="{{ c }}" {% if selected_class == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label for="semester"><i class="fas fa-layer-group"></i> Semester</label>
+                        <select id="semester" name="semester">
+                            <option value="">All Semesters</option>
+                            {% for s in semester_options %}
+                            <option value="{{ s }}" {% if selected_semester == s %}selected{% endif %}>Semester {{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="fg">
+                        <label>&nbsp;</label>
+                        <button type="submit"><i class="fas fa-filter"></i> Apply Filters</button>
+                    </div>
+                    <div class="fg">
+                        <label>&nbsp;</label>
+                        <a href="/teacher_fees/export-csv?course={{ selected_course or '' }}&class_yr={{ selected_class or '' }}&semester={{ selected_semester or '' }}">
+                            <i class="fas fa-file-csv"></i> Export CSV
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </section>
+
+        <!-- KPI Cards -->
+        <section class="cards" data-aos="fade-up" data-aos-delay="100">
+            <article class="card">
+                <div class="label"><i class="fas fa-wallet"></i> Total Fees</div>
+                <div class="value" id="totalFees">0</div>
+            </article>
+            <article class="card">
+                <div class="label"><i class="fas fa-check-circle" style="color: var(--success-500);"></i> Paid Amount</div>
+                <div class="value" id="paidAmount">0</div>
+            </article>
+            <article class="card">
+                <div class="label"><i class="fas fa-exclamation-circle" style="color: var(--danger-500);"></i> Due Amount</div>
+                <div class="value" id="dueAmount">0</div>
+            </article>
+            <article class="card">
+                <div class="label"><i class="fas fa-calendar"></i> Monthly</div>
+                <div class="value" id="monthlyCollection">0</div>
+            </article>
+            <article class="card">
+                <div class="label"><i class="fas fa-chart-line"></i> Quarterly</div>
+                <div class="value" id="quarterlyCollection">0</div>
+            </article>
+            <article class="card">
+                <div class="label"><i class="fas fa-calendar-alt"></i> Yearly</div>
+                <div class="value" id="yearlyCollection">0</div>
+            </article>
+        </section>
+
+        <!-- Charts -->
+        <section class="charts" data-aos="fade-up" data-aos-delay="150">
+            <div class="chart-card">
+                <h3 class="chart-title"><i class="fas fa-chart-pie"></i> Fee Distribution (Paid vs Due)</h3>
+                <div class="chart-wrap"><canvas id="distributionChart"></canvas></div>
+            </div>
+            <div class="chart-card">
+                <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Payment Method Distribution</h3>
+                <div class="chart-wrap"><canvas id="methodChart"></canvas></div>
+            </div>
+        </section>
+
+        <!-- Table -->
+        <section class="table-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="table-head">
+                <h2><i class="fas fa-table"></i> Student Fee Table</h2>
+                <span style="font-size: 0.85rem; color: var(--gray-500);">{{ students_with_fees|length }} records</span>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Student Name</th>
+                            <th>Course</th>
+                            <th>Class</th>
+                            <th>Semester</th>
+                            <th>Total Fee</th>
+                            <th>Paid Amount</th>
+                            <th>Due Amount</th>
+                            <th>Status</th>
+                            <th>History</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if students_with_fees %}
+                            {% for row in students_with_fees %}
+                            <tr>
+                                <td><strong style="color: var(--primary-600);">{{ row.student_id }}</strong></td>
+                                <td>{{ row.full_name }}</td>
+                                <td>{{ row.course }}</td>
+                                <td>{{ row.class_yr }}</td>
+                                <td>{{ row.semester }}</td>
+                                <td style="font-weight: 600;">₹{{ "%.2f"|format(row.total_fee) }}</td>
+                                <td style="color: var(--success-600); font-weight: 600;">₹{{ "%.2f"|format(row.paid_amount) }}</td>
+                                <td style="color: var(--danger-600); font-weight: 600;">₹{{ "%.2f"|format(row.due_amount) }}</td>
+                                <td>
+                                    <span class="status 
+                                        {% if row.status == 'Paid' %}paid
+                                        {% elif row.status == 'Partial' %}partial
+                                        {% else %}pending{% endif %}">
+                                        {{ row.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="view-btn" data-student-id="{{ row.student_id }}">
+                                        <i class="fas fa-history"></i> View
+                                    </button>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr><td class="empty" colspan="10">No records found for selected filters.</td></tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- History Modal -->
+    <div class="modal" id="historyModal" aria-hidden="true">
+        <div class="modal-card">
+            <div class="modal-head">
+                <h3><i class="fas fa-history"></i> Payment History</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Payment Date</th>
+                            <th>Amount Paid</th>
+                            <th>Payment Method</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <tr><td class="empty" colspan="3">Select a student to view payment history.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out',
+            once: true,
+            offset: 20
+        });
+
+        // Theme Management
+        const themeToggle = document.getElementById('themeToggle');
+        const body = document.body;
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+        const savedTheme = localStorage.getItem('theme') || (prefersDark.matches ? 'dark' : 'light');
+        
+        if (savedTheme === 'dark') {
+            body.setAttribute('data-theme', 'dark');
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const current = body.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', next);
+            themeToggle.innerHTML = next === 'dark' ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            localStorage.setItem('theme', next);
+        });
+
+        // Data from Jinja
+        const summary = {{ summary | tojson }};
+        const distribution = {{ fee_distribution_chart | tojson }};
+        const methodData = {{ payment_method_chart | tojson }};
+        const selectedSemester = {{ selected_semester | tojson }};
+
+        // Format currency
+        const inr = new Intl.NumberFormat('en-IN', { 
+            style: 'currency', 
+            currency: 'INR', 
+            maximumFractionDigits: 2,
+            minimumFractionDigits: 2
+        });
+
+        // Update KPI cards
+        function animateValue(element, target) {
+            if (!element) return;
+            const start = parseFloat(element.textContent.replace(/[^0-9.-]+/g, '')) || 0;
+            const end = target || 0;
+            const duration = 800;
+            const startTime = performance.now();
+            
+            const step = (timestamp) => {
+                const progress = Math.min((timestamp - startTime) / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = start + (end - start) * easeProgress;
+                element.textContent = inr.format(current);
+                
+                if (progress < 1) {
+                    requestAnimationFrame(step);
+                }
+            };
+            requestAnimationFrame(step);
+        }
+
+        animateValue(document.getElementById('totalFees'), Number(summary.total_fee || 0));
+        animateValue(document.getElementById('paidAmount'), Number(summary.paid_amount || 0));
+        animateValue(document.getElementById('dueAmount'), Number(summary.due_amount || 0));
+        animateValue(document.getElementById('monthlyCollection'), Number(summary.monthly_collection || 0));
+        animateValue(document.getElementById('quarterlyCollection'), Number(summary.quarterly_collection || 0));
+        animateValue(document.getElementById('yearlyCollection'), Number(summary.yearly_collection || 0));
+
+        // Distribution Chart
+        new Chart(document.getElementById('distributionChart').getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: distribution.labels,
+                datasets: [{
+                    data: distribution.values,
+                    backgroundColor: ['#10b981', '#ef4444'],
+                    borderColor: ['#059669', '#dc2626'],
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                cutout: '65%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: { usePointStyle: true, boxWidth: 8 }
+                    } 
+                } 
+            }
+        });
+
+        // Method Chart
+        new Chart(document.getElementById('methodChart').getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: methodData.labels,
+                datasets: [{
+                    data: methodData.values,
+                    backgroundColor: ['#0ea5e9', '#f59e0b', '#8b5cf6', '#14b8a6', '#f43f5e'],
+                    borderColor: ['#0284c7', '#d97706', '#7e22ce', '#0d9488', '#e11d48'],
+                    borderWidth: 2
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { 
+                    legend: { 
+                        position: 'bottom',
+                        labels: { usePointStyle: true, boxWidth: 8 }
+                    } 
+                } 
+            }
+        });
+
+        // Modal handling
+        const modal = document.getElementById('historyModal');
+        const closeModal = document.getElementById('closeModal');
+        const historyBody = document.getElementById('historyBody');
+
+        function openModal() {
+            modal.classList.add('show');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function hideModal() {
+            modal.classList.remove('show');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+
+        closeModal.addEventListener('click', hideModal);
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) hideModal();
+        });
+
+        // View history buttons
+        document.querySelectorAll('.view-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const sid = btn.dataset.studentId;
+                const qs = new URLSearchParams();
+                if (selectedSemester) qs.set('semester', selectedSemester);
+
+                historyBody.innerHTML = '<tr><td class="empty" colspan="3"><i class="fas fa-spinner fa-spin"></i> Loading...</td></tr>';
+                openModal();
+
+                try {
+                    const res = await fetch(`/teacher_fees/payment-history/${sid}?${qs.toString()}`);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+
+                    if (!Array.isArray(data.history) || data.history.length === 0) {
+                        historyBody.innerHTML = '<tr><td class="empty" colspan="3">No payment history found.</td></tr>';
+                        return;
+                    }
+
+                    historyBody.innerHTML = data.history.map(item => `
+                        <tr>
+                            <td><i class="fas fa-calendar-alt" style="color: var(--gray-400); margin-right: 6px;"></i>${item.payment_date || ''}</td>
+                            <td style="font-weight: 600; color: var(--success-600);">${inr.format(Number(item.amount_paid || 0))}</td>
+                            <td><span class="badge" style="background: var(--gray-100); padding: 2px 8px; border-radius: var(--radius-full);">${item.payment_method || 'Unknown'}</span></td>
+                        </tr>
+                    `).join('');
+                } catch (err) {
+                    historyBody.innerHTML = '<tr><td class="empty" colspan="3">Failed to load payment history.</td></tr>';
+                    console.error(err);
+                }
+            });
+        });
+
+        // Page entrance animation
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.from('#main', {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power2.out'
+            });
+        });
+    </script>
+</body>
+</html>

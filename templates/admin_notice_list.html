@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Notices | Teacher Panel</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global_theme.css') }}">
+    <style>
+    /* ═══════════════════════════════════════════
+       ANALYTICS CARDS
+    ═══════════════════════════════════════════ */
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+    .stat-card {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-b);
+        border-radius: var(--radius);
+        padding: 20px 22px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        transition: var(--transition);
+        cursor: default;
+    }
+    .stat-card:hover { transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .stat-card::before {
+        content:'';
+        position:absolute; top:0; left:0;
+        width:4px; height:100%;
+        border-radius:4px 0 0 4px;
+    }
+    .stat-card::after {
+        content:'';
+        position:absolute; top:-20%; right:-10%;
+        width:90px; height:90px;
+        border-radius:50%;
+        opacity:.07;
+    }
+    .sc-total::before   { background:linear-gradient(180deg,var(--primary),var(--primary-d)); }
+    .sc-active::before  { background:linear-gradient(180deg,var(--success),var(--success-d)); }
+    .sc-inactive::before{ background:linear-gradient(180deg,var(--danger),var(--danger-d)); }
+    .sc-pinned::before  { background:linear-gradient(180deg,var(--warning),var(--warning-d)); }
+    .sc-total::after    { background:var(--primary); }
+    .sc-active::after   { background:var(--success); }
+    .sc-inactive::after { background:var(--danger); }
+    .sc-pinned::after   { background:var(--warning); }
+
+    .stat-label {
+        font-size:.72rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:.7px;
+        color:var(--gray-500); margin-bottom:8px;
+        display:flex; align-items:center; gap:6px;
+    }
+    .stat-value {
+        font-family:'Poppins',sans-serif;
+        font-size:2.4rem; font-weight:800;
+        line-height:1; margin-bottom:4px;
+    }
+    .sc-total   .stat-value { color:var(--primary); }
+    .sc-active  .stat-value { color:var(--success-d); }
+    .sc-inactive.stat-value { color:var(--danger); }
+    .sc-inactive .stat-value{ color:var(--danger); }
+    .sc-pinned  .stat-value { color:var(--warning-d); }
+    .stat-sub { font-size:.78rem; color:var(--gray-400); }
+
+    /* ═══════════════════════════════════════════
+       MAIN TABLE CARD
+    ═══════════════════════════════════════════ */
+    .table-card {
+        background: var(--glass);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid var(--glass-b);
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    /* toolbar */
+    .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 22px;
+        border-bottom: 1px solid var(--gray-200);
+        flex-wrap: wrap;
+        gap: 14px;
+        background: rgba(255,255,255,.6);
+    }
+    .toolbar-left  { display:flex; align-items:center; gap:12px; flex-wrap:wrap; flex:1; }
+    .toolbar-right { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+
+    .search-wrap { position:relative; min-width:240px; flex:1; max-width:340px; }
+    .search-wrap i { position:absolute; left:14px; top:50%; transform:translateY(-50%); color:var(--gray-400); font-size:.82rem; }
+    .search-wrap input {
+        width:100%; padding:10px 14px 10px 38px;
+        border:1.5px solid var(--gray-300);
+        border-radius:50px; font-size:.88rem;
+        font-family:'Inter',sans-serif;
+        background:#fff; transition:var(--transition);
+    }
+    .search-wrap input:focus {
+        outline:none; border-color:var(--primary);
+        box-shadow:0 0 0 3px rgba(52,152,219,.15);
+    }
+
+    .filter-select {
+        padding:10px 14px; border:1.5px solid var(--gray-300);
+        border-radius:50px; font-size:.85rem;
+        font-family:'Inter',sans-serif;
+        background:#fff; cursor:pointer;
+        transition:var(--transition); color:var(--gray-600);
+        appearance:none;
+        background-image:url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat:no-repeat; background-position:right 12px center; background-size:14px;
+        padding-right:34px;
+    }
+    .filter-select:focus { outline:none; border-color:var(--primary); }
+
+    /* bulk action bar */
+    .bulk-bar {
+        display: none;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 22px;
+        background: linear-gradient(135deg, rgba(52,152,219,.08), rgba(41,128,185,.05));
+        border-bottom: 1px solid rgba(52,152,219,.15);
+        flex-wrap: wrap;
+    }
+    .bulk-bar.visible { display:flex; }
+    .bulk-info { font-size:.85rem; font-weight:600; color:var(--primary); }
+
+    /* ═══════════════════════════════════════════
+       TABLE
+    ═══════════════════════════════════════════ */
+    .table-wrap { overflow-x:auto; }
+    table {
+        width:100%; border-collapse:collapse;
+        min-width:900px;
+    }
+    thead th {
+        background: linear-gradient(135deg, var(--primary), var(--primary-d));
+        color:#fff; padding:14px 16px;
+        text-align:left; font-size:.78rem;
+        font-weight:700; text-transform:uppercase;
+        letter-spacing:.5px; white-space:nowrap;
+        user-select:none;
+    }
+    thead th.sortable { cursor:pointer; }
+    thead th.sortable:hover { background:linear-gradient(135deg,#2980b9,#1a6fa8); }
+    thead th .sort-icon { margin-left:6px; opacity:.6; font-size:.7rem; }
+    thead th.sort-asc  .sort-icon::before { content:'\f0de'; font-family:'Font Awesome 6 Free'; font-weight:900; }
+    thead th.sort-desc .sort-icon::before { content:'\f0dd'; font-family:'Font Awesome 6 Free'; font-weight:900; }
+    thead th:not(.sort-asc):not(.sort-desc) .sort-icon::before { content:'\f0dc'; font-family:'Font Awesome 6 Free'; font-weight:900; }
+
+    /* checkbox col */
+    .col-cb  { width:44px; text-align:center !important; }
+    .col-num { width:48px; text-align:center !important; }
+
+    tbody tr {
+        border-bottom: 1px solid var(--gray-200);
+        transition: background .2s ease;
+        /* No animation here — applied via JS class to avoid opacity:0 conflict */
+    }
+    tbody tr.row-animate {
+        animation: rowIn .35s ease-out both;
+    }
+    @keyframes rowIn {
+        from { opacity:0; transform:translateX(-8px); }
+        to   { opacity:1; transform:translateX(0); }
+    }
+    tbody tr:last-child { border-bottom:none; }
+    tbody tr:hover { background:rgba(52,152,219,.04); }
+    tbody tr.selected { background:rgba(52,152,219,.07) !important; }
+
+    tbody td {
+        padding:14px 16px;
+        font-size:.88rem;
+        vertical-align:middle;
+    }
+    .td-center { text-align:center; }
+
+    /* custom checkbox */
+    .cb-wrap { display:flex; justify-content:center; }
+    .cb-wrap input[type="checkbox"] {
+        appearance:none; width:18px; height:18px;
+        border:2px solid var(--gray-300); border-radius:5px;
+        cursor:pointer; transition:var(--transition);
+        position:relative; flex-shrink:0;
+    }
+    .cb-wrap input[type="checkbox"]:checked {
+        background:var(--primary); border-color:var(--primary);
+    }
+    .cb-wrap input[type="checkbox"]:checked::after {
+        content:'\f00c'; font-family:'Font Awesome 6 Free'; font-weight:900;
+        position:absolute; color:#fff; font-size:10px;
+        top:50%; left:50%; transform:translate(-50%,-50%);
+    }
+
+    /* title cell */
+    .title-cell { display:flex; flex-direction:column; gap:3px; }
+    .title-main { font-weight:600; color:var(--dark); font-size:.9rem; }
+    .title-meta { display:flex; gap:6px; flex-wrap:wrap; margin-top:2px; }
+
+    /* badges */
+    .badge {
+        display:inline-flex; align-items:center; gap:4px;
+        padding:3px 10px; border-radius:50px;
+        font-size:.7rem; font-weight:700;
+        text-transform:uppercase; letter-spacing:.4px;
+        white-space:nowrap;
+    }
+    .badge-pin      { background:rgba(243,156,18,.12); color:var(--warning-d); }
+    .badge-important{ background:rgba(231,76,60,.1);   color:var(--danger); }
+    .badge-academic { background:rgba(52,152,219,.1);  color:var(--primary-d); }
+    .badge-events   { background:rgba(155,89,182,.1);  color:var(--purple); }
+    .badge-important-cat { background:rgba(231,76,60,.1); color:var(--danger); }
+    .badge-news     { background:rgba(46,204,113,.1);  color:var(--success-d); }
+    .badge-exam     { background:rgba(243,156,18,.1);  color:var(--warning-d); }
+    .badge-default  { background:var(--gray-100);      color:var(--gray-500); }
+
+    /* status toggle */
+    .toggle-wrap { display:flex; align-items:center; gap:8px; }
+    .toggle-switch { position:relative; display:inline-block; width:40px; height:22px; flex-shrink:0; }
+    .toggle-switch input { opacity:0; width:0; height:0; }
+    .toggle-slider {
+        position:absolute; cursor:pointer;
+        top:0; left:0; right:0; bottom:0;
+        background:var(--gray-300); border-radius:22px;
+        transition:.3s;
+    }
+    .toggle-slider::before {
+        content:''; position:absolute;
+        height:16px; width:16px;
+        left:3px; bottom:3px;
+        background:#fff; border-radius:50%;
+        transition:.3s;
+        box-shadow:0 1px 4px rgba(0,0,0,.2);
+    }
+    .toggle-switch input:checked + .toggle-slider { background:var(--success); }
+    .toggle-switch input:checked + .toggle-slider::before { transform:translateX(18px); }
+    .toggle-label { font-size:.78rem; font-weight:600; }
+    .toggle-label.on  { color:var(--success-d); }
+    .toggle-label.off { color:var(--gray-400); }
+
+    /* views cell */
+    .views-cell { display:flex; align-items:center; gap:6px; color:var(--gray-500); font-size:.85rem; }
+    .views-cell i { color:var(--gray-400); font-size:.78rem; }
+
+    /* action buttons */
+    .action-btns { display:flex; gap:7px; align-items:center; }
+    .act-btn {
+        width:32px; height:32px; border-radius:50%;
+        display:flex; align-items:center; justify-content:center;
+        cursor:pointer; transition:var(--transition);
+        color:#fff; font-size:.8rem; border:none;
+        text-decoration:none; flex-shrink:0;
+    }
+    .act-btn:hover { transform:scale(1.15); }
+    .act-view   { background:var(--primary); }
+    .act-view:hover { background:var(--primary-d); }
+    .act-edit   { background:var(--warning); }
+    .act-edit:hover { background:var(--warning-d); }
+    .act-delete { background:var(--danger); }
+    .act-delete:hover { background:var(--danger-d); }
+
+    /* ═══════════════════════════════════════════
+       EMPTY STATE
+    ═══════════════════════════════════════════ */
+    .empty-state {
+        text-align:center;
+        padding:80px 30px;
+    }
+    .empty-icon-wrap {
+        position:relative;
+        width:110px; height:110px;
+        margin:0 auto 28px;
+    }
+    .empty-icon-wrap .ring {
+        position:absolute; inset:0;
+        border-radius:50%;
+        border:3px solid transparent;
+        animation: emptyRing 2.5s linear infinite;
+    }
+    .empty-icon-wrap .ring-1 { border-top-color:var(--primary); animation-duration:2.5s; }
+    .empty-icon-wrap .ring-2 { border-right-color:rgba(52,152,219,.3); animation-duration:3.5s; animation-direction:reverse; inset:8px; }
+    @keyframes emptyRing { to { transform:rotate(360deg); } }
+    .empty-icon-wrap .icon-center {
+        position:absolute; inset:0;
+        display:flex; align-items:center; justify-content:center;
+        font-size:2.6rem; color:var(--primary); opacity:.35;
+        animation: emptyBob 3s ease-in-out infinite;
+    }
+    @keyframes emptyBob {
+        0%,100% { transform:translateY(0); }
+        50%      { transform:translateY(-6px); }
+    }
+    .empty-state h3 {
+        font-family:'Poppins',sans-serif;
+        font-size:1.5rem; font-weight:700;
+        color:var(--gray-700); margin-bottom:10px;
+    }
+    .empty-state p { font-size:.95rem; color:var(--gray-400); max-width:400px; margin:0 auto 24px; }
+
+    /* ═══════════════════════════════════════════
+       DELETE MODAL
+    ═══════════════════════════════════════════ */
+    .modal-overlay {
+        display:none; position:fixed; inset:0;
+        background:rgba(0,0,0,.5);
+        z-index:var(--z-toast); align-items:center; justify-content:center;
+        backdrop-filter:blur(4px);
+    }
+    .modal-overlay.open { display:flex; }
+    .modal-box {
+        background:#fff; border-radius:var(--radius-lg);
+        padding:36px 32px; max-width:440px; width:90%;
+        box-shadow:var(--shadow-xl);
+        animation:modalIn .3s cubic-bezier(.175,.885,.32,1.275);
+    }
+    @keyframes modalIn {
+        from { opacity:0; transform:translateY(24px) scale(.95); }
+        to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+    .modal-icon {
+        width:60px; height:60px; border-radius:50%;
+        background:rgba(231,76,60,.1);
+        display:flex; align-items:center; justify-content:center;
+        margin:0 auto 18px;
+        font-size:1.6rem; color:var(--danger);
+    }
+    .modal-title { font-family:'Poppins',sans-serif; font-size:1.3rem; font-weight:700; text-align:center; margin-bottom:8px; color:var(--dark); }
+    .modal-msg   { font-size:.9rem; color:var(--gray-500); text-align:center; margin-bottom:24px; line-height:1.6; }
+    .modal-notice-name { font-weight:700; color:var(--dark); }
+    .modal-actions { display:flex; gap:12px; }
+    .modal-actions .btn { flex:1; justify-content:center; }
+    .btn-cancel { background:var(--gray-100); color:var(--gray-700); border:1.5px solid var(--gray-200); }
+    .btn-cancel:hover { background:var(--gray-200); }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width:1100px) { .analytics-grid { grid-template-columns:repeat(2,1fr); } }
+    @media (max-width:900px)  {
+        #main { padding:18px; }
+        .page-header { padding:20px; }
+        .hdr-left h1 { font-size:1.4rem; }
+    }
+    @media (max-width:768px)  {
+        #main { padding:14px; }
+        .analytics-grid { grid-template-columns:repeat(2,1fr); }
+        .toolbar { padding:14px; }
+        .toolbar-left, .toolbar-right { width:100%; }
+        .search-wrap { max-width:100%; }
+        .page-header { flex-direction:column; align-items:flex-start; }
+        .hdr-right { width:100%; }
+        .hdr-right .btn { flex:1; justify-content:center; }
+    }
+    @media (max-width:480px)  {
+        .analytics-grid { grid-template-columns:1fr 1fr; }
+        .stat-value { font-size:1.9rem; }
+        .hdr-left h1 { font-size:1.2rem; }
+    }
+
+    /* print */
+    @media print {
+        .sidebar,
+        .page-header .hdr-right,
+        .toolbar,
+        .bulk-bar,
+        .act-btn,
+        .toggle-switch,
+        .modal-overlay,
+        .flash-wrap,
+        .analytics-grid { display:none !important; }
+
+        body {
+            background:#fff !important;
+            font-family:'Inter',sans-serif;
+        }
+
+        /* push content to left edge — sidebar is hidden */
+        #main {
+            margin-left: 0 !important;
+            padding: 16px !important;
+            width: 100% !important;
+        }
+
+        .table-card {
+            box-shadow: none !important;
+            border: 1px solid #ddd !important;
+            background: #fff !important;
+        }
+
+        /* make ALL rows visible regardless of JS filter state */
+        #tableBody tr { display: table-row !important; opacity: 1 !important; }
+
+        .table-wrap { overflow: visible !important; }
+        table { min-width: auto !important; width: 100% !important; }
+
+        thead th {
+            background: var(--primary) !important;
+            color: #fff !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* print header */
+        .print-only { display: block !important; }
+    }
+
+    .print-only {
+        display: none;
+        text-align: center;
+        padding: 0 0 16px;
+        border-bottom: 2px solid #ddd;
+        margin-bottom: 16px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .print-only h2 { font-size: 1.3rem; color: var(--dark); margin-bottom: 4px; }
+    .print-only p  { font-size: .82rem; color: var(--gray-500); }
+    </style>
+</head>
+<body>
+
+    {% include 'components/teacher_sidebar.html' %}
+
+    <!-- ══ DELETE MODAL ══ -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <div class="modal-icon"><i class="fas fa-trash-alt"></i></div>
+            <div class="modal-title">Delete Notice</div>
+            <div class="modal-msg">
+                Are you sure you want to delete<br>
+                <span class="modal-notice-name" id="modalNoticeName">"—"</span>?<br>
+                <small style="color:var(--gray-400)">This action cannot be undone.</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-cancel" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <a class="btn btn-danger" id="modalDeleteLink" href="#">
+                    <i class="fas fa-trash-alt"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="main" class="main-content">
+
+        <!-- flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-wrap">
+            {% for cat, msg in messages %}
+            <div class="toast-msg flash-{{ 'success' if cat == 'success' else 'error' if cat == 'error' else 'info' }}">
+                <i class="fas {{ 'fa-check-circle' if cat == 'success' else 'fa-exclamation-circle' if cat == 'error' else 'fa-info-circle' }}"></i>
+                {{ msg }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- ══ PAGE HEADER ══ -->
+        <div class="page-header">
+            <div class="hdr-left">
+                <h1><i class="fas fa-bullhorn"></i> Manage Notices</h1>
+                <p>Create, manage and publish notices to students.</p>
+            </div>
+            <div class="hdr-right">
+                <button class="btn btn-csv btn-sm" onclick="exportCSV()">
+                    <i class="fas fa-file-csv"></i> CSV
+                </button>
+                <button class="btn btn-pdf btn-sm" onclick="exportPDF()">
+                    <i class="fas fa-file-pdf"></i> PDF
+                </button>
+                <a href="/add_notice" class="btn btn-white btn-sm">
+                    <i class="fas fa-plus"></i> Add Notice
+                </a>
+            </div>
+        </div>
+
+        <!-- ══ ANALYTICS CARDS ══ -->
+        <div class="analytics-grid">
+            <div class="stat-card sc-total">
+                <div class="stat-label"><i class="fas fa-layer-group"></i> Total</div>
+                <div class="stat-value" id="kTotal">0</div>
+                <div class="stat-sub">All notices</div>
+            </div>
+            <div class="stat-card sc-active">
+                <div class="stat-label"><i class="fas fa-check-circle"></i> Active</div>
+                <div class="stat-value" id="kActive">0</div>
+                <div class="stat-sub">Currently live</div>
+            </div>
+            <div class="stat-card sc-inactive">
+                <div class="stat-label"><i class="fas fa-times-circle"></i> Inactive</div>
+                <div class="stat-value" id="kInactive">0</div>
+                <div class="stat-sub">Deactivated</div>
+            </div>
+            <div class="stat-card sc-pinned">
+                <div class="stat-label"><i class="fas fa-thumbtack"></i> Pinned</div>
+                <div class="stat-value" id="kPinned">0</div>
+                <div class="stat-sub">Pinned to top</div>
+            </div>
+        </div>
+
+        <!-- ══ TABLE CARD ══ -->
+        <div class="glass-card table-card">
+
+            <!-- toolbar -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="search-wrap">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Search notices..." oninput="applyFilters()">
+                    </div>
+                    <select class="filter-select" id="statusFilter" onchange="applyFilters()">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <select class="filter-select" id="categoryFilter" onchange="applyFilters()">
+                        <option value="all">All Categories</option>
+                        <option value="Academic">Academic</option>
+                        <option value="Events">Events</option>
+                        <option value="Important">Important</option>
+                        <option value="Pinned">Pinned</option>
+                        <option value="News">News</option>
+                        <option value="Exam">Exam</option>
+                    </select>
+                </div>
+                <div class="toolbar-right">
+                    <span id="rowCount" style="font-size:.82rem;color:var(--gray-400);white-space:nowrap"></span>
+                </div>
+            </div>
+
+            <!-- bulk action bar -->
+            <div class="bulk-bar" id="bulkBar">
+                <span class="bulk-info" id="bulkInfo">0 selected</span>
+                <button class="btn btn-danger btn-sm" id="bulkDeleteBtn" onclick="bulkDelete()">
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
+                <button class="btn btn-cancel btn-sm" onclick="clearSelection()">
+                    <i class="fas fa-times"></i> Clear
+                </button>
+            </div>
+
+            <!-- print-only header (hidden on screen) -->
+            <div class="print-only">
+                <h2><i class="fas fa-bullhorn"></i> Notices Management Report</h2>
+                <p>Generated on <span id="printDate"></span> &nbsp;|&nbsp; Total notices: {{ notices|length }}</p>
+            </div>
+
+            {% if notices %}
+            <!-- table -->
+            <div class="table-wrap">
+                <table id="noticesTable">
+                    <thead>
+                        <tr>
+                            <th class="col-cb">
+                                <div class="cb-wrap">
+                                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                                </div>
+                            </th>
+                            <th class="col-num">#</th>
+                            <th class="sortable" data-col="1" onclick="sortTable(1)">
+                                Title <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-col="2" onclick="sortTable(2)">
+                                Category <span class="sort-icon"></span>
+                            </th>
+                            <th class="sortable" data-col="3" onclick="sortTable(3)">
+                                Date <span class="sort-icon"></span>
+                            </th>
+                            <th>Status</th>
+                            <th class="sortable" data-col="5" onclick="sortTable(5)">
+                                Views <span class="sort-icon"></span>
+                            </th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        {% for notice in notices %}
+                        <tr
+                            data-id="{{ notice.notice_id }}"
+                            data-title="{{ notice.title | lower }}"
+                            data-status="{{ 'active' if notice.is_active else 'inactive' }}"
+                            data-category="{{ notice.category or 'Academic' }}"
+                            data-date="{{ notice.date_posted.strftime('%Y%m%d') }}"
+                            data-views="{{ notice.views or 0 }}"
+                            data-delay="{{ loop.index0 * 40 }}">
+
+                            <!-- checkbox -->
+                            <td class="td-center">
+                                <div class="cb-wrap">
+                                    <input type="checkbox" class="row-cb"
+                                        data-id="{{ notice.notice_id }}"
+                                        onchange="onRowCheck()">
+                                </div>
+                            </td>
+
+                            <!-- row number -->
+                            <td class="td-center" style="color:var(--gray-400);font-size:.8rem">
+                                {{ loop.index }}
+                            </td>
+
+                            <!-- title + badges -->
+                            <td>
+                                <div class="title-cell">
+                                    <span class="title-main">{{ notice.title }}</span>
+                                    <div class="title-meta">
+                                        {% if notice.is_pinned %}
+                                        <span class="badge badge-pin"><i class="fas fa-thumbtack"></i> Pinned</span>
+                                        {% endif %}
+                                        {% if notice.is_important %}
+                                        <span class="badge badge-important"><i class="fas fa-exclamation"></i> Important</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- category badge -->
+                            <td>
+                                {% set cat = notice.category or 'Academic' %}
+                                {% if cat == 'Academic' %}
+                                    <span class="badge badge-academic">{{ cat }}</span>
+                                {% elif cat == 'Events' %}
+                                    <span class="badge badge-events">{{ cat }}</span>
+                                {% elif cat == 'Important' %}
+                                    <span class="badge badge-important-cat">{{ cat }}</span>
+                                {% elif cat == 'News' %}
+                                    <span class="badge badge-news">{{ cat }}</span>
+                                {% elif cat == 'Exam' %}
+                                    <span class="badge badge-exam">{{ cat }}</span>
+                                {% else %}
+                                    <span class="badge badge-default">{{ cat }}</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- date -->
+                            <td style="white-space:nowrap;color:var(--gray-600);font-size:.85rem">
+                                <i class="fas fa-calendar-alt" style="color:var(--gray-400);margin-right:5px"></i>
+                                {{ notice.date_posted.strftime('%d %b %Y') }}
+                            </td>
+
+                            <!-- status toggle -->
+                            <td>
+                                <div class="toggle-wrap">
+                                    <a href="{{ url_for('toggle_notice', notice_id=notice.notice_id) }}"
+                                       title="{{ 'Deactivate' if notice.is_active else 'Activate' }}"
+                                       style="text-decoration:none">
+                                        <label class="toggle-switch" style="pointer-events:none">
+                                            <input type="checkbox" {{ 'checked' if notice.is_active else '' }} readonly>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                    </a>
+                                    <span class="toggle-label {{ 'on' if notice.is_active else 'off' }}">
+                                        {{ 'Active' if notice.is_active else 'Inactive' }}
+                                    </span>
+                                </div>
+                            </td>
+
+                            <!-- views -->
+                            <td>
+                                <div class="views-cell">
+                                    <i class="fas fa-eye"></i>
+                                    {{ notice.views or 0 }}
+                                </div>
+                            </td>
+
+                            <!-- actions -->
+                            <td>
+                                <div class="action-btns">
+                                    <a href="{{ url_for('view_notice', notice_id=notice.notice_id) }}"
+                                       class="act-btn act-view" title="View">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_notice', notice_id=notice.notice_id) }}"
+                                       class="act-btn act-edit" title="Edit">
+                                        <i class="fas fa-pencil-alt"></i>
+                                    </a>
+                                    <button class="act-btn act-delete" title="Delete"
+                                        onclick="openDeleteModal('{{ notice.notice_id }}', '{{ notice.title | replace("'", "\\'") }}')">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% else %}
+            <!-- animated empty state -->
+            <div class="empty-state">
+                <div class="empty-icon-wrap">
+                    <div class="ring ring-1"></div>
+                    <div class="ring ring-2"></div>
+                    <div class="icon-center"><i class="far fa-bell-slash"></i></div>
+                </div>
+                <h3>No Notices Yet</h3>
+                <p>No notices have been created. Click "Add Notice" to publish your first one.</p>
+                <a href="/add_notice" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create First Notice
+                </a>
+            </div>
+            {% endif %}
+
+        </div><!-- .table-card -->
+    </div><!-- #main -->
+
+    <script>
+    /* ═══════════════════════════════════════════════════════
+       KPI COUNTERS
+    ═══════════════════════════════════════════════════════ */
+    function countUp(el, target, dur) {
+        if (!el) return;
+        const start = performance.now();
+        (function step(now) {
+            const p = Math.min((now - start) / dur, 1);
+            el.textContent = Math.round((1 - Math.pow(1-p, 3)) * target);
+            if (p < 1) requestAnimationFrame(step);
+        })(start);
+    }
+
+    function initKPIs() {
+        const rows = document.querySelectorAll('#tableBody tr');
+        let total=0, active=0, inactive=0, pinned=0;
+        rows.forEach(r => {
+            total++;
+            if (r.dataset.status === 'active') active++; else inactive++;
+            if (r.querySelector('.badge-pin')) pinned++;
+
+            /* Trigger row entrance animation via JS so opacity never stays at 0 */
+            const delay = parseInt(r.dataset.delay || 0);
+            setTimeout(() => r.classList.add('row-animate'), delay);
+        });
+        countUp(document.getElementById('kTotal'),    total,    900);
+        countUp(document.getElementById('kActive'),   active,   900);
+        countUp(document.getElementById('kInactive'), inactive, 900);
+        countUp(document.getElementById('kPinned'),   pinned,   900);
+        updateRowCount();
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       SEARCH + FILTER
+    ═══════════════════════════════════════════════════════ */
+    function applyFilters() {
+        const q      = (document.getElementById('searchInput').value || '').toLowerCase();
+        const status = document.getElementById('statusFilter').value;
+        const cat    = document.getElementById('categoryFilter').value;
+        let visible  = 0;
+
+        document.querySelectorAll('#tableBody tr').forEach(row => {
+            const matchQ   = !q || (row.dataset.title || '').includes(q);
+            const matchSt  = status === 'all' || row.dataset.status === status;
+            const matchCat = cat === 'all' || (row.dataset.category || '') === cat;
+            const show     = matchQ && matchSt && matchCat;
+
+            /* Use display:table-row (not '') so the row is always fully visible */
+            row.style.display = show ? 'table-row' : 'none';
+            /* Ensure animation class is present so opacity is 1 */
+            if (show) row.classList.add('row-animate');
+            if (show) visible++;
+        });
+        updateRowCount(visible);
+    }
+
+    function updateRowCount(n) {
+        const el = document.getElementById('rowCount');
+        if (!el) return;
+        const total = document.querySelectorAll('#tableBody tr').length;
+        el.textContent = n !== undefined
+            ? `Showing ${n} of ${total}`
+            : `${total} notices`;
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       SORTING
+    ═══════════════════════════════════════════════════════ */
+    let sortState = { col: -1, dir: 'asc' };
+
+    function sortTable(colIdx) {
+        const tbody = document.getElementById('tableBody');
+        const rows  = Array.from(tbody.querySelectorAll('tr'));
+        const dir   = (sortState.col === colIdx && sortState.dir === 'asc') ? 'desc' : 'asc';
+        sortState   = { col: colIdx, dir };
+
+        rows.sort((a, b) => {
+            const aCell = a.cells[colIdx]?.textContent.trim() || '';
+            const bCell = b.cells[colIdx]?.textContent.trim() || '';
+            // numeric sort for views col (index 6 → colIdx 5 in header = data col 5)
+            const aNum = parseFloat(aCell), bNum = parseFloat(bCell);
+            const cmp  = (!isNaN(aNum) && !isNaN(bNum))
+                ? aNum - bNum
+                : aCell.localeCompare(bCell);
+            return dir === 'asc' ? cmp : -cmp;
+        });
+
+        rows.forEach(r => tbody.appendChild(r));
+
+        // update sort icons
+        document.querySelectorAll('thead th.sortable').forEach(th => {
+            th.classList.remove('sort-asc', 'sort-desc');
+            if (parseInt(th.dataset.col) === colIdx) {
+                th.classList.add(dir === 'asc' ? 'sort-asc' : 'sort-desc');
+            }
+        });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CHECKBOX SELECTION
+    ═══════════════════════════════════════════════════════ */
+    function toggleSelectAll(master) {
+        document.querySelectorAll('.row-cb').forEach(cb => {
+            const row = cb.closest('tr');
+            if (row.style.display !== 'none') {
+                cb.checked = master.checked;
+                row.classList.toggle('selected', master.checked);
+            }
+        });
+        onRowCheck();
+    }
+
+    function onRowCheck() {
+        const checked = document.querySelectorAll('.row-cb:checked');
+        const bulkBar = document.getElementById('bulkBar');
+        const bulkInfo= document.getElementById('bulkInfo');
+        const master  = document.getElementById('selectAll');
+
+        bulkBar.classList.toggle('visible', checked.length > 0);
+        if (bulkInfo) bulkInfo.textContent = `${checked.length} selected`;
+
+        const allVisible = document.querySelectorAll('.row-cb');
+        const allChecked = Array.from(allVisible).every(cb => cb.checked);
+        if (master) master.checked = allChecked && allVisible.length > 0;
+    }
+
+    function clearSelection() {
+        document.querySelectorAll('.row-cb, #selectAll').forEach(cb => cb.checked = false);
+        document.querySelectorAll('#tableBody tr').forEach(r => r.classList.remove('selected'));
+        document.getElementById('bulkBar').classList.remove('visible');
+    }
+
+    function bulkDelete() {
+        const ids = Array.from(document.querySelectorAll('.row-cb:checked'))
+                         .map(cb => cb.dataset.id);
+        if (!ids.length) return;
+        openDeleteModal('bulk', `${ids.length} selected notices`, ids);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       DELETE MODAL
+    ═══════════════════════════════════════════════════════ */
+    let pendingDeleteIds = [];
+
+    function openDeleteModal(id, title, ids) {
+        pendingDeleteIds = ids || [id];
+        document.getElementById('modalNoticeName').textContent = `"${title}"`;
+        const link = document.getElementById('modalDeleteLink');
+        if (pendingDeleteIds.length === 1) {
+            link.href = `/delete_notice/${pendingDeleteIds[0]}`;
+        } else {
+            // bulk: chain deletes via first, rest handled client-side
+            link.href = '#';
+            link.onclick = function(e) {
+                e.preventDefault();
+                bulkDeleteSequential(pendingDeleteIds);
+            };
+        }
+        document.getElementById('deleteModal').classList.add('open');
+    }
+
+    function closeDeleteModal() {
+        document.getElementById('deleteModal').classList.remove('open');
+        pendingDeleteIds = [];
+        const link = document.getElementById('modalDeleteLink');
+        link.onclick = null;
+    }
+
+    function bulkDeleteSequential(ids) {
+        // Navigate to first delete; backend redirects back to all_notices
+        // For a real bulk endpoint this would be a POST; here we chain redirects
+        if (!ids.length) return;
+        window.location.href = `/delete_notice/${ids[0]}`;
+    }
+
+    // close on overlay click
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+        if (e.target === this) closeDeleteModal();
+    });
+
+    /* ═══════════════════════════════════════════════════════
+       EXPORT CSV
+    ═══════════════════════════════════════════════════════ */
+    function exportCSV() {
+        const rows = [];
+        rows.push(['"#"','"Title"','"Category"','"Date"','"Status"','"Views"'].join(','));
+        document.querySelectorAll('#tableBody tr').forEach((row, i) => {
+            if (row.style.display === 'none') return;
+            const cells = row.querySelectorAll('td');
+            const title  = cells[2]?.querySelector('.title-main')?.textContent.trim() || '';
+            const cat    = cells[3]?.textContent.trim() || '';
+            const date   = cells[4]?.textContent.trim().replace(/\s+/g,' ') || '';
+            const status = row.dataset.status || '';
+            const views  = row.dataset.views  || '0';
+            rows.push([`"${i+1}"`,`"${title}"`,`"${cat}"`,`"${date}"`,`"${status}"`,`"${views}"`].join(','));
+        });
+        const blob = new Blob([rows.join('\n')], { type:'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `notices_${new Date().toISOString().slice(0,10)}.csv`;
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(a.href);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       EXPORT PDF  (print-based)
+    ═══════════════════════════════════════════════════════ */
+    function exportPDF() { window.print(); }
+
+    /* ═══════════════════════════════════════════════════════
+       INIT
+    ═══════════════════════════════════════════════════════ */
+    document.addEventListener('DOMContentLoaded', function() {
+        initKPIs();
+
+        // Set print date
+        const pd = document.getElementById('printDate');
+        if (pd) pd.textContent = new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+
+        // auto-dismiss flash messages
+        setTimeout(() => {
+            document.querySelectorAll('.flash-msg').forEach(el => {
+                el.style.transition = 'opacity .5s';
+                el.style.opacity = '0';
+                setTimeout(() => el.remove(), 500);
+            });
+        }, 4000);
+    });
+    </script>
+</body>
+</html>
