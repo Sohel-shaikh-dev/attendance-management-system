@@ -34,7 +34,10 @@ app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_REFRESH_EACH_REQUEST'] = True  # Har request pe session refresh
 
 # Secure Database Connection String
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://postgres:passwordd@localhost/attendance_db')
+db_url = os.environ.get('DATABASE_URL', 'postgresql://postgres:passwordd@localhost/attendance_db')
+if db_url.startswith('postgres://'):
+    db_url = db_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = db_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
     'pool_pre_ping': True,

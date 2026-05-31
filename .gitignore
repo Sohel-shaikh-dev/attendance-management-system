@@ -1,0 +1,27 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Deployment / Render
+.render/
+
+# Project-specific large/unnecessary files
+*.pptx
+*.docx
+*.pdf
+_ppt_media_extract/
+ppt_transition_qfl3x0ve/
+app.py.txt
+All query.txt
+original_style_dump.txt
